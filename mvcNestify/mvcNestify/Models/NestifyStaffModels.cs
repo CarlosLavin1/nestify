@@ -62,11 +62,8 @@ namespace mvcNestify.Models
         [Required(ErrorMessage = "Agent username is required")]
         public string? Username { get; set; }
 
+
     }
 
-    public class Staff 
-    { 
-        
-    }
 
 }
