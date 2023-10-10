@@ -62,6 +62,9 @@ namespace mvcNestify.Models
         [Required(ErrorMessage = "Agent username is required")]
         public string? Username { get; set; }
 
+        public string AuthorizationLevel { get; set; }
+
+        public int CreatorID { get; set; }
 
     }
 
