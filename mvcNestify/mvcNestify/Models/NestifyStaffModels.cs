@@ -23,6 +23,7 @@ namespace mvcNestify.Models
         public string? MiddleName { get; set; }
 
         [Required(ErrorMessage = "Agent's date of birth is required")]
+        [DataType(DataType.Date)]
         [Display(Name = "Date of Birth")]
         public DateTime DateOfBirth { get; set; }
 
@@ -31,16 +32,18 @@ namespace mvcNestify.Models
         [Display(Name = "Home Phone")]
         public string? HomePhone { get; set; }
 
-        [Required(ErrorMessage = "Please provide a mobile phone number")]
+        
         [StringLength(12, ErrorMessage = "Phone number cannot be longer than 7 characters (123-123-1234)")]
         [Display(Name = "Cell Phone")]
         public string? CellPhone { get; set; }
 
+        [Required(ErrorMessage = "Please provide an office phone number")]
         [StringLength(12, ErrorMessage = "Phone number cannot be longer than 7 characters (123-123-1234)")]
         [Display(Name = "Office Phone")]
         public string? OfficePhone { get; set; }
 
         [Required(ErrorMessage = "An agent email is required")]
+        [Display(Name = "Office Email")]
         public string? OfficeEmail { get; set; }
 
         [Required(ErrorMessage = "A valid street address is required")]
