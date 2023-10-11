@@ -62,9 +62,9 @@ namespace mvcNestify.Controllers
             {
                 _context.Add(agent);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return Redirect("../ImageUpload/Index");
             }
-            return View(agent);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Agents/Edit/5
