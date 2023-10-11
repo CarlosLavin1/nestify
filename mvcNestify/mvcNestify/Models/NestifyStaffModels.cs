@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace mvcNestify.Models
 {
@@ -68,5 +69,44 @@ namespace mvcNestify.Models
 
     }
 
+    public class Customer
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int CustomerID { get; set; }
 
+        [Required(ErrorMessage = "Agent's first name is required")]
+        [Display(Name = "First Name")]
+        public string? FirstName { get; set; }
+
+        [Display(Name = "Middle Name")]
+        public string? MiddleName { get; set; }
+
+        [Required(ErrorMessage = "Agent's last name is required")]
+        [Display(Name = "Last Name")]
+        public string? LastName { get; set; }
+
+        [Required(ErrorMessage = "A valid street address is required")]
+        [Display(Name = "Street Address")]
+        [StringLength(90, ErrorMessage = "Street address cannot be longer than 90 characters")]
+        public string? StreetAddress { get; set; }
+
+        [Required(ErrorMessage = "A municipality name is required")]
+        [StringLength(90, ErrorMessage = "Municipality name cannot be longer than 90 characters")]
+        public string? Municipality { get; set; }
+
+        [StringLength(12, ErrorMessage = "Please enter a 10 digit phone number (123-123-1234)")]
+        [Display(Name = "Phone Number")]
+        [Required(ErrorMessage = "Phone number is required")]
+        public string? PhoneNumber { get; set; }
+
+        [EmailAddress(ErrorMessage = "Invalid Email Address")]
+        public string? Email { get; set; }
+
+        [Required(ErrorMessage = "Date of birth is required")]
+        [Display(Name = "Date of Birth")]
+        [MinAge(18)]
+        public DateTime DateOfBirth { get; set; }
+        // use case asks for proof of identity
+    }
 }
