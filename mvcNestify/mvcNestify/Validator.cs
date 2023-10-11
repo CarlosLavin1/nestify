@@ -20,7 +20,7 @@ namespace mvcNestify
             }
             if (age < _Limit)
             {
-                var result = new ValidationResult("Sorry, you are not of legal age");
+                var result = new ValidationResult("Invalid age, must be 18+");
                 return result;
             }
 

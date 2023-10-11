@@ -300,7 +300,7 @@ namespace mvcNestify.Data.Migrations
 
                     b.HasKey("AgentID");
 
-                    b.ToTable("Agents");
+                    b.ToTable("Agents", (string)null);
                 });
 
             modelBuilder.Entity("mvcNestify.Models.Customer", b =>
@@ -345,7 +345,7 @@ namespace mvcNestify.Data.Migrations
 
                     b.HasKey("CustomerID");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

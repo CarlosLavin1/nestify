@@ -25,6 +25,7 @@ namespace mvcNestify.Models
         [Required(ErrorMessage = "Agent's date of birth is required")]
         [DataType(DataType.Date)]
         [Display(Name = "Date of Birth")]
+        [MinAge(18)]
         public DateTime DateOfBirth { get; set; }
 
 
@@ -66,9 +67,9 @@ namespace mvcNestify.Models
         [Required(ErrorMessage = "Agent username is required")]
         public string? Username { get; set; }
 
-        public string AuthorizationLevel { get; set; }
+        public string AuthorizationLevel { get; set; } = "Agent";
 
-        public int CreatorID { get; set; }
+        public int CreatorID { get; set; } = 0;
 
     }
 
