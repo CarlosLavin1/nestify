@@ -25,7 +25,7 @@ namespace mvcNestify.Models
         [Required(ErrorMessage = "Agent's date of birth is required")]
         [DataType(DataType.Date)]
         [Display(Name = "Date of Birth")]
-        [MinAge(18)]
+        //[MinAge(18)]
         public DateTime DateOfBirth { get; set; }
 
 
@@ -109,7 +109,7 @@ namespace mvcNestify.Models
 
         [Required(ErrorMessage = "Date of birth is required")]
         [Display(Name = "Date of Birth")]
-        [MinAge(18)]
+        //[MinAge(18)]
         [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
         // use case asks for proof of identity

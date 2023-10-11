@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using mvcNestify.Data;
 using mvcNestify.Models;
+using mvcNestify;
 
 namespace mvcNestify.Controllers
 {
@@ -60,10 +61,14 @@ namespace mvcNestify.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(customer);
-                await _context.SaveChangesAsync();
-                // redirect to home index instead of customer list
-                return RedirectToAction(nameof(Index), "Home");
+                if(ValidationHelper.GetAge(customer.DateOfBirth) >= 18)
+                {
+                    _context.Add(customer);
+                    await _context.SaveChangesAsync();
+                    // redirect to home index instead of customer list
+                    return RedirectToAction(nameof(Index), "Home");
+                }
+                ModelState.AddModelError("DateOfBirth", "Invalid age, must be 18+");
             }
             return View(customer);
         }
