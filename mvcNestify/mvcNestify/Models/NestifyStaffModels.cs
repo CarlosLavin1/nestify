@@ -79,14 +79,14 @@ namespace mvcNestify.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CustomerID { get; set; }
 
-        [Required(ErrorMessage = "Agent's first name is required")]
+        [Required(ErrorMessage = "Customer's first name is required")]
         [Display(Name = "First Name")]
         public string? FirstName { get; set; }
 
         [Display(Name = "Middle Name")]
         public string? MiddleName { get; set; }
 
-        [Required(ErrorMessage = "Agent's last name is required")]
+        [Required(ErrorMessage = "Customer's last name is required")]
         [Display(Name = "Last Name")]
         public string? LastName { get; set; }
 
@@ -110,6 +110,7 @@ namespace mvcNestify.Models
         [Required(ErrorMessage = "Date of birth is required")]
         [Display(Name = "Date of Birth")]
         [MinAge(18)]
+        [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
         // use case asks for proof of identity
     }
