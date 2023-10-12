@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using mvcNestify.Data;
 using mvcNestify.Models;
 using mvcNestify;
+using Microsoft.AspNetCore.Authorization;
 
 namespace mvcNestify.Controllers
 {
@@ -47,6 +48,8 @@ namespace mvcNestify.Controllers
         }
 
         // GET: Agents/Create
+        [Authorize]
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -65,7 +68,7 @@ namespace mvcNestify.Controllers
                 {
                     _context.Add(agent);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction("Index", "ImageUpload");
+                    return RedirectToAction("Index");
                 }
                 ModelState.AddModelError("DateOfBirth", "Invalid age, must be 18+");
                 return View(agent);
@@ -74,6 +77,7 @@ namespace mvcNestify.Controllers
         }
 
         // GET: Agents/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Agents == null)
@@ -125,6 +129,7 @@ namespace mvcNestify.Controllers
         }
 
         // GET: Agents/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Agents == null)
