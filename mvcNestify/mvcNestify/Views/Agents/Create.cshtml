@@ -15,7 +15,7 @@
             <div class="form-group">
                 <label asp-for="AgentSIN" class="control-label"></label>
                 <input asp-for="AgentSIN" class="form-control" />
-                <span asp-validation-for="AgentSIN" class="text-danger"></span>
+                <span asp-validation-for="AgentSIN" class="text-danger">@ViewBag.Error</span>
             </div>
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>

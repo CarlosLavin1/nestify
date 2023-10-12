@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using mvcNestify.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace mvcNestify
 {
@@ -14,6 +15,7 @@ namespace mvcNestify
 
             return age;
         }
+
     }
 
 }

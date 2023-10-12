@@ -64,7 +64,7 @@ namespace mvcNestify.Models
         public string? Municipality { get; set; }
 
         [Required(ErrorMessage = "Province is required")]
-        [RegularExpression(@"[A-Z]{3}", ErrorMessage = "Please enter a valid province abbreviation")]
+        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Please enter a valid province abbreviation")]
         [StringLength(3, ErrorMessage = "Please provide province abbreviation")]
         public string? Province { get; set; }
 
