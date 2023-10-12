@@ -9,6 +9,7 @@ namespace mvcNestify.Models
         public int AgentID { get; set; }
 
         [Required(ErrorMessage = "Agent's S.I.N number is required")]
+        [RegularExpression(@"^\d{3}(-?)\d{3}\1\d{3}$", ErrorMessage = "Please enter a valid S.I.N")]
         public string? AgentSIN { get; set; }
 
         [Required(ErrorMessage = "Agent's first name is required")]
@@ -28,21 +29,25 @@ namespace mvcNestify.Models
         public DateTime DateOfBirth { get; set; }
 
 
-        [StringLength(12, ErrorMessage = "Phone number cannot be longer than 7 characters (123-123-1234)")]
+        [StringLength(12, ErrorMessage = "Phone number cannot be longer than 12 characters")]
+        [RegularExpression(@"\(?\d{3}\)?-? *\d{3}-? *-?\d{4}", ErrorMessage = "Please enter a valid phone number")]
         [Display(Name = "Home Phone")]
         public string? HomePhone { get; set; }
 
         
-        [StringLength(12, ErrorMessage = "Phone number cannot be longer than 7 characters (123-123-1234)")]
+        [StringLength(12, ErrorMessage = "Phone number cannot be longer than 12 characters")]
+        [RegularExpression(@"\(?\d{3}\)?-? *\d{3}-? *-?\d{4}", ErrorMessage = "Please enter a valid phone number")]
         [Display(Name = "Cell Phone")]
         public string? CellPhone { get; set; }
 
         [Required(ErrorMessage = "Please provide an office phone number")]
-        [StringLength(12, ErrorMessage = "Phone number cannot be longer than 7 characters (123-123-1234)")]
+        [RegularExpression(@"\(?\d{3}\)?-? *\d{3}-? *-?\d{4}", ErrorMessage = "Please enter a valid phone number")]
+        [StringLength(12, ErrorMessage = "Phone number cannot be longer than 12 characters")]
         [Display(Name = "Office Phone")]
         public string? OfficePhone { get; set; }
 
         [Required(ErrorMessage = "An agent email is required")]
+        [RegularExpression(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$", ErrorMessage = "Please enter a valid email")]
         [Display(Name = "Office Email")]
         public string? OfficeEmail { get; set; }
 
