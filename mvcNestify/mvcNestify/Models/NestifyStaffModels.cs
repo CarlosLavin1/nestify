@@ -69,6 +69,7 @@ namespace mvcNestify.Models
         public string AuthorizationLevel { get; set; } = "Agent";
 
         public int CreatorID { get; set; } = 0;
+        public DateTime DateOfEmployment { get; set; } = DateTime.Now;
 
     }
 
