@@ -66,9 +66,19 @@ namespace mvcNestify.Controllers
             {
                 if (ValidationHelper.GetAge(agent.DateOfBirth) >= 18)
                 {
-                    _context.Add(agent);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction("Index");
+                    if(!ExistingSin(agent.AgentSIN)) 
+                    {
+                        if (!ExistingUsername(agent.Username))
+                        {
+                            _context.Add(agent);
+                            await _context.SaveChangesAsync();
+                            return RedirectToAction("Index");
+                        }
+                        ModelState.AddModelError("Username", "Agent with that username already exists");
+                        return View(agent);
+                    }
+                    ModelState.AddModelError("AgentSIN", "Agent with that S.I.N number already exists");
+                    return View(agent);
                 }
                 ModelState.AddModelError("DateOfBirth", "Invalid age, must be 18+");
                 return View(agent);
@@ -169,6 +179,16 @@ namespace mvcNestify.Controllers
         private bool AgentExists(int id)
         {
           return (_context.Agents?.Any(e => e.AgentID == id)).GetValueOrDefault();
+        }
+
+        public bool ExistingSin(string agentSin)
+        {
+            return (_context.Agents?.Any(e => e.AgentSIN == agentSin)).GetValueOrDefault();
+        }
+
+        public bool ExistingUsername(string username) 
+        {
+            return (_context.Agents?.Any(e => e.Username == username)).GetValueOrDefault();
         }
     }
 }
