@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace mvcNestify.Controllers
 {
@@ -12,6 +13,7 @@ namespace mvcNestify.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult Index()
         {
             return View("Index");
