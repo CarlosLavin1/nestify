@@ -65,8 +65,8 @@ namespace mvcNestify.Controllers
                 {
                     _context.Add(customer);
                     await _context.SaveChangesAsync();
-                    // redirect to home index instead of customer list
-                    return RedirectToAction(nameof(Index), "Home");
+                    
+                    return RedirectToAction(nameof(Index));
                 }
                 ModelState.AddModelError("DateOfBirth", "Invalid age, must be 18+");
             }
