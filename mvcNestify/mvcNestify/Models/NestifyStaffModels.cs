@@ -113,4 +113,21 @@ namespace mvcNestify.Models
         public DateTime DateOfBirth { get; set; }
         // use case asks for proof of identity
     }
+
+    public class Image
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int ImageID { get; set; }
+        public string? FilePath { get; set; }
+        public string? Name { get; set; }
+        [Required(ErrorMessage = "Image description is required")]
+        public string? Description { get; set; }
+        [Required(ErrorMessage = "Alternate text is required")]
+        [Display(Name = "Alternate Text")]
+        public string? AltText { get; set; }
+        public DateTime? UploadTime { get; set; }
+        public bool Validated { get; set; }
+        public int StaffID { get; set; }
+    }
 }
