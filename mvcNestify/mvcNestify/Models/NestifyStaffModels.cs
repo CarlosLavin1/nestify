@@ -105,8 +105,20 @@ namespace mvcNestify.Models
 
         [Required(ErrorMessage = "A valid street address is required")]
         [Display(Name = "Street Address")]
+        [RegularExpression(@"^[A-Za-z0-9]+(?:\s[A-Za-z0-9'_-]+)+$", ErrorMessage = "Please enter a valid address")]
         [StringLength(90, ErrorMessage = "Street address cannot be longer than 90 characters")]
         public string? StreetAddress { get; set; }
+
+        [Required(ErrorMessage = "Province is required")]
+        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Please enter a valid province abbreviation")]
+        [StringLength(3, ErrorMessage = "Please provide province abbreviation")]
+        public string? Province { get; set; }
+
+        [Required(ErrorMessage = "Postal Code is required")]
+        [RegularExpression(@"^[ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ][0-9][ABCEGHJKLMNPRSTVWXYZ][0-9]$", ErrorMessage = "Please enter a valid postal code")]
+        [StringLength(6, ErrorMessage = "Postal code cannot be longer than 6 characters")]
+        [Display(Name = "Postal Code")]
+        public string? PostalCode { get; set; }
 
         [Required(ErrorMessage = "A municipality name is required")]
         [StringLength(90, ErrorMessage = "Municipality name cannot be longer than 90 characters")]
@@ -115,9 +127,10 @@ namespace mvcNestify.Models
         [StringLength(12, ErrorMessage = "Please enter a 10 digit phone number (123-123-1234)")]
         [Display(Name = "Phone Number")]
         [Required(ErrorMessage = "Phone number is required")]
+        [RegularExpression(@"\(?\d{3}\)?-? *\d{3}-? *-?\d{4}", ErrorMessage = "Please enter a valid phone number")]
         public string? PhoneNumber { get; set; }
 
-        [EmailAddress(ErrorMessage = "Invalid Email Address")]
+        [RegularExpression(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$", ErrorMessage = "Please enter a valid email")]
         public string? Email { get; set; }
 
         [Required(ErrorMessage = "Date of birth is required")]
