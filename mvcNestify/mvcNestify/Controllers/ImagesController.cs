@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,10 +14,12 @@ namespace mvcNestify.Controllers
     public class ImagesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private IWebHostEnvironment Environment { get; set; }
 
-        public ImagesController(ApplicationDbContext context)
+        public ImagesController(ApplicationDbContext context, IWebHostEnvironment environment)
         {
             _context = context;
+            Environment = environment;
         }
 
         // GET: Images
@@ -56,14 +59,53 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ImageID,FilePath,Name,Description,AltText,UploadTime,Validated,StaffID")] Image image)
+        public async Task<IActionResult> Create([Bind("Description, AltText, PostedFile")] Image image)
         {
+            IFormFile imageFile = image.PostedFile;
+            int fileSizeLimit = 1048576;
             if (ModelState.IsValid)
             {
-                //image.FilePath = 
-                _context.Add(image);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (imageFile != null && imageFile.Length <= fileSizeLimit)
+                {
+                    // verify valid image type
+                    string contentType = imageFile.ContentType;
+                    if (contentType != "image/jpeg" && contentType != "image/png" && contentType != "image/gif")
+                    {
+                        ModelState.AddModelError("PostedFile", "File type not supported");
+                        return View(image);
+                    }
+
+                    string wwwpath = this.Environment.WebRootPath;
+                    var filePath = Path.Combine(wwwpath, "Uploads/TempFiles");
+                    if (!Directory.Exists(filePath))
+                    {
+                        Directory.CreateDirectory(filePath);
+                    }
+
+                    var fileName = Path.GetFileName(imageFile.FileName);
+                    var fullPath = Path.Combine(filePath, fileName);
+
+                    using (FileStream stream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        imageFile.CopyTo(stream);
+                    }
+                    // populate model props
+                    image.Name = fileName;
+                    image.FilePath = fullPath;
+                    image.UploadTime = DateTime.Now;
+                    image.Validated = false;
+                    image.StaffID = 20; // get staff id from authenticated staff
+
+                    _context.Add(image);
+                    await _context.SaveChangesAsync();
+
+                    ViewBag.Message = $"Successfully uploaded file: " + fileName;
+                    return View("Confirmation");
+                }
+                
+                ViewBag.Message = "Error uploading file";
+                return View("Confirmation");
+
             }
             return View(image);
         }

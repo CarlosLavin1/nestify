@@ -155,5 +155,7 @@ namespace mvcNestify.Models
         public DateTime? UploadTime { get; set; }
         public bool Validated { get; set; }
         public int StaffID { get; set; }
+        [NotMapped]
+        public IFormFile? PostedFile { get; set; }
     }
 }
