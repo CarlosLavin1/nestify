@@ -1,0 +1,77 @@
+﻿@model mvcNestify.Models.Image
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Image</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="PostedFile" class="control-label">Select file: </label>
+                <input type="file" asp-for="PostedFile" name="PostedFile" />
+                <span asp-validation-for="PostedFile" class="text-danger"></span>
+            </div>
+            <br />
+            @*
+            <div class="form-group">
+            <label asp-for="FilePath" class="control-label"></label>
+            <input asp-for="FilePath" class="form-control" />
+            <span asp-validation-for="FilePath" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+            <label asp-for="Name" class="control-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            *@
+
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AltText" class="control-label"></label>
+                <input asp-for="AltText" class="form-control" />
+                <span asp-validation-for="AltText" class="text-danger"></span>
+            </div>
+            @*
+            <div class="form-group">
+            <label asp-for="UploadTime" class="control-label"></label>
+            <input asp-for="UploadTime" class="form-control" />
+            <span asp-validation-for="UploadTime" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+            <label class="form-check-label">
+            <input class="form-check-input" asp-for="Validated" /> @Html.DisplayNameFor(model => model.Validated)
+            </label>
+            </div>
+            <div class="form-group">
+            <label asp-for="StaffID" class="control-label"></label>
+            <input asp-for="StaffID" class="form-control" />
+            <span asp-validation-for="StaffID" class="text-danger"></span>
+            </div>
+            *@
+            <div class="form-group">
+                <input type="submit" value="Upload" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

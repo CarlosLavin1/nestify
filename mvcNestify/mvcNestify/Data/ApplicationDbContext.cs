@@ -14,5 +14,6 @@ namespace mvcNestify.Data
         {
             
         }
+        public DbSet<mvcNestify.Models.Image>? Image { get; set; }
     }
 }
