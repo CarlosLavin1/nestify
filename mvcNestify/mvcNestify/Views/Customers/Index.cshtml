@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<mvcNestify.Models.Customer>
 
 @{
-    ViewData["Title"] = "Customers - Index";
+    ViewData["Title"] = "Index";
 }
 
-<h1>Customers - Index</h1>
+<h1>Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -23,6 +23,12 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.StreetAddress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Province)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PostalCode)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Municipality)
@@ -53,6 +59,12 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.StreetAddress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Province)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PostalCode)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Municipality)

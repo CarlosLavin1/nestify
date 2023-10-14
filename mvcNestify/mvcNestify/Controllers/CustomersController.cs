@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using mvcNestify.Data;
 using mvcNestify.Models;
-using mvcNestify;
 
 namespace mvcNestify.Controllers
 {
@@ -67,7 +66,6 @@ namespace mvcNestify.Controllers
                 new SelectListItem{Text = "YT", Value= "Yukon" }
 
             };
-
             ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
 
             return View();
@@ -78,7 +76,7 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CustomerID,FirstName,MiddleName,LastName,StreetAddress,Municipality,PhoneNumber,Email,DateOfBirth")] Customer customer)
+        public async Task<IActionResult> Create([Bind("CustomerID,FirstName,MiddleName,LastName,StreetAddress,Province,PostalCode,Municipality,PhoneNumber,Email,DateOfBirth")] Customer customer)
         {
             List<SelectListItem> provinceOptions = new List<SelectListItem>()
             {
@@ -99,15 +97,13 @@ namespace mvcNestify.Controllers
 
             };
 
-
-
             if (ModelState.IsValid)
             {
-                if(ValidationHelper.GetAge(customer.DateOfBirth) >= 18)
+                if (ValidationHelper.GetAge(customer.DateOfBirth) >= 18)
                 {
                     _context.Add(customer);
                     await _context.SaveChangesAsync();
-                    
+
                     return RedirectToAction(nameof(Index));
                 }
                 ModelState.AddModelError("DateOfBirth", "Invalid age, must be 18+");
@@ -123,6 +119,26 @@ namespace mvcNestify.Controllers
         // GET: Customers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            List<SelectListItem> provinceOptions = new List<SelectListItem>()
+            {
+                new SelectListItem{Text = "-- SELECT A VALUE --", Value= "", Disabled = true, Selected = true },
+                new SelectListItem{Text = "AB", Value= "Alberta" },
+                new SelectListItem{Text = "BC", Value= "British Columbia" },
+                new SelectListItem{Text = "MB", Value= "Manitoba" },
+                new SelectListItem{Text = "NB", Value= "New Brunswick" },
+                new SelectListItem{Text = "NL", Value= "Newfoundland and Labrador" },
+                new SelectListItem{Text = "NT", Value= "Northwest Territories" },
+                new SelectListItem{Text = "NS", Value= "Nova Scotia" },
+                new SelectListItem{Text = "NU", Value= "Nunavut" },
+                new SelectListItem{Text = "ON", Value= "Ontario" },
+                new SelectListItem{Text = "PEI", Value= "Prince Edward Island" },
+                new SelectListItem{Text = "QUE", Value= "Quebec" },
+                new SelectListItem{Text = "SK", Value= "Saskatchewan" },
+                new SelectListItem{Text = "YT", Value= "Yukon" }
+
+            };
+            ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
+
             if (id == null || _context.Customers == null)
             {
                 return NotFound();
@@ -141,8 +157,28 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CustomerID,FirstName,MiddleName,LastName,StreetAddress,Municipality,PhoneNumber,Email,DateOfBirth")] Customer customer)
+        public async Task<IActionResult> Edit(int id, [Bind("CustomerID,FirstName,MiddleName,LastName,StreetAddress,Province,PostalCode,Municipality,PhoneNumber,Email,DateOfBirth")] Customer customer)
         {
+            List<SelectListItem> provinceOptions = new List<SelectListItem>()
+            {
+                new SelectListItem{Text = "-- SELECT A VALUE --", Value= "", Disabled = true, Selected = true },
+                new SelectListItem{Text = "AB", Value= "Alberta" },
+                new SelectListItem{Text = "BC", Value= "British Columbia" },
+                new SelectListItem{Text = "MB", Value= "Manitoba" },
+                new SelectListItem{Text = "NB", Value= "New Brunswick" },
+                new SelectListItem{Text = "NL", Value= "Newfoundland and Labrador" },
+                new SelectListItem{Text = "NT", Value= "Northwest Territories" },
+                new SelectListItem{Text = "NS", Value= "Nova Scotia" },
+                new SelectListItem{Text = "NU", Value= "Nunavut" },
+                new SelectListItem{Text = "ON", Value= "Ontario" },
+                new SelectListItem{Text = "PEI", Value= "Prince Edward Island" },
+                new SelectListItem{Text = "QUE", Value= "Quebec" },
+                new SelectListItem{Text = "SK", Value= "Saskatchewan" },
+                new SelectListItem{Text = "YT", Value= "Yukon" }
+
+            };
+            
+
             if (id != customer.CustomerID)
             {
                 return NotFound();
@@ -168,6 +204,7 @@ namespace mvcNestify.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
             return View(customer);
         }
 
