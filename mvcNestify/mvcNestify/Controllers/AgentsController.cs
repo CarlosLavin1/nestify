@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using mvcNestify.Data;
 using mvcNestify.Models;
-using mvcNestify;
-using Microsoft.AspNetCore.Authorization;
 
 namespace mvcNestify.Controllers
 {
@@ -30,6 +29,7 @@ namespace mvcNestify.Controllers
         }
 
         // GET: Agents/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Agents == null)
@@ -49,7 +49,6 @@ namespace mvcNestify.Controllers
 
         // GET: Agents/Create
         [Authorize]
-        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -60,13 +59,14 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AgentID,AgentSIN,FirstName,LastName,MiddleName,DateOfBirth,HomePhone,CellPhone,OfficePhone,OfficeEmail,StreetAddress,Municipality,Province,PostalCode,Username,AuthorizationLevel,CreatorID")] Agent agent)
+       
+        public async Task<IActionResult> Create([Bind("AgentID,AgentSIN,FirstName,LastName,MiddleName,DateOfBirth,HomePhone,CellPhone,OfficePhone,OfficeEmail,StreetAddress,Municipality,Province,PostalCode,Username,AuthorizationLevel,CreatorID,IsVerified,DateOfEmployment")] Agent agent)
         {
             if (ModelState.IsValid)
             {
                 if (ValidationHelper.GetAge(agent.DateOfBirth) >= 18)
                 {
-                    if(!ExistingSin(agent.AgentSIN)) 
+                    if (!ExistingSin(agent.AgentSIN))
                     {
                         if (!ExistingUsername(agent.Username))
                         {
@@ -108,7 +108,7 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AgentID,AgentSIN,FirstName,LastName,MiddleName,DateOfBirth,HomePhone,CellPhone,OfficePhone,OfficeEmail,StreetAddress,Municipality,Province,PostalCode,Username,AuthorizationLevel,CreatorID")] Agent agent)
+        public async Task<IActionResult> Edit(int id, [Bind("AgentID,AgentSIN,FirstName,LastName,MiddleName,DateOfBirth,HomePhone,CellPhone,OfficePhone,OfficeEmail,StreetAddress,Municipality,Province,PostalCode,Username,AuthorizationLevel,CreatorID,IsVerified,DateOfEmployment")] Agent agent)
         {
             if (id != agent.AgentID)
             {
@@ -181,12 +181,12 @@ namespace mvcNestify.Controllers
           return (_context.Agents?.Any(e => e.AgentID == id)).GetValueOrDefault();
         }
 
-        public bool ExistingSin(string agentSin)
+        private bool ExistingSin(string sin)
         {
-            return (_context.Agents?.Any(e => e.AgentSIN == agentSin)).GetValueOrDefault();
+            return (_context.Agents?.Any(e => e.AgentSIN == sin)).GetValueOrDefault();
         }
 
-        public bool ExistingUsername(string username) 
+        private bool ExistingUsername(string username)
         {
             return (_context.Agents?.Any(e => e.Username == username)).GetValueOrDefault();
         }
