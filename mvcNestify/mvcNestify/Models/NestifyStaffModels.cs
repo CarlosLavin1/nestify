@@ -17,12 +17,26 @@ namespace mvcNestify.Models
         [Display(Name = "First Name")]
         public string? FirstName { get; set; }
 
+
+        [Display(Name = "Middle Name")]
+        public string? MiddleName { get; set; }
+
         [Required(ErrorMessage = "Agent's last name is required")]
         [Display(Name = "Last Name")]
         public string? LastName { get; set; }
 
-        [Display(Name = "Middle Name")]
-        public string? MiddleName { get; set; }
+
+        [NotMapped]
+        [Display(Name = "Agent Name")]
+        public string? FullName
+        {
+            get
+            {
+                return (MiddleName != null && MiddleName.Length > 0) ?
+                    $"{FirstName} {MiddleName} {LastName}" :
+                    $"{FirstName} {LastName}";
+            }
+        }
 
         [Required(ErrorMessage = "Agent's date of birth is required")]
         [DataType(DataType.Date)]
@@ -69,7 +83,8 @@ namespace mvcNestify.Models
         public string? Province { get; set; }
 
         [Required(ErrorMessage = "Postal Code is required")]
-        [RegularExpression(@"^[ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ][0-9][ABCEGHJKLMNPRSTVWXYZ][0-9]$", ErrorMessage = "Please enter a valid postal code")]
+        [RegularExpression(@"^[ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ][0-9][ABCEGHJKLMNPRSTVWXYZ][0-9]$", 
+            ErrorMessage = "Please enter a valid postal code")]
         [StringLength(6,ErrorMessage = "Postal code cannot be longer than 6 characters")]
         [Display(Name = "Postal Code")]
         public string? PostalCode { get; set; }
@@ -77,11 +92,16 @@ namespace mvcNestify.Models
         [Required(ErrorMessage = "Agent username is required")]
         public string? Username { get; set; }
 
+        [Required]
         public string AuthorizationLevel { get; set; } = "Agent";
 
+        [Required]
         public int CreatorID { get; set; } = 0;
 
+        [Required]
         public bool IsVerified { get; set; } = false;
+
+        [Required]
         public DateTime DateOfEmployment { get; set; } = DateTime.Now;
 
     }
