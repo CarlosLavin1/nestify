@@ -102,8 +102,9 @@ namespace mvcNestify.Models
         public bool IsVerified { get; set; } = false;
 
         [Required]
-        public DateTime DateOfEmployment { get; set; } = DateTime.Now;
-
+        [DataType(DataType.Date)]
+        [Display(Name = "Date of Employment")]
+        public DateTime DateOfEmployment { get; set; } 
     }
 
     public class Customer
