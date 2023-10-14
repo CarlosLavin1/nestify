@@ -82,16 +82,6 @@
                 <input asp-for="Username" class="form-control" />
                 <span asp-validation-for="Username" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="AuthorizationLevel" class="control-label"></label>
-                <input asp-for="AuthorizationLevel" class="form-control" />
-                <span asp-validation-for="AuthorizationLevel" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatorID" class="control-label"></label>
-                <input asp-for="CreatorID" class="form-control" />
-                <span asp-validation-for="CreatorID" class="text-danger"></span>
-            </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="IsVerified" /> @Html.DisplayNameFor(model => model.IsVerified)
