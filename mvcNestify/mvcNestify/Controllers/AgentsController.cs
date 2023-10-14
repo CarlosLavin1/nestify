@@ -127,7 +127,7 @@ namespace mvcNestify.Controllers
                 return View(agent);
             }
             ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
-            return View();
+            return View(agent);
         }
 
         // GET: Agents/Edit/5
