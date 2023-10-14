@@ -78,8 +78,6 @@ namespace mvcNestify.Models
         public string? Municipality { get; set; }
 
         [Required(ErrorMessage = "Province is required")]
-        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Please enter a valid province abbreviation")]
-        [StringLength(3, ErrorMessage = "Please provide province abbreviation")]
         public string? Province { get; set; }
 
         [Required(ErrorMessage = "Postal Code is required")]
@@ -131,8 +129,6 @@ namespace mvcNestify.Models
         public string? StreetAddress { get; set; }
 
         [Required(ErrorMessage = "Province is required")]
-        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Please enter a valid province abbreviation")]
-        [StringLength(3, ErrorMessage = "Please provide province abbreviation")]
         public string? Province { get; set; }
 
         [Required(ErrorMessage = "Postal Code is required")]

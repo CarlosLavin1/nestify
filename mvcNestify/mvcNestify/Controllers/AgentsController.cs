@@ -83,6 +83,25 @@ namespace mvcNestify.Controllers
        
         public async Task<IActionResult> Create([Bind("AgentID,AgentSIN,FirstName,LastName,MiddleName,DateOfBirth,HomePhone,CellPhone,OfficePhone,OfficeEmail,StreetAddress,Municipality,Province,PostalCode,Username,AuthorizationLevel,CreatorID,IsVerified,DateOfEmployment")] Agent agent)
         {
+            List<SelectListItem> provinceOptions = new List<SelectListItem>()
+            {
+                new SelectListItem{Text = "-- SELECT A VALUE --", Value= "", Disabled = true, Selected = true },
+                new SelectListItem{Text = "AB", Value= "Alberta" },
+                new SelectListItem{Text = "BC", Value= "British Columbia" },
+                new SelectListItem{Text = "MB", Value= "Manitoba" },
+                new SelectListItem{Text = "NB", Value= "New Brunswick" },
+                new SelectListItem{Text = "NL", Value= "Newfoundland and Labrador" },
+                new SelectListItem{Text = "NT", Value= "Northwest Territories" },
+                new SelectListItem{Text = "NS", Value= "Nova Scotia" },
+                new SelectListItem{Text = "NU", Value= "Nunavut" },
+                new SelectListItem{Text = "ON", Value= "Ontario" },
+                new SelectListItem{Text = "PEI", Value= "Prince Edward Island" },
+                new SelectListItem{Text = "QUE", Value= "Quebec" },
+                new SelectListItem{Text = "SK", Value= "Saskatchewan" },
+                new SelectListItem{Text = "YT", Value= "Yukon" }
+            };
+
+
             if (ModelState.IsValid)
             {
                 if (ValidationHelper.GetAge(agent.DateOfBirth) >= 18)
@@ -96,15 +115,19 @@ namespace mvcNestify.Controllers
                             return RedirectToAction("Index");
                         }
                         ModelState.AddModelError("Username", "Agent with that username already exists");
+                        ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
                         return View(agent);
                     }
                     ModelState.AddModelError("AgentSIN", "Agent with that S.I.N number already exists");
+                    ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
                     return View(agent);
                 }
                 ModelState.AddModelError("DateOfBirth", "Invalid age, must be 18+");
+                ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
                 return View(agent);
             }
-            return RedirectToAction(nameof(Index));
+            ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
+            return View();
         }
 
         // GET: Agents/Edit/5
