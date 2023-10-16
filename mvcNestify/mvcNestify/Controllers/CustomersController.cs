@@ -76,7 +76,7 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CustomerID,FirstName,MiddleName,LastName,StreetAddress,Province,PostalCode,Municipality,PhoneNumber,Email,DateOfBirth")] Customer customer)
+        public async Task<IActionResult> Create([Bind("CustomerID,FirstName,MiddleName,LastName,StreetAddress,Province,PostalCode,Municipality,PhoneNumber,Email,DateOfBirth,IsVerified")] Customer customer)
         {
             List<SelectListItem> provinceOptions = new List<SelectListItem>()
             {
@@ -157,7 +157,7 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CustomerID,FirstName,MiddleName,LastName,StreetAddress,Province,PostalCode,Municipality,PhoneNumber,Email,DateOfBirth")] Customer customer)
+        public async Task<IActionResult> Edit(int id, [Bind("CustomerID,FirstName,MiddleName,LastName,StreetAddress,Province,PostalCode,Municipality,PhoneNumber,Email,DateOfBirth,IsVerified")] Customer customer)
         {
             List<SelectListItem> provinceOptions = new List<SelectListItem>()
             {

@@ -69,7 +69,12 @@ namespace mvcNestify.Controllers
                 {
                     // verify valid image type
                     string contentType = imageFile.ContentType;
-                    if (contentType != "image/jpeg" && contentType != "image/png" && contentType != "image/gif")
+
+                    if (contentType != "image/jpeg" && 
+                        contentType != "image/png" && 
+                        contentType != "image/gif" && 
+                        contentType != "image/svg" && 
+                        contentType != "image/webp")
                     {
                         ModelState.AddModelError("PostedFile", "File type not supported");
                         return View(image);
@@ -92,7 +97,7 @@ namespace mvcNestify.Controllers
                     // populate model props
                     image.Name = fileName;
                     image.FilePath = fullPath;
-                    image.UploadTime = DateTime.Now;
+                    image.UploadDateTime = DateTime.Now;
                     image.Validated = false;
                     image.StaffID = 20; // get staff id from authenticated staff
 
@@ -131,7 +136,7 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ImageID,FilePath,Name,Description,AltText,UploadTime,Validated,StaffID")] Image image)
+        public async Task<IActionResult> Edit(int id, [Bind("ImageID,FilePath,Name,Description,AltText,UploadDateTime,Validated,StaffID")] Image image)
         {
             if (id != image.ImageID)
             {

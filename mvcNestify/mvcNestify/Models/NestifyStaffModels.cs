@@ -154,6 +154,9 @@ namespace mvcNestify.Models
         [Display(Name = "Date of Birth")]
         [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
+
+        [Required]
+        public bool IsVerified { get; set; } = false;
         // use case asks for proof of identity
     }
 
@@ -169,7 +172,7 @@ namespace mvcNestify.Models
         [Required(ErrorMessage = "Alternate text is required")]
         [Display(Name = "Alternate Text")]
         public string? AltText { get; set; }
-        public DateTime? UploadTime { get; set; }
+        public DateTime? UploadDateTime { get; set; }
         public bool Validated { get; set; }
         public int StaffID { get; set; }
         [NotMapped]
