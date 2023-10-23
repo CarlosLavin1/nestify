@@ -9,6 +9,8 @@ namespace mvcNestify.Data
     {
         public DbSet<Agent>? Agents { get; set; }
         public DbSet<Customer>? Customers { get; set; }
+
+        public DbSet<Listing>? Listings { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

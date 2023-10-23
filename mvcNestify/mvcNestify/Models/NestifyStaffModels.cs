@@ -49,7 +49,7 @@ namespace mvcNestify.Models
         [Display(Name = "Home Phone")]
         public string? HomePhone { get; set; }
 
-        
+
         [StringLength(12, ErrorMessage = "Phone number cannot be longer than 12 characters")]
         [RegularExpression(@"\(?\d{3}\)?-? *\d{3}-? *-?\d{4}", ErrorMessage = "Please enter a valid phone number")]
         [Display(Name = "Cell Phone")]
@@ -81,9 +81,9 @@ namespace mvcNestify.Models
         public string? Province { get; set; }
 
         [Required(ErrorMessage = "Postal Code is required")]
-        [RegularExpression(@"^[ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ][0-9][ABCEGHJKLMNPRSTVWXYZ][0-9]$", 
+        [RegularExpression(@"^[ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ][0-9][ABCEGHJKLMNPRSTVWXYZ][0-9]$",
             ErrorMessage = "Please enter a valid postal code")]
-        [StringLength(6,ErrorMessage = "Postal code cannot be longer than 6 characters")]
+        [StringLength(6, ErrorMessage = "Postal code cannot be longer than 6 characters")]
         [Display(Name = "Postal Code")]
         public string? PostalCode { get; set; }
 
@@ -102,7 +102,9 @@ namespace mvcNestify.Models
         [Required]
         [DataType(DataType.Date)]
         [Display(Name = "Date of Employment")]
-        public DateTime DateOfEmployment { get; set; } 
+        public DateTime DateOfEmployment { get; set; }
+
+        public ICollection<Listing>? Listing { get; set; }
     }
 
     public class Customer
@@ -158,24 +160,8 @@ namespace mvcNestify.Models
         [Required]
         public bool IsVerified { get; set; } = false;
         // use case asks for proof of identity
+
+        public ICollection<Listing>? Listing { get; set; }
     }
 
-    public class Image
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ImageID { get; set; }
-        public string? FilePath { get; set; }
-        public string? Name { get; set; }
-        [Required(ErrorMessage = "Image description is required")]
-        public string? Description { get; set; }
-        [Required(ErrorMessage = "Alternate text is required")]
-        [Display(Name = "Alternate Text")]
-        public string? AltText { get; set; }
-        public DateTime? UploadDateTime { get; set; }
-        public bool Validated { get; set; }
-        public int StaffID { get; set; }
-        [NotMapped]
-        public IFormFile? PostedFile { get; set; }
-    }
 }
