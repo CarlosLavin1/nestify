@@ -85,11 +85,44 @@ namespace mvcNestify.Models
         public int? CustomerID {get; set; }
         public virtual Customer Customer { get; set; }
 
+        [Required]
+        [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
 
+        [Required]
+        [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
 
         public string? ListingStatus { get; set; }
+
+        public virtual ICollection<Showing>? Showing { get; set; }
+    }
+
+    public class Showing 
+    {
+
+        [Required]
+        public int? CustomerID { get; set; }
+        public virtual Customer Customer { get; set; }
+
+        [Required]
+        public int? ListingID {  get; set; }
+        public virtual Listing Listing { get; set; }
+
+        [Required]
+        [DataType(DataType.Date)]
+        public DateTime Date { get; set; }
+
+        [Required]
+        [DataType(DataType.Time)]
+        public DateTime StartTime {  get; set; }
+
+        [Required]
+        [DataType(DataType.Date)]
+        public DateTime EndTime { get; set; }
+
+        [StringLength(255, ErrorMessage = "Comments character length cannot be longer than 255 characters.")]
+        public string? Comments { get; set; }
     }
 }
 

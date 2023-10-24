@@ -104,7 +104,7 @@ namespace mvcNestify.Models
         [Display(Name = "Date of Employment")]
         public DateTime DateOfEmployment { get; set; }
 
-        public ICollection<Listing>? Listing { get; set; }
+        public virtual ICollection<Listing>? Listing { get; set; }
     }
 
     public class Customer
@@ -161,7 +161,7 @@ namespace mvcNestify.Models
         public bool IsVerified { get; set; } = false;
         // use case asks for proof of identity
 
-        public ICollection<Listing>? Listing { get; set; }
+        public virtual ICollection<Listing>? Listing { get; set; }
     }
 
 }
