@@ -49,50 +49,66 @@ namespace mvcNestify.Models
         public string? PostalCode { get; set; }
 
         [Required]
+        [Display(Name = "City Location")]
         public string? CityLocation { get; set; }
 
         [Required]
         public double Footage { get; set; }
 
         [Required]
+        [Display(Name = "Number of Baths")]
         public double NumOfBaths { get; set; }
 
         [Required]
+        [Display(Name = "Number of Rooms")]
         public double NumOfRooms { get; set; }
 
         [Required]
+        [Display(Name = "Stories")]
         public int NumOfStories { get; set; }
 
         [Required]
+        [Display(Name = "Heating")]
         public string TypeOfHeating { get; set; }
 
         [Required]
         public string Features { get; set; }
 
+        [Display(Name = "Special Features")]
         public string SpecialFeatures { get; set; }
 
         [Required]
         [DataType(DataType.Currency)]
+        [Display(Name = "Sales Price")]
         public decimal SalesPrice { get; set; }
 
+        [Required]
+        [Display(Name = "Signed Contract")]
         public Boolean ContractSigned { get; set; }
 
         [Required]
+        [Display(Name = "Listing Agent")]
         public int? AgentID { get; set; }
-        public virtual Agent ListingAgent { get; set; }
+
+        public virtual Agent? ListingAgent { get; set; }
 
         [Required]
+        [Display(Name = "Listing Customer")]
         public int? CustomerID {get; set; }
-        public virtual Customer Customer { get; set; }
+
+        public virtual Customer? Customer { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
+        [Display(Name  = "Contract Start Date")]
         public DateTime StartDate { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
+        [Display(Name = "Contract End Date")]
         public DateTime EndDate { get; set; }
 
+        [Display(Name = "Listing Status")]
         public string? ListingStatus { get; set; }
 
         public virtual ICollection<Showing>? Showing { get; set; }

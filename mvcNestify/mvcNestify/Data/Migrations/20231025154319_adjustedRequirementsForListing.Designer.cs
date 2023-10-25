@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using mvcNestify.Data;
 
@@ -11,9 +12,10 @@ using mvcNestify.Data;
 namespace mvcNestify.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231025154319_adjustedRequirementsForListing")]
+    partial class adjustedRequirementsForListing
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -305,7 +307,7 @@ namespace mvcNestify.Data.Migrations
 
                     b.HasKey("AgentID");
 
-                    b.ToTable("Agents", (string)null);
+                    b.ToTable("Agents");
                 });
 
             modelBuilder.Entity("mvcNestify.Models.Customer", b =>
@@ -362,7 +364,7 @@ namespace mvcNestify.Data.Migrations
 
                     b.HasKey("CustomerID");
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("mvcNestify.Models.Image", b =>
@@ -398,7 +400,7 @@ namespace mvcNestify.Data.Migrations
 
                     b.HasKey("ImageID");
 
-                    b.ToTable("Image", (string)null);
+                    b.ToTable("Image");
                 });
 
             modelBuilder.Entity("mvcNestify.Models.Listing", b =>
@@ -486,7 +488,7 @@ namespace mvcNestify.Data.Migrations
 
                     b.HasIndex("CustomerID");
 
-                    b.ToTable("Listings", (string)null);
+                    b.ToTable("Listings");
                 });
 
             modelBuilder.Entity("mvcNestify.Models.Showing", b =>
@@ -514,7 +516,7 @@ namespace mvcNestify.Data.Migrations
 
                     b.HasIndex("CustomerID");
 
-                    b.ToTable("Showings", (string)null);
+                    b.ToTable("Showings");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
