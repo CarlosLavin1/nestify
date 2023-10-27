@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,14 +21,29 @@ namespace mvcNestify.Controllers
         }
 
         // GET: Customers
-        public async Task<IActionResult> Index()
+        [Authorize]
+        public async Task<IActionResult> Index(string searchCriteria)
         {
-              return _context.Customers != null ? 
-                          View(await _context.Customers.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Customers'  is null.");
+            ViewData["CurrentFilter"] = searchCriteria;
+            var customerList =
+                from cust in _context.Customers
+                select cust;
+
+            if (!String.IsNullOrEmpty(searchCriteria))
+            {
+                customerList = customerList.Where(cust =>
+                cust.FirstName.Contains(searchCriteria) ||
+                cust.LastName.Contains(searchCriteria) ||
+                cust.PhoneNumber.Contains(searchCriteria)
+                );
+            }
+
+
+            return View(await customerList.ToListAsync());
         }
 
         // GET: Customers/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Customers == null)
@@ -46,6 +62,7 @@ namespace mvcNestify.Controllers
         }
 
         // GET: Customers/Create
+        [Authorize]
         public IActionResult Create()
         {
             List<SelectListItem> provinceOptions = new List<SelectListItem>()
@@ -76,6 +93,7 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("CustomerID,FirstName,MiddleName,LastName,StreetAddress,Province,PostalCode,Municipality,PhoneNumber,Email,DateOfBirth,IsVerified")] Customer customer)
         {
             List<SelectListItem> provinceOptions = new List<SelectListItem>()
@@ -117,6 +135,7 @@ namespace mvcNestify.Controllers
         }
 
         // GET: Customers/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             List<SelectListItem> provinceOptions = new List<SelectListItem>()
@@ -177,7 +196,7 @@ namespace mvcNestify.Controllers
                 new SelectListItem{Text = "YT", Value= "Yukon" }
 
             };
-            
+
 
             if (id != customer.CustomerID)
             {
@@ -209,6 +228,7 @@ namespace mvcNestify.Controllers
         }
 
         // GET: Customers/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Customers == null)
@@ -240,14 +260,14 @@ namespace mvcNestify.Controllers
             {
                 _context.Customers.Remove(customer);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CustomerExists(int id)
         {
-          return (_context.Customers?.Any(e => e.CustomerID == id)).GetValueOrDefault();
+            return (_context.Customers?.Any(e => e.CustomerID == id)).GetValueOrDefault();
         }
     }
 }
