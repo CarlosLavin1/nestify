@@ -59,6 +59,18 @@ namespace mvcNestify.Controllers
                     EndDate = listing.EndDate,
                     CustomerID = listing.CustomerID
                 }).ToList();
+            if (TempData["ListingSaved"] != null)
+            {
+                ViewBag.ListingSaved = TempData["ListingSaved"].ToString();
+            }
+
+
+
+            TempData["CustomerID"] = id;
+            if (listingsOverivews == null) 
+            {
+                return View();
+            }
 
             return View(listingsOverivews);
 
@@ -105,9 +117,9 @@ namespace mvcNestify.Controllers
 
         // GET: Listings/Create
         [Authorize]
-        public IActionResult Create()
+        public IActionResult Create(int? id)
         {
-            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName");
+
             ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName");
             List<SelectListItem> provinceOptions = new List<SelectListItem>()
             {
@@ -128,7 +140,7 @@ namespace mvcNestify.Controllers
 
             };
 
-
+            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", selectedValue: id);
             ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
             return View();
         }
@@ -177,7 +189,8 @@ namespace mvcNestify.Controllers
             {
                 _context.Add(listing);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                TempData["ListingSaved"] = "Listing has been saved!";
+                return RedirectToAction("Select", new { id = listing.CustomerID });
             }
             ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
             ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", listing.AgentID);
@@ -285,7 +298,8 @@ namespace mvcNestify.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                TempData["ListingSaved"] = "Listing has been updated!";
+                return RedirectToAction("Select", new { id = listing.CustomerID });
             }
             ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
             ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", listing.AgentID);
