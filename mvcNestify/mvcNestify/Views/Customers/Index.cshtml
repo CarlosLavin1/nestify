@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<mvcNestify.Models.Customer>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Customer - Index";
 }
 
-<h1>Index</h1>
+<h1>Customer - Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -13,7 +13,7 @@
 
     <div class="form-actions no-color">
         <p>
-            Find by Name: <input type="text" name="searchCriteria" value="@ViewData["CurrentFilter"]" />
+            Search For Customer: <input type="text" name="searchCriteria" value="@ViewData["CurrentFilter"]" />
             <input type="submit" value="Search" class="btn btn-default" />
             <a asp-action="Index">Back to Full List</a>
         </p>
@@ -79,6 +79,7 @@
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.CustomerID">Edit</a> |
+                <a asp-controller="Listings" asp-action="Select" asp-route-id="@item.CustomerID">Select</a> |
                 <a asp-action="Details" asp-route-id="@item.CustomerID">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.CustomerID">Delete</a>
             </td>

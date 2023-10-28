@@ -52,6 +52,16 @@ namespace mvcNestify.Models
         [Display(Name = "City Location")]
         public string? CityLocation { get; set; }
 
+        [NotMapped]
+        [Display(Name = "Address")]
+        public string? Address
+        {
+            get 
+            {
+                return $"{StreetAddress}, {Municipality}, {Province}";
+            }
+        }
+
         [Required]
         public double Footage { get; set; }
 

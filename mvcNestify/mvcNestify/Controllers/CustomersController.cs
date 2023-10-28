@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using mvcNestify.Data;
 using mvcNestify.Models;
@@ -52,7 +53,9 @@ namespace mvcNestify.Controllers
             }
 
             var customer = await _context.Customers
+                .Include(l => l.Listing)
                 .FirstOrDefaultAsync(m => m.CustomerID == id);
+
             if (customer == null)
             {
                 return NotFound();

@@ -26,12 +26,65 @@ namespace mvcNestify.Controllers
         // GET: Listings
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Listings.Include(l => l.Customer).Include(l => l.ListingAgent);
+            var applicationDbContext = _context.Listings
+                .Include(l => l.Customer)
+                .Include(l => l.ListingAgent)
+                .Where(l => l.ListingStatus != "Not Avaliable");
             return View(await applicationDbContext.ToListAsync());
+        }
+
+        public async Task<IActionResult> Select(int? id)
+        {
+            if (id == null || _context.Listings == null)
+            {
+                return NotFound();
+            }
+
+            ICollection<Listing>? listings = _context.Listings
+                .Where(listing => listing.CustomerID == id)
+                .ToList();
+
+
+
+            ICollection<ListingViewModel>? listingsOverivews =
+                listings.Select(listing =>
+                new ListingViewModel
+                {
+                    ListingID = listing.ListingID,
+                    StreetAddress = listing.StreetAddress,
+                    Municipality = listing.Municipality,
+                    Province = listing.Province,
+                    AgentID = listing.AgentID,
+                    StartDate = listing.StartDate,
+                    EndDate = listing.EndDate,
+                    CustomerID = listing.CustomerID
+                }).ToList();
+
+            return View(listingsOverivews);
+
         }
 
         // GET: Listings/Details/5
         public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null || _context.Listings == null)
+            {
+                return NotFound();
+            }
+
+            var listing = await _context.Listings
+                .Include(l => l.Customer)
+                .Include(l => l.ListingAgent)
+                .FirstOrDefaultAsync(m => m.ListingID == id);
+            if (listing == null)
+            {
+                return NotFound();
+            }
+
+            return View(listing);
+        }
+
+        public async Task<IActionResult> CustDetails(int? id)
         {
             if (id == null || _context.Listings == null)
             {
@@ -75,6 +128,7 @@ namespace mvcNestify.Controllers
 
             };
 
+
             ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
             return View();
         }
@@ -110,9 +164,11 @@ namespace mvcNestify.Controllers
             {
                 listing.ListingStatus = "Avaliable";
             }
-            else 
+            else
             {
                 listing.ListingStatus = "Not Avaliable";
+                listing.StartDate = DateTime.MinValue;
+                listing.EndDate = DateTime.MinValue;
                 listing.AgentID = null;
             }
 
@@ -133,6 +189,26 @@ namespace mvcNestify.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
+            List<SelectListItem> provinceOptions = new List<SelectListItem>()
+            {
+                new SelectListItem{Text = "-- SELECT A VALUE --", Value= "", Disabled = true, Selected = true },
+                new SelectListItem{Text = "AB", Value= "Alberta" },
+                new SelectListItem{Text = "BC", Value= "British Columbia" },
+                new SelectListItem{Text = "MB", Value= "Manitoba" },
+                new SelectListItem{Text = "NB", Value= "New Brunswick" },
+                new SelectListItem{Text = "NL", Value= "Newfoundland and Labrador" },
+                new SelectListItem{Text = "NT", Value= "Northwest Territories" },
+                new SelectListItem{Text = "NS", Value= "Nova Scotia" },
+                new SelectListItem{Text = "NU", Value= "Nunavut" },
+                new SelectListItem{Text = "ON", Value= "Ontario" },
+                new SelectListItem{Text = "PEI", Value= "Prince Edward Island" },
+                new SelectListItem{Text = "QUE", Value= "Quebec" },
+                new SelectListItem{Text = "SK", Value= "Saskatchewan" },
+                new SelectListItem{Text = "YT", Value= "Yukon" }
+
+            };
+            ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
+
             if (id == null || _context.Listings == null)
             {
                 return NotFound();
@@ -155,10 +231,41 @@ namespace mvcNestify.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ListingID,StreetAddress,Municipality,Province,PostalCode,CityLocation,Footage,NumOfBaths,NumOfRooms,NumOfStories,TypeOfHeating,Features,SpecialFeatures,SalesPrice,ContractSigned,AgentID,CustomerID,StartDate,EndDate,ListingStatus")] Listing listing)
         {
+            List<SelectListItem> provinceOptions = new List<SelectListItem>()
+            {
+                new SelectListItem{Text = "-- SELECT A VALUE --", Value= "", Disabled = true, Selected = true },
+                new SelectListItem{Text = "AB", Value= "Alberta" },
+                new SelectListItem{Text = "BC", Value= "British Columbia" },
+                new SelectListItem{Text = "MB", Value= "Manitoba" },
+                new SelectListItem{Text = "NB", Value= "New Brunswick" },
+                new SelectListItem{Text = "NL", Value= "Newfoundland and Labrador" },
+                new SelectListItem{Text = "NT", Value= "Northwest Territories" },
+                new SelectListItem{Text = "NS", Value= "Nova Scotia" },
+                new SelectListItem{Text = "NU", Value= "Nunavut" },
+                new SelectListItem{Text = "ON", Value= "Ontario" },
+                new SelectListItem{Text = "PEI", Value= "Prince Edward Island" },
+                new SelectListItem{Text = "QUE", Value= "Quebec" },
+                new SelectListItem{Text = "SK", Value= "Saskatchewan" },
+                new SelectListItem{Text = "YT", Value= "Yukon" }
+
+            };
+
             if (id != listing.ListingID)
             {
                 return NotFound();
             }
+
+            listing.EndDate = listing.StartDate.AddMonths(3);
+            if (!!listing.ContractSigned)
+            {
+                listing.ListingStatus = "Avaliable";
+            }
+            else
+            {
+                listing.ListingStatus = "Not Avaliable";
+                listing.AgentID = null;
+            }
+
 
             if (ModelState.IsValid)
             {
@@ -182,6 +289,7 @@ namespace mvcNestify.Controllers
             }
             ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
             ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", listing.AgentID);
+            ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
             return View(listing);
         }
 
@@ -220,14 +328,14 @@ namespace mvcNestify.Controllers
             {
                 _context.Listings.Remove(listing);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ListingExists(int id)
         {
-          return (_context.Listings?.Any(e => e.ListingID == id)).GetValueOrDefault();
+            return (_context.Listings?.Any(e => e.ListingID == id)).GetValueOrDefault();
         }
     }
 }

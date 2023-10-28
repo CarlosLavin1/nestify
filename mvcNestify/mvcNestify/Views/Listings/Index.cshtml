@@ -6,26 +6,11 @@
 
 <h1>Listings - Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.StreetAddress)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Municipality)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Province)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PostalCode)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CityLocation)
+                @Html.DisplayNameFor(model => model.Address)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Footage)
@@ -40,9 +25,6 @@
                 @Html.DisplayNameFor(model => model.NumOfStories)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TypeOfHeating)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Features)
             </th>
             <th>
@@ -51,63 +33,41 @@
             <th>
                 @Html.DisplayNameFor(model => model.SalesPrice)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AgentID)
-            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.StreetAddress)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Municipality)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Province)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PostalCode)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CityLocation)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Footage)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumOfBaths)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumOfRooms)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumOfStories)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TypeOfHeating)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Features)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SpecialFeatures)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SalesPrice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AgentID)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ListingID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ListingID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ListingID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Footage)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumOfBaths)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumOfRooms)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumOfStories)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Features)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SpecialFeatures)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SalesPrice)
+                </td>
+                <td>
+                    <a asp-action="CustDetails" asp-route-id="@item.ListingID">View Listing</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
