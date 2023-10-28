@@ -139,8 +139,7 @@ namespace mvcNestify.Controllers
                 new SelectListItem{Text = "YT", Value= "Yukon" }
 
             };
-
-            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", selectedValue: id);
+            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", id);
             ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
             return View();
         }
@@ -187,6 +186,33 @@ namespace mvcNestify.Controllers
 
             if (ModelState.IsValid)
             {
+                var customer = _context.Customers.FirstOrDefault(cust => cust.CustomerID == listing.CustomerID);
+                var agent = _context.Agents.FirstOrDefault(a => a.AgentID == listing.AgentID);
+                if (customer.IsVerified != true) 
+                {
+                    ModelState.AddModelError("CustomerID", "Customer is not verifed, please wait for verification and try again.");
+                    ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
+                    ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", listing.AgentID);
+                    ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
+                    return View(listing);
+                }
+                if (agent.IsVerified == false)
+                {
+
+                    ModelState.AddModelError("AgentID", "Agent is not verifed, please wait for verification and try again.");
+                    ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
+                    ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", listing.AgentID);
+                    ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
+                    return View(listing);
+                }
+                if (ListingAddressExists(listing.Address)) 
+                {
+                    ModelState.AddModelError("StreetAddress", $"Listing at {listing.Address} already exists.");
+                    ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
+                    ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", listing.AgentID);
+                    ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
+                    return View(listing);
+                }
                 _context.Add(listing);
                 await _context.SaveChangesAsync();
                 TempData["ListingSaved"] = "Listing has been saved!";
@@ -344,12 +370,22 @@ namespace mvcNestify.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            TempData["ListingSaved"] = "Listing has been deleted!";
+            return RedirectToAction("Select", new { id = listing.CustomerID });
         }
 
         private bool ListingExists(int id)
         {
             return (_context.Listings?.Any(e => e.ListingID == id)).GetValueOrDefault();
+        }
+        private bool ListingAddressExists(string address)
+        {
+            return (_context.Listings?.Any(e => 
+                e.StreetAddress + 
+                e.Municipality + 
+                e.Province 
+                == address ))
+                .GetValueOrDefault();
         }
     }
 }

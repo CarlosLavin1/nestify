@@ -8,7 +8,7 @@
 <h1>Selected Customer ID: @TempData["CustomerID"]</h1>
 
 <p>
-    <a asp-action="Create" asp-route-id="@ViewBag.CustomerID">Create New Listing</a>
+    <a asp-action="Create" asp-route-id="@TempData["CustomerID"]">Create New Listing</a>
 </p>
 <table class="table">
     <thead>

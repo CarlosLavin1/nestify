@@ -122,6 +122,7 @@ namespace mvcNestify.Controllers
             {
                 if (ValidationHelper.GetAge(customer.DateOfBirth) >= 18)
                 {
+                    customer.IsVerified = false;
                     _context.Add(customer);
                     await _context.SaveChangesAsync();
 

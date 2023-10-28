@@ -91,13 +91,11 @@ namespace mvcNestify.Models
         public string? Username { get; set; }
 
         [Required]
-        public string AuthorizationLevel { get; set; } = "Agent";
+        public string AuthorizationLevel { get; set; } = "";
 
-        [Required]
-        public int CreatorID { get; set; } = 0;
+        public string? CreatorID { get; set; } 
 
-        [Required]
-        public bool IsVerified { get; set; } = false;
+        public bool IsVerified { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
@@ -170,7 +168,7 @@ namespace mvcNestify.Models
         public DateTime DateOfBirth { get; set; }
 
         [Required]
-        public bool IsVerified { get; set; } = false;
+        public bool IsVerified { get; set; }
         // use case asks for proof of identity
 
         public virtual ICollection<Listing>? Listing { get; set; }

@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using mvcNestify.Data;
 using mvcNestify.Models;
+using NuGet.Protocol.Core.Types;
 
 namespace mvcNestify.Controllers
 {
@@ -110,6 +113,9 @@ namespace mvcNestify.Controllers
                     {
                         if (!ExistingUsername(agent.Username))
                         {
+                            agent.IsVerified = false;
+                            agent.AuthorizationLevel = "Agent";
+                            agent.CreatorID = User.FindFirstValue(ClaimTypes.NameIdentifier);
                             _context.Add(agent);
                             await _context.SaveChangesAsync();
                             return RedirectToAction("Index");
@@ -134,6 +140,24 @@ namespace mvcNestify.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
+            List<SelectListItem> provinceOptions = new List<SelectListItem>()
+            {
+                new SelectListItem{Text = "-- SELECT A VALUE --", Value= "", Disabled = true, Selected = true },
+                new SelectListItem{Text = "AB", Value= "Alberta" },
+                new SelectListItem{Text = "BC", Value= "British Columbia" },
+                new SelectListItem{Text = "MB", Value= "Manitoba" },
+                new SelectListItem{Text = "NB", Value= "New Brunswick" },
+                new SelectListItem{Text = "NL", Value= "Newfoundland and Labrador" },
+                new SelectListItem{Text = "NT", Value= "Northwest Territories" },
+                new SelectListItem{Text = "NS", Value= "Nova Scotia" },
+                new SelectListItem{Text = "NU", Value= "Nunavut" },
+                new SelectListItem{Text = "ON", Value= "Ontario" },
+                new SelectListItem{Text = "PEI", Value= "Prince Edward Island" },
+                new SelectListItem{Text = "QUE", Value= "Quebec" },
+                new SelectListItem{Text = "SK", Value= "Saskatchewan" },
+                new SelectListItem{Text = "YT", Value= "Yukon" }
+            };
+
             if (id == null || _context.Agents == null)
             {
                 return NotFound();
@@ -144,6 +168,7 @@ namespace mvcNestify.Controllers
             {
                 return NotFound();
             }
+            ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
             return View(agent);
         }
 
@@ -154,6 +179,23 @@ namespace mvcNestify.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("AgentID,AgentSIN,FirstName,LastName,MiddleName,DateOfBirth,HomePhone,CellPhone,OfficePhone,OfficeEmail,StreetAddress,Municipality,Province,PostalCode,Username,AuthorizationLevel,CreatorID,IsVerified,DateOfEmployment")] Agent agent)
         {
+            List<SelectListItem> provinceOptions = new List<SelectListItem>()
+            {
+                new SelectListItem{Text = "-- SELECT A VALUE --", Value= "", Disabled = true, Selected = true },
+                new SelectListItem{Text = "AB", Value= "Alberta" },
+                new SelectListItem{Text = "BC", Value= "British Columbia" },
+                new SelectListItem{Text = "MB", Value= "Manitoba" },
+                new SelectListItem{Text = "NB", Value= "New Brunswick" },
+                new SelectListItem{Text = "NL", Value= "Newfoundland and Labrador" },
+                new SelectListItem{Text = "NT", Value= "Northwest Territories" },
+                new SelectListItem{Text = "NS", Value= "Nova Scotia" },
+                new SelectListItem{Text = "NU", Value= "Nunavut" },
+                new SelectListItem{Text = "ON", Value= "Ontario" },
+                new SelectListItem{Text = "PEI", Value= "Prince Edward Island" },
+                new SelectListItem{Text = "QUE", Value= "Quebec" },
+                new SelectListItem{Text = "SK", Value= "Saskatchewan" },
+                new SelectListItem{Text = "YT", Value= "Yukon" }
+            };
             if (id != agent.AgentID)
             {
                 return NotFound();
@@ -179,6 +221,7 @@ namespace mvcNestify.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
             return View(agent);
         }
 
