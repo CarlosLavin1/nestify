@@ -101,7 +101,7 @@ namespace mvcNestify.Models
         [Display(Name = "Date of Employment")]
         public DateTime DateOfEmployment { get; set; }
 
-        public virtual ICollection<Listing>? Listing { get; set; }
+        public virtual ICollection<Contract>? Contract { get; set; }
     }
 
     public class Customer
