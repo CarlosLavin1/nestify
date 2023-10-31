@@ -104,6 +104,9 @@ namespace mvcNestify.Controllers
                 new SelectListItem{Text = "YT", Value= "Yukon" }
             };
 
+            agent.IsVerified = false;
+            agent.AuthorizationLevel = "Agent";
+            agent.CreatorID = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (ModelState.IsValid)
             {
@@ -113,9 +116,7 @@ namespace mvcNestify.Controllers
                     {
                         if (!ExistingUsername(agent.Username))
                         {
-                            agent.IsVerified = false;
-                            agent.AuthorizationLevel = "Agent";
-                            agent.CreatorID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
                             _context.Add(agent);
                             await _context.SaveChangesAsync();
                             return RedirectToAction("Index");

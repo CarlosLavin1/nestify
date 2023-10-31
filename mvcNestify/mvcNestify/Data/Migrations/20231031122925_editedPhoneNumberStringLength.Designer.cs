@@ -12,8 +12,8 @@ using mvcNestify.Data;
 namespace mvcNestify.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231028194428_implementedCreatorIDForAgent")]
-    partial class implementedCreatorIDForAgent
+    [Migration("20231031122925_editedPhoneNumberStringLength")]
+    partial class editedPhoneNumberStringLength
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -243,10 +243,11 @@ namespace mvcNestify.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CellPhone")
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
                     b.Property<string>("CreatorID")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateOfBirth")
@@ -260,8 +261,8 @@ namespace mvcNestify.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HomePhone")
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
                     b.Property<bool>("IsVerified")
                         .HasColumnType("bit");
@@ -284,8 +285,8 @@ namespace mvcNestify.Data.Migrations
 
                     b.Property<string>("OfficePhone")
                         .IsRequired()
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
                     b.Property<string>("PostalCode")
                         .IsRequired()
@@ -345,8 +346,8 @@ namespace mvcNestify.Data.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
                     b.Property<string>("PostalCode")
                         .IsRequired()

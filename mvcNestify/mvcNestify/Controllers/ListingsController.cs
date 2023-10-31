@@ -23,16 +23,7 @@ namespace mvcNestify.Controllers
             _context = context;
         }
 
-        // GET: Listings
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.Listings
-                .Include(l => l.Customer)
-                .Include(l => l.ListingAgent)
-                .Where(l => l.ListingStatus != "Not Avaliable");
-            return View(await applicationDbContext.ToListAsync());
-        }
-
+        [HttpGet]
         public async Task<IActionResult> Select(int? id)
         {
             if (id == null || _context.Listings == null)
@@ -63,8 +54,6 @@ namespace mvcNestify.Controllers
             {
                 ViewBag.ListingSaved = TempData["ListingSaved"].ToString();
             }
-
-
 
             TempData["CustomerID"] = id;
             if (listingsOverivews == null) 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Castle.Core.Internal;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -37,6 +38,10 @@ namespace mvcNestify.Controllers
                 cust.LastName.Contains(searchCriteria) ||
                 cust.PhoneNumber.Contains(searchCriteria)
                 );
+            }
+            if (customerList.IsNullOrEmpty())
+            {
+                ViewBag.NoCustomer = $"There were no records that matched your search {searchCriteria} in the system. Please try again.";
             }
 
 

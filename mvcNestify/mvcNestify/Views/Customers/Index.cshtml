@@ -15,6 +15,7 @@
         <p>
             Search For Customer: <input type="text" name="searchCriteria" value="@ViewData["CurrentFilter"]" />
             <input type="submit" value="Search" class="btn btn-default" />
+            <span class="text-danger">@ViewBag.NoCustomer</span>
             <a asp-action="Index">Back to Full List</a>
         </p>
     </div>

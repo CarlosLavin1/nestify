@@ -4,7 +4,7 @@
 
 namespace mvcNestify.Data.Migrations
 {
-    public partial class implementedCreatorIDForAgent : Migration
+    public partial class updatedAgentCreatorAndAuthorizeLevel : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,7 +20,7 @@ namespace mvcNestify.Data.Migrations
                 name: "CreatorID",
                 table: "Agents",
                 type: "nvarchar(max)",
-                nullable: true,
+                nullable: false,
                 oldClrType: typeof(int),
                 oldType: "int");
         }
@@ -42,10 +42,8 @@ namespace mvcNestify.Data.Migrations
                 table: "Agents",
                 type: "int",
                 nullable: false,
-                defaultValue: 0,
                 oldClrType: typeof(string),
-                oldType: "nvarchar(max)",
-                oldNullable: true);
+                oldType: "nvarchar(max)");
         }
     }
 }

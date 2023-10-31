@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using mvcNestify.Data;
 
@@ -11,9 +12,10 @@ using mvcNestify.Data;
 namespace mvcNestify.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231031122032_updatedAgentCreatorAndAuthorizeLevel")]
+    partial class updatedAgentCreatorAndAuthorizeLevel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -237,13 +239,15 @@ namespace mvcNestify.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AuthorizationLevel")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CellPhone")
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
 
                     b.Property<string>("CreatorID")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateOfBirth")
@@ -257,8 +261,8 @@ namespace mvcNestify.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HomePhone")
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
 
                     b.Property<bool>("IsVerified")
                         .HasColumnType("bit");
@@ -281,8 +285,8 @@ namespace mvcNestify.Data.Migrations
 
                     b.Property<string>("OfficePhone")
                         .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
 
                     b.Property<string>("PostalCode")
                         .IsRequired()
@@ -342,8 +346,8 @@ namespace mvcNestify.Data.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
 
                     b.Property<string>("PostalCode")
                         .IsRequired()

@@ -44,20 +44,20 @@ namespace mvcNestify.Models
         public DateTime DateOfBirth { get; set; }
 
 
-        [StringLength(12, ErrorMessage = "Phone number cannot be longer than 12 characters")]
+        [StringLength(13, ErrorMessage = "Phone number cannot be longer than 13 characters")]
         [Phone]
         [Display(Name = "Home Phone")]
         public string? HomePhone { get; set; }
 
 
-        [StringLength(12, ErrorMessage = "Phone number cannot be longer than 12 characters")]
+        [StringLength(13, ErrorMessage = "Phone number cannot be longer than 13 characters")]
         [Phone]
         [Display(Name = "Cell Phone")]
         public string? CellPhone { get; set; }
 
         [Required(ErrorMessage = "Please provide an office phone number")]
         [Phone]
-        [StringLength(12, ErrorMessage = "Phone number cannot be longer than 12 characters")]
+        [StringLength(13, ErrorMessage = "Phone number cannot be longer than 13 characters")]
         [Display(Name = "Office Phone")]
         public string? OfficePhone { get; set; }
 
@@ -90,10 +90,9 @@ namespace mvcNestify.Models
         [Required(ErrorMessage = "Agent username is required")]
         public string? Username { get; set; }
 
-        [Required]
-        public string AuthorizationLevel { get; set; } = "";
+        public string? AuthorizationLevel { get; set; }
 
-        public string? CreatorID { get; set; } 
+        public string? CreatorID { get; set; }
 
         public bool IsVerified { get; set; }
 
@@ -153,7 +152,7 @@ namespace mvcNestify.Models
         [StringLength(90, ErrorMessage = "Municipality name cannot be longer than 90 characters")]
         public string? Municipality { get; set; }
 
-        [StringLength(12, ErrorMessage = "Please enter a 10 digit phone number (123-123-1234)")]
+        [StringLength(13, ErrorMessage = "Phone number cannot be longer than 13 characters")]
         [Display(Name = "Phone Number")]
         [Required(ErrorMessage = "Phone number is required")]
         [Phone]
