@@ -26,9 +26,9 @@ namespace mvcNestify.Controllers
         // GET: Agents
         public async Task<IActionResult> Index()
         {
-              return _context.Agents != null ? 
-                          View(await _context.Agents.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Agents'  is null.");
+            return _context.Agents != null ?
+                        View(await _context.Agents.ToListAsync()) :
+                        Problem("Entity set 'ApplicationDbContext.Agents'  is null.");
         }
 
         // GET: Agents/Details/5
@@ -83,7 +83,7 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-       
+
         public async Task<IActionResult> Create([Bind("AgentID,AgentSIN,FirstName,LastName,MiddleName,DateOfBirth,HomePhone,CellPhone,OfficePhone,OfficeEmail,StreetAddress,Municipality,Province,PostalCode,Username,AuthorizationLevel,CreatorID,IsVerified,DateOfEmployment")] Agent agent)
         {
             List<SelectListItem> provinceOptions = new List<SelectListItem>()
@@ -104,9 +104,7 @@ namespace mvcNestify.Controllers
                 new SelectListItem{Text = "YT", Value= "Yukon" }
             };
 
-            agent.IsVerified = false;
-            agent.AuthorizationLevel = "Agent";
-            agent.CreatorID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+           
 
             if (ModelState.IsValid)
             {
@@ -116,6 +114,9 @@ namespace mvcNestify.Controllers
                     {
                         if (!ExistingUsername(agent.Username))
                         {
+                            agent.IsVerified = false;
+                            agent.AuthorizationLevel = "Agent";
+                            agent.CreatorID = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                             _context.Add(agent);
                             await _context.SaveChangesAsync();
@@ -259,14 +260,14 @@ namespace mvcNestify.Controllers
             {
                 _context.Agents.Remove(agent);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool AgentExists(int id)
         {
-          return (_context.Agents?.Any(e => e.AgentID == id)).GetValueOrDefault();
+            return (_context.Agents?.Any(e => e.AgentID == id)).GetValueOrDefault();
         }
 
         private bool ExistingSin(string sin)
