@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace mvcNestify.Controllers
 {
-    public class ContractController1 : Controller
+    public class ContractController : Controller
     {
         // GET: ContractController1
         public ActionResult Index()

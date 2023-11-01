@@ -91,25 +91,22 @@ namespace mvcNestify.Models
         [Display(Name = "Special Features")]
         public string SpecialFeatures { get; set; }
 
-        [Required]
-        [Display(Name = "Listing Customer")]
-        public int? CustomerID {get; set; }
-
-        public virtual Customer? Customer { get; set; }
+        [Display(Name = "Listing Status")]
+        public string? ListingStatus { get; set; }
 
         [Required]
         [Display(Name = "Signed Contract")]
         public Boolean ContractSigned { get; set; }
         public virtual ICollection<Contract>? Contract { get; set; }
 
-        [Display(Name = "Listing Status")]
-        public string? ListingStatus { get; set; }
-
         public virtual ICollection<Showing>? Showing { get; set; }
     }
 
     public class Contract
     {
+        [Key]
+        public int? ContractID { get; set; }
+
         [Required]
         [DataType(DataType.Date)]
         [Display(Name = "Contract Start Date")]
@@ -137,6 +134,11 @@ namespace mvcNestify.Models
         public int? ListingID { get; set; }
         public virtual Listing? Listing{ get; set; }
 
+        [Required]
+        [ForeignKey("Customer")]
+        [Display(Name = "Listing Customer")]
+        public int? CustomerID { get; set; }
+        public virtual Customer? Customer { get; set; }
 
     }
 

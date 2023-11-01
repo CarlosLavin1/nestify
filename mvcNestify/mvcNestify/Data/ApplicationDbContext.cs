@@ -27,19 +27,22 @@ namespace mvcNestify.Data
                 .HasKey(lc => new { lc.ListingID, lc.CustomerID });
 
             builder.Entity<Listing>()
-                .HasMany(s => s.Contract)
-                .WithOne(e => e.Listing)
-                .HasForeignKey(e => e.ListingID)
+                .HasMany(c => c.Contract)
+                .WithOne(l => l.Listing)
+                .HasForeignKey(l => l.ListingID)
                 .HasConstraintName("FK_Contract_Listing_ListingID");
 
             builder.Entity<Agent>()
-            .HasMany(s => s.Contract)
-            .WithOne(e => e.ListingAgent)
-            .HasForeignKey(e => e.AgentID)
-            .HasConstraintName("FK_Contract_Agent_AgentID");
-
-            builder.Entity<Contract>()
-                .HasKey(en => new { en.ListingID, en.AgentID });
+                .HasMany(c => c.Contract)
+                .WithOne(cust => cust.ListingAgent)
+                .HasForeignKey(cust => cust.AgentID)
+                .HasConstraintName("FK_Contract_Agent_AgentID");
+           
+            builder.Entity<Customer>()
+                .HasMany(c => c.Contract)
+                .WithOne(cust => cust.Customer)
+                .HasForeignKey(cust => cust.CustomerID)
+                .HasConstraintName("FK_Contract_Customer_CustomerID");
         }
 
         public DbSet<Showing>? Showings { get; set; }
