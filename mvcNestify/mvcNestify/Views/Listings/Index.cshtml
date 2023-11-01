@@ -7,7 +7,6 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -22,15 +21,6 @@
                 @Html.DisplayNameFor(model => model.Province)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PostalCode)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CityLocation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Footage)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.NumOfBaths)
             </th>
             <th>
@@ -38,24 +28,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.NumOfStories)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TypeOfHeating)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Features)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SpecialFeatures)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Customer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ContractSigned)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ListingStatus)
             </th>
             <th></th>
         </tr>
@@ -73,15 +45,6 @@
                 @Html.DisplayFor(modelItem => item.Province)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PostalCode)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CityLocation)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Footage)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.NumOfBaths)
             </td>
             <td>
@@ -91,27 +54,7 @@
                 @Html.DisplayFor(modelItem => item.NumOfStories)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TypeOfHeating)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Features)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SpecialFeatures)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Customer.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ContractSigned)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ListingStatus)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ListingID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ListingID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ListingID">Delete</a>
+                <a asp-action="CustDetails" asp-route-id="@item.ListingID">Details</a>
             </td>
         </tr>
 }

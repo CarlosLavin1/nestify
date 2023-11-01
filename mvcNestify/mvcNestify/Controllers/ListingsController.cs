@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using mvcNestify.Data;
 using mvcNestify.Models;
+using NuGet.Versioning;
 
 namespace mvcNestify.Controllers
 {
+
     public class ListingsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,11 +24,63 @@ namespace mvcNestify.Controllers
             _context = context;
         }
 
-        // GET: Listings
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Listings.Include(l => l.Customer);
+            var applicationDbContext = _context.Listings
+                .Include(c => c.Contract)
+                .Where(l => l.ListingStatus != "Not Avaliable");
             return View(await applicationDbContext.ToListAsync());
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Select(int? id)
+        {
+            if (id == null || _context.Listings == null)
+            {
+                return NotFound();
+            }
+
+            ICollection<Contract>? contracts = _context.Contracts
+                .Include(l => l.Listing)
+                .Include(c => c.Customer)
+                .Include(a => a.ListingAgent)
+                .Where(c => c.CustomerID == id)
+                .ToList();
+
+            ICollection<ContractViewModel>? model =
+                        contracts.Select(contract =>
+                new ContractViewModel
+                {
+                    ListingID = contract.ListingID,
+                    StreetAddress = contract.Listing.StreetAddress,
+                    Municipality = contract.Listing.Municipality,
+                    Province = contract.Listing.Province,
+                    AgentID = contract.AgentID,
+                    StartDate = contract.StartDate,
+                    EndDate = contract.EndDate,
+                    CustomerID = contract.CustomerID,
+                }).ToList();
+
+           
+
+            if (TempData["ListingSaved"] != null)
+            {
+                ViewBag.ListingSaved = TempData["ListingSaved"].ToString();
+            }
+
+            var customer = await _context.Customers
+                .FirstOrDefaultAsync(m => m.CustomerID == id);
+
+            ViewData["CustomerName"] = customer.FullName;
+            TempData["CustomerID"] = id;
+
+            if (model == null) 
+            {
+                return View();
+            }
+
+            return View(model);
+
         }
 
         // GET: Listings/Details/5
@@ -35,7 +92,23 @@ namespace mvcNestify.Controllers
             }
 
             var listing = await _context.Listings
-                .Include(l => l.Customer)
+                .FirstOrDefaultAsync(m => m.ListingID == id);
+            if (listing == null)
+            {
+                return NotFound();
+            }
+
+            return View(listing);
+        }
+
+        public async Task<IActionResult> CustDetails(int? id)
+        {
+            if (id == null || _context.Listings == null)
+            {
+                return NotFound();
+            }
+
+            var listing = await _context.Listings
                 .FirstOrDefaultAsync(m => m.ListingID == id);
             if (listing == null)
             {
@@ -46,9 +119,31 @@ namespace mvcNestify.Controllers
         }
 
         // GET: Listings/Create
-        public IActionResult Create()
+        [Authorize]
+        public IActionResult Create(int? id)
         {
-            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FirstName");
+
+            ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName");
+            List<SelectListItem> provinceOptions = new List<SelectListItem>()
+            {
+                new SelectListItem{Text = "-- SELECT A VALUE --", Value= "", Disabled = true, Selected = true },
+                new SelectListItem{Text = "AB", Value= "Alberta" },
+                new SelectListItem{Text = "BC", Value= "British Columbia" },
+                new SelectListItem{Text = "MB", Value= "Manitoba" },
+                new SelectListItem{Text = "NB", Value= "New Brunswick" },
+                new SelectListItem{Text = "NL", Value= "Newfoundland and Labrador" },
+                new SelectListItem{Text = "NT", Value= "Northwest Territories" },
+                new SelectListItem{Text = "NS", Value= "Nova Scotia" },
+                new SelectListItem{Text = "NU", Value= "Nunavut" },
+                new SelectListItem{Text = "ON", Value= "Ontario" },
+                new SelectListItem{Text = "PEI", Value= "Prince Edward Island" },
+                new SelectListItem{Text = "QUE", Value= "Quebec" },
+                new SelectListItem{Text = "SK", Value= "Saskatchewan" },
+                new SelectListItem{Text = "YT", Value= "Yukon" }
+
+            };
+            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", id);
+            ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
             return View();
         }
 
@@ -57,21 +152,138 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ListingID,StreetAddress,Municipality,Province,PostalCode,CityLocation,Footage,NumOfBaths,NumOfRooms,NumOfStories,TypeOfHeating,Features,SpecialFeatures,CustomerID,ContractSigned,ListingStatus")] Listing listing)
+        public async Task<IActionResult> Create(ContractViewModel contractModel)
         {
+            List<SelectListItem> provinceOptions = new List<SelectListItem>()
+            {
+                new SelectListItem{Text = "-- SELECT A VALUE --", Value= "", Disabled = true, Selected = true },
+                new SelectListItem{Text = "AB", Value= "Alberta" },
+                new SelectListItem{Text = "BC", Value= "British Columbia" },
+                new SelectListItem{Text = "MB", Value= "Manitoba" },
+                new SelectListItem{Text = "NB", Value= "New Brunswick" },
+                new SelectListItem{Text = "NL", Value= "Newfoundland and Labrador" },
+                new SelectListItem{Text = "NT", Value= "Northwest Territories" },
+                new SelectListItem{Text = "NS", Value= "Nova Scotia" },
+                new SelectListItem{Text = "NU", Value= "Nunavut" },
+                new SelectListItem{Text = "ON", Value= "Ontario" },
+                new SelectListItem{Text = "PEI", Value= "Prince Edward Island" },
+                new SelectListItem{Text = "QUE", Value= "Quebec" },
+                new SelectListItem{Text = "SK", Value= "Saskatchewan" },
+                new SelectListItem{Text = "YT", Value= "Yukon" }
+
+            };
+
+            Listing listing = new()
+            {
+                StreetAddress = contractModel.StreetAddress,
+                Municipality = contractModel.Municipality,
+                CityLocation = contractModel.CityLocation,
+                Province = contractModel.Province,
+                PostalCode = contractModel.PostalCode,
+                Footage = contractModel.Footage,
+                NumOfBaths = contractModel.NumOfBaths,
+                NumOfRooms = contractModel.NumOfRooms,
+                NumOfStories = contractModel.NumOfStories,
+                TypeOfHeating = contractModel.TypeOfHeating,
+                Features = contractModel.Features,
+                SpecialFeatures = contractModel.SpecialFeatures,
+                ListingStatus = null,
+                ContractSigned = contractModel.ContractSigned
+            };
+
+            Contract contract = new()
+            {
+                StartDate = contractModel.StartDate,
+                SalesPrice = contractModel.SalesPrice,
+                AgentID = contractModel.AgentID,
+                ListingID = null,
+                CustomerID = contractModel.CustomerID
+            };
+
             if (ModelState.IsValid)
             {
+
+                var customer = _context.Customers.FirstOrDefault(cust => cust.CustomerID == contract.CustomerID);
+                var agent = _context.Agents.FirstOrDefault(a => a.AgentID == contract.AgentID);
+
+                if (!!listing.ContractSigned)
+                {
+                    listing.ListingStatus = "Avaliable";
+                    contract.EndDate = contract.StartDate.AddMonths(3);
+                }
+                else
+                {
+                    listing.ListingStatus = "Not Avaliable";
+                }
+
+                if (customer.IsVerified != true)
+                {
+                    ModelState.AddModelError("CustomerID", "Customer is not verifed, please wait for verification and try again.");
+                    ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", contract.CustomerID);
+                    ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
+                    ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
+                    return View(contractModel);
+                }
+                if (agent.IsVerified == false)
+                {
+
+                    ModelState.AddModelError("AgentID", "Agent is not verifed, please wait for verification and try again.");
+                    ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", contract.CustomerID);
+                    ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
+                    ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
+                    return View(contractModel);
+                }
+                if (ListingAddressExists(listing.Address)) 
+                {
+                    ModelState.AddModelError("StreetAddress", $"Listing at {listing.Address} already exists.");
+                    ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", contract.CustomerID);
+                    ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
+                    ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
+                    return View(contractModel);
+                }
                 _context.Add(listing);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                if (!!listing.ContractSigned)
+                {
+                    contract.ListingID = listing.ListingID;
+                    _context.Contracts.Add(contract);
+                    await _context.SaveChangesAsync();
+                }
+
+                TempData["ListingSaved"] = "Listing has been saved!";
+                return RedirectToAction("Select", new { id = contract.CustomerID });
             }
-            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FirstName", listing.CustomerID);
-            return View(listing);
+            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", contract.CustomerID);
+            ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
+            ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
+            return View(contractModel);
         }
 
         // GET: Listings/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
+            List<SelectListItem> provinceOptions = new List<SelectListItem>()
+            {
+                new SelectListItem{Text = "-- SELECT A VALUE --", Value= "", Disabled = true, Selected = true },
+                new SelectListItem{Text = "AB", Value= "Alberta" },
+                new SelectListItem{Text = "BC", Value= "British Columbia" },
+                new SelectListItem{Text = "MB", Value= "Manitoba" },
+                new SelectListItem{Text = "NB", Value= "New Brunswick" },
+                new SelectListItem{Text = "NL", Value= "Newfoundland and Labrador" },
+                new SelectListItem{Text = "NT", Value= "Northwest Territories" },
+                new SelectListItem{Text = "NS", Value= "Nova Scotia" },
+                new SelectListItem{Text = "NU", Value= "Nunavut" },
+                new SelectListItem{Text = "ON", Value= "Ontario" },
+                new SelectListItem{Text = "PEI", Value= "Prince Edward Island" },
+                new SelectListItem{Text = "QUE", Value= "Quebec" },
+                new SelectListItem{Text = "SK", Value= "Saskatchewan" },
+                new SelectListItem{Text = "YT", Value= "Yukon" }
+
+            };
+            ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
+
             if (id == null || _context.Listings == null)
             {
                 return NotFound();
@@ -82,7 +294,8 @@ namespace mvcNestify.Controllers
             {
                 return NotFound();
             }
-            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FirstName", listing.CustomerID);
+            //ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
+            //ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", listing.AgentID);
             return View(listing);
         }
 
@@ -91,12 +304,43 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ListingID,StreetAddress,Municipality,Province,PostalCode,CityLocation,Footage,NumOfBaths,NumOfRooms,NumOfStories,TypeOfHeating,Features,SpecialFeatures,CustomerID,ContractSigned,ListingStatus")] Listing listing)
+        public async Task<IActionResult> Edit(int id, [Bind("ListingID,StreetAddress,Municipality,Province,PostalCode,CityLocation,Footage,NumOfBaths,NumOfRooms,NumOfStories,TypeOfHeating,Features,SpecialFeatures,SalesPrice,ContractSigned,AgentID,CustomerID,StartDate,EndDate,ListingStatus")] Listing listing)
         {
+            List<SelectListItem> provinceOptions = new List<SelectListItem>()
+            {
+                new SelectListItem{Text = "-- SELECT A VALUE --", Value= "", Disabled = true, Selected = true },
+                new SelectListItem{Text = "AB", Value= "Alberta" },
+                new SelectListItem{Text = "BC", Value= "British Columbia" },
+                new SelectListItem{Text = "MB", Value= "Manitoba" },
+                new SelectListItem{Text = "NB", Value= "New Brunswick" },
+                new SelectListItem{Text = "NL", Value= "Newfoundland and Labrador" },
+                new SelectListItem{Text = "NT", Value= "Northwest Territories" },
+                new SelectListItem{Text = "NS", Value= "Nova Scotia" },
+                new SelectListItem{Text = "NU", Value= "Nunavut" },
+                new SelectListItem{Text = "ON", Value= "Ontario" },
+                new SelectListItem{Text = "PEI", Value= "Prince Edward Island" },
+                new SelectListItem{Text = "QUE", Value= "Quebec" },
+                new SelectListItem{Text = "SK", Value= "Saskatchewan" },
+                new SelectListItem{Text = "YT", Value= "Yukon" }
+
+            };
+
             if (id != listing.ListingID)
             {
                 return NotFound();
             }
+
+            //listing.EndDate = listing.StartDate.AddMonths(3);
+            if (!!listing.ContractSigned)
+            {
+                listing.ListingStatus = "Avaliable";
+            }
+            else
+            {
+                listing.ListingStatus = "Not Avaliable";
+                //listing.AgentID = null;
+            }
+
 
             if (ModelState.IsValid)
             {
@@ -116,13 +360,17 @@ namespace mvcNestify.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                TempData["ListingSaved"] = "Listing has been updated!";
+                //return RedirectToAction("Select", new { id = listing.CustomerID });
             }
-            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FirstName", listing.CustomerID);
+            //ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
+            //ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", listing.AgentID);
+            ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
             return View(listing);
         }
 
         // GET: Listings/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Listings == null)
@@ -131,7 +379,6 @@ namespace mvcNestify.Controllers
             }
 
             var listing = await _context.Listings
-                .Include(l => l.Customer)
                 .FirstOrDefaultAsync(m => m.ListingID == id);
             if (listing == null)
             {
@@ -155,14 +402,24 @@ namespace mvcNestify.Controllers
             {
                 _context.Listings.Remove(listing);
             }
-            
+
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            TempData["ListingSaved"] = "Listing has been deleted!";
+            return RedirectToAction("Select");
         }
 
         private bool ListingExists(int id)
         {
-          return (_context.Listings?.Any(e => e.ListingID == id)).GetValueOrDefault();
+            return (_context.Listings?.Any(e => e.ListingID == id)).GetValueOrDefault();
+        }
+        private bool ListingAddressExists(string address)
+        {
+            return (_context.Listings?.Any(e => 
+                e.StreetAddress + 
+                e.Municipality + 
+                e.Province 
+                == address ))
+                .GetValueOrDefault();
         }
     }
 }

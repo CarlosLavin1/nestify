@@ -58,7 +58,6 @@ namespace mvcNestify.Controllers
             }
 
             var customer = await _context.Customers
-                .Include(l => l.Listing)
                 .FirstOrDefaultAsync(m => m.CustomerID == id);
 
             if (customer == null)
