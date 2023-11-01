@@ -11,6 +11,10 @@ namespace mvcNestify.Models
         public int ImageID { get; set; }
         public string? FilePath { get; set; }
         public string? Name { get; set; }
+        [NotMapped]
+        [Display(Name = "File Name")]
+        [RegularExpression(@"^[^.]*$", ErrorMessage = "Please do not add a file extension to file name")]
+        public string? FileName { get; set; }
         [Required(ErrorMessage = "Image description is required")]
         public string? Description { get; set; }
         [Required(ErrorMessage = "Alternate text is required")]
