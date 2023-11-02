@@ -171,6 +171,8 @@ namespace mvcNestify.Models
         public bool IsVerified { get; set; }
         // use case asks for proof of identity
 
+        public virtual ICollection<Listing>? Listing { get; set; }
+
         public virtual ICollection<Contract>? Contract { get; set; }
     }
 
