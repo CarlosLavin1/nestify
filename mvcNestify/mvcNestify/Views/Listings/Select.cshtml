@@ -1,10 +1,10 @@
-﻿@model IEnumerable<mvcNestify.Models.ContractViewModel>
+﻿@model IEnumerable<mvcNestify.Models.ListingViewModel>
 
 @{
     ViewData["Title"] = "Select";
 }
 
-<h1>Selected Customer: @ViewData["CustomerName"]</h1>
+<h1>Selected Customer: </h1>
 
 <div>
     <a asp-action="Create" asp-route-id=@TempData["CustomerID"]>Create New Listing</a>|
