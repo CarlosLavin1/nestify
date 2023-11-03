@@ -14,17 +14,43 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="form-group">
+                <label for="AgentImage">Agent Image</label>
+                <input type="checkbox" id="AgentImage" />
+            </div>
+
+            <div class="form-group">
+                <label for="ListingImage">Listing Image</label>
+                <input type="checkbox" id="ListingImage" />
+            </div>
+
+            <div id="AgentList" class="form-group" style="display: none;">
+                <label class="control-label">Agents</label>
+                <select asp-items="ViewBag.Agents">
+                    <option selected disabled>-- SELECT AN AGENT --</option>
+                </select>
+                @* <span asp-validation-for="PostedFile" class="text-danger"></span> *@
+            </div>
+            <div id="ListingList" class="form-group" style="display: none;">
+                <label class="control-label">Listings</label>
+                <select asp-items="ViewBag.Listings">
+                    <option selected disabled>-- SELECT A LISTING --</option>
+                </select>
+                @* <span asp-validation-for="PostedFile" class="text-danger"></span> *@
+            </div>
+
+            <div class="form-group">
                 <label asp-for="PostedFile" class="control-label">Select file: </label>
                 <input type="file" asp-for="PostedFile" name="PostedFile" />
                 <span asp-validation-for="PostedFile" class="text-danger"></span>
             </div>
             <br />
-            @*
+            
             <div class="form-group">
-            <label asp-for="FilePath" class="control-label"></label>
-            <input asp-for="FilePath" class="form-control" />
-            <span asp-validation-for="FilePath" class="text-danger"></span>
+            <label asp-for="FileName" class="control-label"></label>
+            <input asp-for="FileName" class="form-control" />
+            <span asp-validation-for="FileName" class="text-danger"></span>
             </div>
+            @*
             <div class="form-group">
             <label asp-for="Name" class="control-label"></label>
             <input asp-for="Name" class="form-control" />
@@ -74,4 +100,26 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    @* Disabled checkbox when the other is selected *@
+    <script>
+        document.getElementById('AgentImage').addEventListener('change', function () {
+            if (this.checked) {
+                document.getElementById('ListingImage').disabled = true;
+                document.getElementById('AgentList').style.display = 'block';
+            } else {
+                document.getElementById('ListingImage').disabled = false;
+                document.getElementById('AgentList').style.display = 'none';
+            }
+        });
+
+        document.getElementById('ListingImage').addEventListener('change', function () {
+            if (this.checked) {
+                document.getElementById('AgentImage').disabled = true;
+                document.getElementById('ListingList').style.display = 'block';
+            } else {
+                document.getElementById('AgentImage').disabled = false;
+                document.getElementById('ListingList').style.display = 'none';
+            }
+        });
+    </script>
 }
