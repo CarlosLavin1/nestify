@@ -46,6 +46,11 @@ namespace mvcNestify.Controllers
                 .Where(c => c.CustomerID == id)
                 .ToList();
 
+            ICollection<Contract>? contracts = _context.Contracts
+                .Include(a => a.ListingAgent)
+                .ToList();
+
+
             IEnumerable<ContractViewModel>? model =
                         listings.Select(listing =>
                 new ContractViewModel
@@ -54,9 +59,9 @@ namespace mvcNestify.Controllers
                     StreetAddress = listing.StreetAddress,
                     Municipality = listing.Municipality,
                     Province = listing.Province,
-                    AgentID = listing.Contract.AgentID,
-                    StartDate = listing.Contract.StartDate,
-                    EndDate = listing.Contract.EndDate,
+                    AgentID = contracts.Where(l => l.ListingID == listing.ListingID).First().AgentID,
+                    StartDate = contracts.Where(l => l.ListingID == listing.ListingID).First().StartDate,
+                    EndDate = contracts.Where(l => l.ListingID == listing.ListingID).First().EndDate,
                     CustomerID = listing.CustomerID
 
                 });
@@ -72,7 +77,7 @@ namespace mvcNestify.Controllers
             ViewData["CustomerName"] = customer.FullName;
             TempData["CustomerID"] = id;
 
-            if (model == null) 
+            if (model == null)
             {
                 return View();
             }
@@ -201,7 +206,7 @@ namespace mvcNestify.Controllers
             {
 
                 var customer = _context.Customers.FirstOrDefault(cust => cust.CustomerID == listing.CustomerID);
-                var agent = _context.Agents.FirstOrDefault(a => a.AgentID == contract.AgentID);            
+                var agent = _context.Agents.FirstOrDefault(a => a.AgentID == contract.AgentID);
 
                 if (customer.IsVerified != true)
                 {
@@ -220,7 +225,7 @@ namespace mvcNestify.Controllers
                     ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
                     return View(contractModel);
                 }
-                if (ListingAddressExists(listing.Address)) 
+                if (ListingAddressExists(listing.Address))
                 {
                     ModelState.AddModelError("StreetAddress", $"Listing at {listing.Address} already exists.");
                     ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
@@ -235,7 +240,7 @@ namespace mvcNestify.Controllers
                 {
                     listing.ListingStatus = "Avaliable";
                     contract.EndDate = contract.StartDate.AddMonths(3);
-                   
+
                 }
                 else
                 {
@@ -288,6 +293,7 @@ namespace mvcNestify.Controllers
 
             var listing = await _context.Listings.FindAsync(id);
             var contract = await _context.Contracts.FindAsync();
+
             if (listing == null)
             {
                 return NotFound();
@@ -440,11 +446,11 @@ namespace mvcNestify.Controllers
         }
         private bool ListingAddressExists(string address)
         {
-            return (_context.Listings?.Any(e => 
-                e.StreetAddress + 
-                e.Municipality + 
-                e.Province 
-                == address ))
+            return (_context.Listings?.Any(e =>
+                e.StreetAddress +
+                e.Municipality +
+                e.Province
+                == address))
                 .GetValueOrDefault();
         }
     }

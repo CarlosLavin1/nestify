@@ -102,7 +102,7 @@ namespace mvcNestify.Models
         [Required]
         [Display(Name = "Listing")]
         public int? ContractID { get; set; }
-        public virtual Contract? Contract { get; set; }
+        public virtual ICollection<Contract>? Contract { get; set; }
 
         public virtual ICollection<Showing>? Showing { get; set; }
     }
@@ -133,7 +133,11 @@ namespace mvcNestify.Models
         public int? AgentID { get; set; }
         public virtual Agent? ListingAgent { get; set; }
 
-        public virtual ICollection<Listing>? Listings { get; set; }
+        [Required]
+        [ForeignKey("Listing")]
+        [Display(Name = "Listing")]
+        public int? ListingID { get; set; }
+        public virtual Listing? Listing { get; set; }
 
     }
 
