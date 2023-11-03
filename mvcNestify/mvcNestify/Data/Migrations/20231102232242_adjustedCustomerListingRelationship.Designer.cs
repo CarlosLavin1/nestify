@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using mvcNestify.Data;
 
@@ -11,9 +12,10 @@ using mvcNestify.Data;
 namespace mvcNestify.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231102232242_adjustedCustomerListingRelationship")]
+    partial class adjustedCustomerListingRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -325,10 +327,6 @@ namespace mvcNestify.Data.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("ListingID")
-                        .IsRequired()
-                        .HasColumnType("int");
-
                     b.Property<decimal>("SalesPrice")
                         .HasColumnType("decimal(18,2)");
 
@@ -340,8 +338,6 @@ namespace mvcNestify.Data.Migrations
                     b.HasIndex("AgentID");
 
                     b.HasIndex("CustomerID");
-
-                    b.HasIndex("ListingID");
 
                     b.ToTable("Contracts");
                 });
@@ -510,6 +506,8 @@ namespace mvcNestify.Data.Migrations
 
                     b.HasKey("ListingID");
 
+                    b.HasIndex("ContractID");
+
                     b.HasIndex("CustomerID");
 
                     b.ToTable("Listings");
@@ -606,24 +604,24 @@ namespace mvcNestify.Data.Migrations
                         .WithMany("Contract")
                         .HasForeignKey("CustomerID");
 
-                    b.HasOne("mvcNestify.Models.Listing", "Listing")
-                        .WithMany("Contract")
-                        .HasForeignKey("ListingID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Listing");
-
                     b.Navigation("ListingAgent");
                 });
 
             modelBuilder.Entity("mvcNestify.Models.Listing", b =>
                 {
+                    b.HasOne("mvcNestify.Models.Contract", "Contract")
+                        .WithMany("Listings")
+                        .HasForeignKey("ContractID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("mvcNestify.Models.Customer", "Customer")
                         .WithMany("Listing")
                         .HasForeignKey("CustomerID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Contract");
 
                     b.Navigation("Customer");
                 });
@@ -652,6 +650,11 @@ namespace mvcNestify.Data.Migrations
                     b.Navigation("Contract");
                 });
 
+            modelBuilder.Entity("mvcNestify.Models.Contract", b =>
+                {
+                    b.Navigation("Listings");
+                });
+
             modelBuilder.Entity("mvcNestify.Models.Customer", b =>
                 {
                     b.Navigation("Contract");
@@ -661,8 +664,6 @@ namespace mvcNestify.Data.Migrations
 
             modelBuilder.Entity("mvcNestify.Models.Listing", b =>
                 {
-                    b.Navigation("Contract");
-
                     b.Navigation("Showing");
                 });
 #pragma warning restore 612, 618

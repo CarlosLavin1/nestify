@@ -97,6 +97,15 @@ namespace mvcNestify.Models
         [Required]
         [Display(Name = "Signed Contract")]
         public Boolean ContractSigned { get; set; }
+
+        [Required]
+        [Display(Name = "Listing Customer")]
+        public int? CustomerID { get; set; }
+        public virtual Customer? Customer { get; set; }
+
+        [Required]
+        [Display(Name = "Listing")]
+        public int? ContractID { get; set; }
         public virtual ICollection<Contract>? Contract { get; set; }
 
         public virtual ICollection<Showing>? Showing { get; set; }
@@ -132,13 +141,7 @@ namespace mvcNestify.Models
         [ForeignKey("Listing")]
         [Display(Name = "Listing")]
         public int? ListingID { get; set; }
-        public virtual Listing? Listing{ get; set; }
-
-        [Required]
-        [ForeignKey("Customer")]
-        [Display(Name = "Listing Customer")]
-        public int? CustomerID { get; set; }
-        public virtual Customer? Customer { get; set; }
+        public virtual Listing? Listing { get; set; }
 
     }
 

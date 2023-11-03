@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using mvcNestify.Data;
 
@@ -11,9 +12,10 @@ using mvcNestify.Data;
 namespace mvcNestify.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231103022400_correctedListingContractRelationship")]
+    partial class correctedListingContractRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +23,21 @@ namespace mvcNestify.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("ContractListing", b =>
+                {
+                    b.Property<int>("ContractID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ListingsListingID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ContractID", "ListingsListingID");
+
+                    b.HasIndex("ListingsListingID");
+
+                    b.ToTable("ContractListing");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -325,10 +342,6 @@ namespace mvcNestify.Data.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("ListingID")
-                        .IsRequired()
-                        .HasColumnType("int");
-
                     b.Property<decimal>("SalesPrice")
                         .HasColumnType("decimal(18,2)");
 
@@ -340,8 +353,6 @@ namespace mvcNestify.Data.Migrations
                     b.HasIndex("AgentID");
 
                     b.HasIndex("CustomerID");
-
-                    b.HasIndex("ListingID");
 
                     b.ToTable("Contracts");
                 });
@@ -543,6 +554,21 @@ namespace mvcNestify.Data.Migrations
                     b.ToTable("Showings");
                 });
 
+            modelBuilder.Entity("ContractListing", b =>
+                {
+                    b.HasOne("mvcNestify.Models.Contract", null)
+                        .WithMany()
+                        .HasForeignKey("ContractID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("mvcNestify.Models.Listing", null)
+                        .WithMany()
+                        .HasForeignKey("ListingsListingID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -606,14 +632,6 @@ namespace mvcNestify.Data.Migrations
                         .WithMany("Contract")
                         .HasForeignKey("CustomerID");
 
-                    b.HasOne("mvcNestify.Models.Listing", "Listing")
-                        .WithMany("Contract")
-                        .HasForeignKey("ListingID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Listing");
-
                     b.Navigation("ListingAgent");
                 });
 
@@ -661,8 +679,6 @@ namespace mvcNestify.Data.Migrations
 
             modelBuilder.Entity("mvcNestify.Models.Listing", b =>
                 {
-                    b.Navigation("Contract");
-
                     b.Navigation("Showing");
                 });
 #pragma warning restore 612, 618
