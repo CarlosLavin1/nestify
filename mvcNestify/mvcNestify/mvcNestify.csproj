@@ -25,4 +25,10 @@
     <Folder Include="wwwroot\Uploads\TempFiles\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\assets\logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

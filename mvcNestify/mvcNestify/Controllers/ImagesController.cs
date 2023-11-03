@@ -51,6 +51,15 @@ namespace mvcNestify.Controllers
         // GET: Images/Create
         public IActionResult Create()
         {
+            List<SelectListItem> agents = new List<SelectListItem>();
+            List<SelectListItem> listings = new List<SelectListItem>();
+            foreach (var agent in _context.Agents)
+                agents.Add(new SelectListItem { Text = $"{agent.FullName}", Value = $"{ agent.AgentID}" });
+            foreach (var listing in _context.Listings)
+                listings.Add(new SelectListItem { Text = $"{/*listing.Customer.FullName*/""} - {listing.Address}", Value = $"{listing.ListingID}" });
+
+            ViewData["Listings"] = listings;
+            ViewData["Agents"] = agents;
             return View();
         }
 
@@ -59,7 +68,7 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Description, AltText, PostedFile")] Image image)
+        public async Task<IActionResult> Create([Bind("FileName, Description, AltText, PostedFile")] Image image)
         {
             IFormFile imageFile = image.PostedFile;
             int fileSizeLimit = 1048576;
@@ -87,7 +96,8 @@ namespace mvcNestify.Controllers
                         Directory.CreateDirectory(filePath);
                     }
 
-                    var fileName = Path.GetFileName(imageFile.FileName);
+                    var fileExtension = Path.GetExtension(imageFile.FileName);
+                    var fileName = image.FileName == null ? Path.GetFileName(imageFile.FileName) : image.FileName + fileExtension;
                     var fullPath = Path.Combine(filePath, fileName);
 
                     using (FileStream stream = new FileStream(fullPath, FileMode.Create))
