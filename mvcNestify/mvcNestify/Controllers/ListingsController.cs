@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -45,37 +46,33 @@ namespace mvcNestify.Controllers
                 .Include(cust => cust.Customer)
                 .Where(c => c.CustomerID == id)
                 .ToList();
+           
+            
 
-            ICollection<Contract>? contracts = _context.Contracts
-                .Include(a => a.ListingAgent)
-                .ToList();
-
-
-            IEnumerable<ContractViewModel>? model =
+            ICollection<ListingViewModel>? model =
                         listings.Select(listing =>
-                new ContractViewModel
+                new ListingViewModel
                 {
                     ListingID = listing.ListingID,
                     StreetAddress = listing.StreetAddress,
                     Municipality = listing.Municipality,
                     Province = listing.Province,
-                    AgentID = contracts.Where(l => l.ListingID == listing.ListingID).First().AgentID,
-                    StartDate = contracts.Where(l => l.ListingID == listing.ListingID).First().StartDate,
-                    EndDate = contracts.Where(l => l.ListingID == listing.ListingID).First().EndDate,
-                    CustomerID = listing.CustomerID
-
-                });
+                    AgentID = listing.Contract.Where(c => c.ListingID == listing.ListingID).First().AgentID,
+                    StartDate = listing.Contract.Where(c => c.ListingID == listing.ListingID).First().StartDate,
+                    EndDate = listing.Contract.Where(c => c.ListingID == listing.ListingID).First().EndDate.Date,
+                    CustomerID = listing.CustomerID,
+                    CustFirstName = listing.Customer.FirstName,
+                    CustMiddleName = listing.Customer.MiddleName,
+                    CustLastName = listing.Customer.LastName
+                }).ToList();
 
             if (TempData["ListingSaved"] != null)
             {
                 ViewBag.ListingSaved = TempData["ListingSaved"].ToString();
             }
 
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.CustomerID == id);
-
-            ViewData["CustomerName"] = customer.FullName;
             TempData["CustomerID"] = id;
+
 
             if (model == null)
             {
@@ -181,6 +178,7 @@ namespace mvcNestify.Controllers
                 StartDate = contractModel.StartDate,
                 SalesPrice = contractModel.SalesPrice,
                 AgentID = contractModel.AgentID,
+                ListingID = 0
             };
             Listing listing = new()
             {
@@ -198,8 +196,7 @@ namespace mvcNestify.Controllers
                 SpecialFeatures = contractModel.SpecialFeatures,
                 ListingStatus = null,
                 ContractSigned = contractModel.ContractSigned,
-                CustomerID = contractModel.CustomerID,
-                ContractID = contract.ContractID
+                CustomerID = contractModel.CustomerID
             };
 
             if (ModelState.IsValid)
@@ -207,19 +204,21 @@ namespace mvcNestify.Controllers
 
                 var customer = _context.Customers.FirstOrDefault(cust => cust.CustomerID == listing.CustomerID);
                 var agent = _context.Agents.FirstOrDefault(a => a.AgentID == contract.AgentID);
+                if (contractModel.AgentID != null) 
+                {
+                    if (agent.IsVerified == false)
+                    {
 
+                        ModelState.AddModelError("AgentID", "Agent is not verifed, please wait for verification and try again.");
+                        ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
+                        ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
+                        ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
+                        return View(contractModel);
+                    }
+                }
                 if (customer.IsVerified != true)
                 {
                     ModelState.AddModelError("CustomerID", "Customer is not verifed, please wait for verification and try again.");
-                    ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
-                    ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
-                    ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
-                    return View(contractModel);
-                }
-                if (agent.IsVerified == false)
-                {
-
-                    ModelState.AddModelError("AgentID", "Agent is not verifed, please wait for verification and try again.");
                     ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
                     ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
                     ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
@@ -249,6 +248,7 @@ namespace mvcNestify.Controllers
 
                 if (listing.ListingStatus == "Avaliable")
                 {
+                    contract.ListingID = listing.ListingID;
                     _context.Contracts.Add(contract);
                     await _context.SaveChangesAsync();
                 }

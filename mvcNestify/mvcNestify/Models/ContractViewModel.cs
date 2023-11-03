@@ -96,4 +96,56 @@ namespace mvcNestify.Models
         public Boolean ContractSigned { get; set; }
 
     }
+    public class ListingViewModel
+    {
+        [Display(Name = "Listing ID")]
+        public int? ListingID { get; set; }
+
+        public string? StreetAddress { get; set; }
+
+        public string? Municipality { get; set; }
+
+        public string? Province { get; set; }
+
+
+        public string? Address
+        {
+            get
+            {
+                return $"{StreetAddress}, {Municipality}, {Province}";
+            }
+        }
+
+        [Display(Name = "Agent ID")]
+        public int? AgentID { get; set; }
+
+        public int? CustomerID { get; set; }
+
+        [Display(Name = "First Name")]
+        public string? CustFirstName { get; set; }
+
+
+        [Display(Name = "Middle Name")]
+        public string? CustMiddleName { get; set; }
+
+        [Display(Name = "Last Name")]
+        public string? CustLastName { get; set; }
+
+        [Display(Name = "Customer Name")]
+        public string? CustomerFullName
+        {
+            get
+            {
+                return (CustMiddleName != null && CustMiddleName.Length > 0) ?
+                    $"{CustFirstName} {CustMiddleName} {CustLastName}" :
+                    $"{CustFirstName} {CustLastName}";
+            }
+        }
+        [DataType(DataType.Date)]
+        public DateTime? StartDate { get; set; }
+
+        [DataType(DataType.Date)]
+        public DateTime? EndDate { get; set; }
+
+    }
 }

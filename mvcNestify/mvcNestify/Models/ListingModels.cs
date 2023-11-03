@@ -103,9 +103,7 @@ namespace mvcNestify.Models
         public int? CustomerID { get; set; }
         public virtual Customer? Customer { get; set; }
 
-        [Required]
-        [Display(Name = "Listing")]
-        public int? ContractID { get; set; }
+
         public virtual ICollection<Contract>? Contract { get; set; }
 
         public virtual ICollection<Showing>? Showing { get; set; }
