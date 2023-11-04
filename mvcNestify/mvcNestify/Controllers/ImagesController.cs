@@ -56,7 +56,7 @@ namespace mvcNestify.Controllers
             foreach (var agent in _context.Agents)
                 agents.Add(new SelectListItem { Text = $"{agent.FullName}", Value = $"{ agent.AgentID}" });
             foreach (var listing in _context.Listings)
-                listings.Add(new SelectListItem { Text = $"{/*listing.Customer.FullName*/""} - {listing.Address}", Value = $"{listing.ListingID}" });
+                listings.Add(new SelectListItem { Text = $"{listing.Customer.FullName} - {listing.Address}", Value = $"{listing.ListingID}" });
 
             ViewData["Listings"] = listings;
             ViewData["Agents"] = agents;
