@@ -28,5 +28,6 @@ body {
     }
 
 #logo {
-    height: 80px;
+    width: 35%;
+    height: min-content;
 }
