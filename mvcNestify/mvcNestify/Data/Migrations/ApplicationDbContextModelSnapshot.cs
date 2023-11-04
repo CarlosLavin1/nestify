@@ -319,9 +319,6 @@ namespace mvcNestify.Data.Migrations
                         .IsRequired()
                         .HasColumnType("int");
 
-                    b.Property<int?>("CustomerID")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
@@ -338,8 +335,6 @@ namespace mvcNestify.Data.Migrations
                     b.HasKey("ContractID");
 
                     b.HasIndex("AgentID");
-
-                    b.HasIndex("CustomerID");
 
                     b.HasIndex("ListingID");
 
@@ -598,10 +593,6 @@ namespace mvcNestify.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("mvcNestify.Models.Customer", null)
-                        .WithMany("Contract")
-                        .HasForeignKey("CustomerID");
-
                     b.HasOne("mvcNestify.Models.Listing", "Listing")
                         .WithMany("Contract")
                         .HasForeignKey("ListingID")
@@ -650,8 +641,6 @@ namespace mvcNestify.Data.Migrations
 
             modelBuilder.Entity("mvcNestify.Models.Customer", b =>
                 {
-                    b.Navigation("Contract");
-
                     b.Navigation("Listing");
                 });
 

@@ -135,6 +135,7 @@ namespace mvcNestify.Models
         public int? AgentID { get; set; }
         public virtual Agent? ListingAgent { get; set; }
 
+
         [Required]
         [ForeignKey("Listing")]
         [Display(Name = "Listing")]

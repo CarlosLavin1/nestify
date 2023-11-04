@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using mvcNestify.Data;
+using mvcNestify.EmailServices;
 
 namespace mvcNestify
 {
@@ -9,6 +10,11 @@ namespace mvcNestify
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            var emailConfiguration = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+            builder.Services.AddSingleton(emailConfiguration);
+
+            builder.Services.AddScoped<IEmailSender, EmailSender>();
 
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -23,7 +29,7 @@ namespace mvcNestify
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
             var app = builder.Build();
 
