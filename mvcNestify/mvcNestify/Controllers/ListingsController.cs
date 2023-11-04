@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using mvcNestify.Data;
 using mvcNestify.Models;
-using NuGet.Versioning;
+using static mvcNestify.EmailServices.EmailSender;
 
 namespace mvcNestify.Controllers
 {
@@ -19,10 +21,12 @@ namespace mvcNestify.Controllers
     public class ListingsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEmailSender _emailSender;
 
-        public ListingsController(ApplicationDbContext context)
+        public ListingsController(ApplicationDbContext context, IEmailSender emailSender)
         {
             _context = context;
+            _emailSender = emailSender;
         }
 
         public async Task<IActionResult> Index()
@@ -46,25 +50,41 @@ namespace mvcNestify.Controllers
                 .Include(cust => cust.Customer)
                 .Where(c => c.CustomerID == id)
                 .ToList();
-           
-            
+
 
             ICollection<ListingViewModel>? model =
-                        listings.Select(listing =>
-                new ListingViewModel
-                {
-                    ListingID = listing.ListingID,
-                    StreetAddress = listing.StreetAddress,
-                    Municipality = listing.Municipality,
-                    Province = listing.Province,
-                    AgentID = listing.Contract.Where(c => c.ListingID == listing.ListingID).First().AgentID,
-                    StartDate = listing.Contract.Where(c => c.ListingID == listing.ListingID).First().StartDate,
-                    EndDate = listing.Contract.Where(c => c.ListingID == listing.ListingID).First().EndDate.Date,
-                    CustomerID = listing.CustomerID,
-                    CustFirstName = listing.Customer.FirstName,
-                    CustMiddleName = listing.Customer.MiddleName,
-                    CustLastName = listing.Customer.LastName
-                }).ToList();
+                         listings.Select(listing => {
+                             ICollection<Models.Contract> contract = listing.Contract;
+                             if(listing.ContractSigned == true) 
+                             {
+                                 return new ListingViewModel
+                                 {
+                                     ListingID = listing.ListingID,
+                                     StreetAddress = listing.StreetAddress,
+                                     Municipality = listing.Municipality,
+                                     Province = listing.Province,
+                                     AgentID = contract.FirstOrDefault(c => c.ListingID == listing.ListingID).AgentID,
+                                     StartDate = contract.FirstOrDefault(c => c.ListingID == listing.ListingID).StartDate,
+                                     EndDate = contract.FirstOrDefault(c => c.ListingID == listing.ListingID).EndDate.Date,
+                                     CustomerID = listing.CustomerID,
+                                     CustFirstName = listing.Customer.FirstName,
+                                     CustMiddleName = listing.Customer.MiddleName,
+                                     CustLastName = listing.Customer.LastName
+                                 };
+                             }
+                             return new ListingViewModel
+                             {
+                                 ListingID = listing.ListingID,
+                                 StreetAddress = listing.StreetAddress,
+                                 Municipality = listing.Municipality,
+                                 Province = listing.Province,
+                                 CustomerID = listing.CustomerID,
+                                 CustFirstName = listing.Customer.FirstName,
+                                 CustMiddleName = listing.Customer.MiddleName,
+                                 CustLastName = listing.Customer.LastName
+                             };
+
+                         }).ToList();
 
             if (TempData["ListingSaved"] != null)
             {
@@ -173,7 +193,7 @@ namespace mvcNestify.Controllers
 
             };
 
-            Contract contract = new()
+            Models.Contract contract = new()
             {
                 StartDate = contractModel.StartDate,
                 SalesPrice = contractModel.SalesPrice,
@@ -194,7 +214,7 @@ namespace mvcNestify.Controllers
                 TypeOfHeating = contractModel.TypeOfHeating,
                 Features = contractModel.Features,
                 SpecialFeatures = contractModel.SpecialFeatures,
-                ListingStatus = null,
+                ListingStatus = " ",
                 ContractSigned = contractModel.ContractSigned,
                 CustomerID = contractModel.CustomerID
             };
@@ -232,19 +252,25 @@ namespace mvcNestify.Controllers
                     ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
                     return View(contractModel);
                 }
-                _context.Add(listing);
-                await _context.SaveChangesAsync();
-
                 if (!!listing.ContractSigned)
                 {
                     listing.ListingStatus = "Avaliable";
                     contract.EndDate = contract.StartDate.AddMonths(3);
-
                 }
                 else
                 {
                     listing.ListingStatus = "Not Avaliable";
                 }
+
+                _context.Add(listing);
+                await _context.SaveChangesAsync();
+
+                string url = Url.Action("CustDetails", "Listings", new { id = listing.ListingID }, protocol: "https");
+                var message = new EmailMessage(new string[] { listing.Customer.Email },
+                    "Listing Creation",
+                    $"Your listing has been created! Your listing number is {listing.ListingID}. \n The link to view your listing is {url}. \n" +
+                    $"Thank you, \n" +
+                    $"From the Nestify Staff");
 
                 if (listing.ListingStatus == "Avaliable")
                 {
@@ -350,7 +376,7 @@ namespace mvcNestify.Controllers
                 CustomerID = contractModel.CustomerID
             };
 
-            Contract contract = new()
+            Models.Contract contract = new()
             {
                 StartDate = contractModel.StartDate,
                 SalesPrice = contractModel.SalesPrice,
@@ -432,12 +458,21 @@ namespace mvcNestify.Controllers
             var listing = await _context.Listings.FindAsync(id);
             if (listing != null)
             {
-                _context.Listings.Remove(listing);
+                if (listing.Contract.Count == 0)
+                {
+                    if (listing.Showing.Count == 0)
+                    {
+                        _context.Listings.Remove(listing);
+                        await _context.SaveChangesAsync();
+                        TempData["ListingSaved"] = "Listing has been deleted!";
+                        return RedirectToAction("Select", new { id = listing.CustomerID });
+                    }
+                    ModelState.AddModelError("Showing", $"Listing at {listing.Address} still has scheduled showings.");
+                }
+                ModelState.AddModelError("Contract", $"Listing at {listing.Address} still has an active contract.");
             }
 
-            await _context.SaveChangesAsync();
-            TempData["ListingSaved"] = "Listing has been deleted!";
-            return RedirectToAction("Select");
+            return View();
         }
 
         private bool ListingExists(int id)

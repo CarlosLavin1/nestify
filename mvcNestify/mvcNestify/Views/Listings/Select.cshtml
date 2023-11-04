@@ -4,7 +4,7 @@
     ViewData["Title"] = "Select";
 }
 
-<h1>Selected Customer: </h1>
+<h1>Selected Customer: @Html.Label(Model.First().CustomerFullName)</h1>
 
 <div>
     <a asp-action="Create" asp-route-id=@TempData["CustomerID"]>Create New Listing</a>|

@@ -173,7 +173,6 @@ namespace mvcNestify.Models
 
         public virtual ICollection<Listing>? Listing { get; set; }
 
-        public virtual ICollection<Contract>? Contract { get; set; }
     }
 
 }
