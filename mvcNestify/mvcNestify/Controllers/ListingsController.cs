@@ -53,9 +53,10 @@ namespace mvcNestify.Controllers
 
 
             ICollection<ListingViewModel>? model =
-                         listings.Select(listing => {
+                         listings.Select(listing =>
+                         {
                              ICollection<Models.Contract> contract = listing.Contract;
-                             if(listing.ContractSigned == true) 
+                             if (listing.ContractSigned == true)
                              {
                                  return new ListingViewModel
                                  {
@@ -224,7 +225,7 @@ namespace mvcNestify.Controllers
 
                 var customer = _context.Customers.FirstOrDefault(cust => cust.CustomerID == listing.CustomerID);
                 var agent = _context.Agents.FirstOrDefault(a => a.AgentID == contract.AgentID);
-                if (contractModel.AgentID != null) 
+                if (contractModel.AgentID != null)
                 {
                     if (agent.IsVerified == false)
                     {
@@ -292,6 +293,7 @@ namespace mvcNestify.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
+            ContractViewModel model = new();
             List<SelectListItem> provinceOptions = new List<SelectListItem>()
             {
                 new SelectListItem{Text = "-- SELECT A VALUE --", Value= "", Disabled = true, Selected = true },
@@ -318,16 +320,69 @@ namespace mvcNestify.Controllers
             }
 
             var listing = await _context.Listings.FindAsync(id);
-            var contract = await _context.Contracts.FindAsync();
+            var contract = _context.Contracts.Where(c => c.ListingID == id).FirstOrDefault();
 
             if (listing == null)
             {
                 return NotFound();
             }
+            if (contract != null)
+            {
+                model = new()
+                {
+                    ContractID = contract.ContractID,
+                    StartDate = contract.StartDate,
+                    EndDate = contract.EndDate,
+                    SalesPrice = contract.SalesPrice,
+                    AgentID = contract.AgentID,
+                    ListingID = listing.ListingID,
+                    CustomerID = listing.CustomerID,
+                    StreetAddress = listing.StreetAddress,
+                    Municipality = listing.Municipality,
+                    CityLocation = listing.CityLocation,
+                    Province = listing.Province,
+                    PostalCode = listing.PostalCode,
+                    Footage = listing.Footage,
+                    NumOfBaths = listing.NumOfBaths,
+                    NumOfRooms = listing.NumOfRooms,
+                    NumOfStories = listing.NumOfStories,
+                    TypeOfHeating = listing.TypeOfHeating,
+                    Features = listing.Features,
+                    SpecialFeatures = listing.SpecialFeatures,
+                    ListingStatus = listing.ListingStatus,
+                    ContractSigned = listing.ContractSigned
+                };
 
-            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
-            ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
-            return View(listing);
+                ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
+            }
+            else
+            {
+                model = new()
+                {
+                    ListingID = listing.ListingID,
+                    CustomerID = listing.CustomerID,
+                    StreetAddress = listing.StreetAddress,
+                    Municipality = listing.Municipality,
+                    CityLocation = listing.CityLocation,
+                    Province = listing.Province,
+                    PostalCode = listing.PostalCode,
+                    Footage = listing.Footage,
+                    NumOfBaths = listing.NumOfBaths,
+                    NumOfRooms = listing.NumOfRooms,
+                    NumOfStories = listing.NumOfStories,
+                    TypeOfHeating = listing.TypeOfHeating,
+                    Features = listing.Features,
+                    SpecialFeatures = listing.SpecialFeatures,
+                    ListingStatus = listing.ListingStatus,
+                    ContractSigned = listing.ContractSigned
+                };
+
+                ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName");
+            }
+
+            ViewBag.Customer = listing.Customer.FullName;
+
+            return View(model);
         }
 
         // POST: Listings/Edit/5
@@ -388,15 +443,16 @@ namespace mvcNestify.Controllers
                 return NotFound();
             }
 
-            //listing.EndDate = listing.StartDate.AddMonths(3);
+
             if (!!listing.ContractSigned)
             {
                 listing.ListingStatus = "Avaliable";
+                contract.EndDate = contract.StartDate.AddMonths(3);
             }
             else
             {
                 listing.ListingStatus = "Not Avaliable";
-                //listing.AgentID = null;
+                contract.AgentID = null;
             }
 
 
@@ -406,6 +462,11 @@ namespace mvcNestify.Controllers
                 {
                     _context.Update(listing);
                     await _context.SaveChangesAsync();
+                    if (contract != null) 
+                    {
+                        _context.Add(contract);
+                        await _context.SaveChangesAsync();
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -419,10 +480,10 @@ namespace mvcNestify.Controllers
                     }
                 }
                 TempData["ListingSaved"] = "Listing has been updated!";
-                //return RedirectToAction("Select", new { id = listing.CustomerID });
+                return RedirectToAction("Select", new { id = listing.CustomerID });
             }
-            //ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
-            //ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", listing.AgentID);
+            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
+            ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
             ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
             return View(listing);
         }
