@@ -5,6 +5,17 @@
 }
 
 <h1>Index</h1>
+<form asp-action="Index" method="get">
+
+    <div class="form-actions no-color">
+        <p>
+            Search For Customer: <input type="text" class="form-control-sm" name="searchCriteria" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" />
+            <span class="text-danger">@ViewBag.NoShowing</span>
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -26,6 +37,9 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.EndTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Agent.FullName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Comments)
@@ -51,6 +65,9 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.EndTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Agent.FullName)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Comments)

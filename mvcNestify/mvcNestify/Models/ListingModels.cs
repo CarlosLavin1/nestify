@@ -151,12 +151,19 @@ namespace mvcNestify.Models
         //public int? ShowingID { get; set;}
 
         [Required]
+        [Display(Name ="Customer")]
         public int? CustomerID { get; set; }
         public virtual Customer? Customer { get; set; }
 
         [Required]
+        [Display(Name = "Listing")]
         public int? ListingID { get; set; }
         public virtual Listing? Listing { get; set; }
+
+        [Required]
+        [Display(Name = "Agent")]
+        public int? AgentID { get; set; }
+        public virtual Agent? Agent { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
@@ -164,10 +171,12 @@ namespace mvcNestify.Models
 
         [Required]
         [DataType(DataType.Time)]
+        [Display(Name ="Start Time")]
         public DateTime StartTime { get; set; }
 
         [Required]
         [DataType(DataType.Time)]
+        [Display(Name ="End Time")]
         public DateTime EndTime { get; set; }
 
         [StringLength(255, ErrorMessage = "Comments character length cannot be longer than 255 characters.")]
