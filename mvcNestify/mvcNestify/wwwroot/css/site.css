@@ -25,9 +25,23 @@ body {
 .nav-item:hover {
     background-color: #E0E1A1;
     font-weight: bold;
+    border-radius: 50px;
+}
+
+.card-header{
+    background-color: #ABDAFC;
+}
+.btn {
+    background-color: #ABDAFC;
+}
+.btn:hover {
+    background-color: #E0E1A1; 
+    font-weight: bold;
+    border-radius: 50px;
 }
 
 #logo {
     width: 35%;
     height: min-content;
 }
+
