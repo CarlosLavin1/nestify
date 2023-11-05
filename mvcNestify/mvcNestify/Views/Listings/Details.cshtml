@@ -104,5 +104,6 @@
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.ListingID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">View Listings</a> |
+    @Html.ActionLink("Back To Customer", "Select", new { id = Model.CustomerID})
 </div>

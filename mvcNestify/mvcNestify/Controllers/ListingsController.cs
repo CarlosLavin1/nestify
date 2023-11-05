@@ -5,6 +5,8 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Castle.Core.Resource;
+using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -51,28 +53,35 @@ namespace mvcNestify.Controllers
                 .Where(c => c.CustomerID == id)
                 .ToList();
 
+            ICollection<ListingViewModel>? model;
 
-            ICollection<ListingViewModel>? model =
-                         listings.Select(listing =>
+            if (listings.Count() > 0)
+            {
+
+                model =
+                     listings.Select(listing =>
+                     {
+                         ICollection<Models.Contract> contract = listing.Contract;
+                         if (listing.ContractSigned == true)
                          {
-                             ICollection<Models.Contract> contract = listing.Contract;
-                             if (listing.ContractSigned == true)
+                             return new ListingViewModel
                              {
-                                 return new ListingViewModel
-                                 {
-                                     ListingID = listing.ListingID,
-                                     StreetAddress = listing.StreetAddress,
-                                     Municipality = listing.Municipality,
-                                     Province = listing.Province,
-                                     AgentID = contract.FirstOrDefault(c => c.ListingID == listing.ListingID).AgentID,
-                                     StartDate = contract.FirstOrDefault(c => c.ListingID == listing.ListingID).StartDate,
-                                     EndDate = contract.FirstOrDefault(c => c.ListingID == listing.ListingID).EndDate.Date,
-                                     CustomerID = listing.CustomerID,
-                                     CustFirstName = listing.Customer.FirstName,
-                                     CustMiddleName = listing.Customer.MiddleName,
-                                     CustLastName = listing.Customer.LastName
-                                 };
-                             }
+                                 ListingID = listing.ListingID,
+                                 StreetAddress = listing.StreetAddress,
+                                 Municipality = listing.Municipality,
+                                 Province = listing.Province,
+                                 AgentID = contract.FirstOrDefault(c => c.ListingID == listing.ListingID).AgentID,
+                                 StartDate = contract.FirstOrDefault(c => c.ListingID == listing.ListingID).StartDate,
+                                 EndDate = contract.FirstOrDefault(c => c.ListingID == listing.ListingID).EndDate.Date,
+                                 CustomerID = listing.CustomerID,
+                                 CustFirstName = listing.Customer.FirstName,
+                                 CustMiddleName = listing.Customer.MiddleName,
+                                 CustLastName = listing.Customer.LastName
+                             };
+
+                         }
+                         else
+                         {
                              return new ListingViewModel
                              {
                                  ListingID = listing.ListingID,
@@ -84,24 +93,34 @@ namespace mvcNestify.Controllers
                                  CustMiddleName = listing.Customer.MiddleName,
                                  CustLastName = listing.Customer.LastName
                              };
+                         }
 
-                         }).ToList();
+                     }).ToList();
+            }
+            else
+            {
+                ICollection<Customer>? customer = _context.Customers
+                .Where(c => c.CustomerID == id)
+                .ToList();
+
+                model =
+                    customer.Select(cust =>
+                    {
+                        return new ListingViewModel
+                        {
+                            CustomerID = cust.CustomerID,
+                            CustFirstName = cust.FirstName,
+                            CustMiddleName = cust.MiddleName,
+                            CustLastName = cust.LastName
+                        };
+                    }).ToList();
+            }
 
             if (TempData["ListingSaved"] != null)
             {
                 ViewBag.ListingSaved = TempData["ListingSaved"].ToString();
             }
-
-            TempData["CustomerID"] = id;
-
-
-            if (model == null)
-            {
-                return View();
-            }
-
             return View(model);
-
         }
 
         // GET: Listings/Details/5
@@ -137,7 +156,7 @@ namespace mvcNestify.Controllers
                 .FirstOrDefaultAsync(m => m.AgentID == contract.AgentID);
 
             AgentListingViewModel model = new()
-            { 
+            {
                 AgentID = agent.AgentID,
                 AgentFirstName = agent.FirstName,
                 AgentMiddleName = agent.MiddleName,
@@ -160,7 +179,7 @@ namespace mvcNestify.Controllers
                 SpecialFeatures = listing.SpecialFeatures
             };
 
-            
+
 
             if (listing == null)
             {
@@ -466,6 +485,7 @@ namespace mvcNestify.Controllers
             {
                 StartDate = contractModel.StartDate,
                 SalesPrice = contractModel.SalesPrice,
+                ListingID = listing.ListingID,
                 AgentID = contractModel.AgentID,
             };
 
@@ -493,7 +513,7 @@ namespace mvcNestify.Controllers
                 {
                     _context.Update(listing);
                     await _context.SaveChangesAsync();
-                    if (contract != null) 
+                    if (contract != null)
                     {
                         _context.Add(contract);
                         await _context.SaveChangesAsync();
