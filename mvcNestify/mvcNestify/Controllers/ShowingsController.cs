@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Castle.Core.Internal;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,6 +12,7 @@ using mvcNestify.Models;
 
 namespace mvcNestify.Controllers
 {
+    [Authorize]
     public class ShowingsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -21,10 +23,24 @@ namespace mvcNestify.Controllers
         }
 
         // GET: Showings
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchCriteria)
         {
-            var applicationDbContext = _context.Showings.Include(s => s.Customer).Include(s => s.Listing);
-            return View(await applicationDbContext.ToListAsync());
+            ViewData["CurrentFiler"] = searchCriteria;
+            var showingList =
+                from showing in _context.Showings
+                select showing;
+
+            if (!String.IsNullOrEmpty(searchCriteria)) 
+            {
+                showingList = showingList.Where(s =>
+                s.Date.Date.Equals(Convert.ToDateTime(searchCriteria).Date));
+            }
+            if (showingList.IsNullOrEmpty()) 
+            {
+                ViewBag.NoShowing = $"There were no records that matched your search {searchCriteria} in the system. Please try again.";
+            }
+
+            return View(await showingList.ToListAsync());
         }
 
         // GET: Showings/Details/5
