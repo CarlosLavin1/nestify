@@ -173,13 +173,13 @@ namespace mvcNestify.Controllers
         // POST: Showings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int? id)
+        public async Task<IActionResult> DeleteConfirmed(int? listingID, int? customerID)
         {
             if (_context.Showings == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Showings'  is null.");
             }
-            var showing = await _context.Showings.FindAsync(id);
+            var showing = await _context.Showings.FindAsync(listingID, customerID);
             if (showing != null)
             {
                 _context.Showings.Remove(showing);
