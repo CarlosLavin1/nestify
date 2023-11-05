@@ -53,7 +53,7 @@ namespace mvcNestify.Controllers
         public IActionResult Create()
         {
             ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName");
-            ViewData["ListingID"] = new SelectList(_context.Listings, "ListingID", "Address");
+            ViewData["ListingID"] = new SelectList(_context.Listings.Where(l => l.ListingStatus.Trim().StartsWith("Av")), "ListingID", "Address");
             return View();
         }
 
@@ -64,7 +64,7 @@ namespace mvcNestify.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CustomerID,ListingID,Customer,Listing,Date,StartTime,EndTime,Comments")] Showing showing)
         {
-
+            List<Listing> availableListings = _context.Listings.Where(l => l.ListingStatus.Trim().StartsWith("Av")).ToList();
             showing.Customer = _context.Customers.First(c => c.CustomerID == showing.CustomerID);
             showing.Listing = _context.Listings.First(c => c.ListingID == showing.ListingID);
 
@@ -74,7 +74,7 @@ namespace mvcNestify.Controllers
                 {
                     ModelState.AddModelError("", "Time slot is not available");
                     ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", showing.CustomerID);
-                    ViewData["ListingID"] = new SelectList(_context.Listings, "ListingID", "Address", showing.ListingID);
+                    ViewData["ListingID"] = new SelectList(availableListings, "ListingID", "Address", showing.ListingID);
                     return View(showing);
                 }
                 _context.Add(showing);
@@ -82,7 +82,7 @@ namespace mvcNestify.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", showing.CustomerID);
-            ViewData["ListingID"] = new SelectList(_context.Listings, "ListingID", "Address", showing.ListingID);
+            ViewData["ListingID"] = new SelectList(availableListings, "ListingID", "Address", showing.ListingID);
             return View(showing);
         }
         private bool TimeSlotIsTaken(Showing showing)
