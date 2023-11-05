@@ -40,6 +40,7 @@ namespace mvcNestify.Controllers
                 .Include(s => s.Customer)
                 .Include(s => s.Listing)
                 .FirstOrDefaultAsync(m => m.ListingID == listingID && m.CustomerID == customerID);
+
             if (showing == null)
             {
                 return NotFound();
@@ -77,6 +78,13 @@ namespace mvcNestify.Controllers
                     ViewData["ListingID"] = new SelectList(availableListings, "ListingID", "Address", showing.ListingID);
                     return View(showing);
                 }
+                if (!CustomerDoesNotOwn(showing.ListingID, showing.CustomerID)) 
+                {
+                    ModelState.AddModelError("CustomerID", "Customer cannot book a showing at an owned listing.");
+                    ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", showing.CustomerID);
+                    ViewData["ListingID"] = new SelectList(availableListings, "ListingID", "Address", showing.ListingID);
+                    return View(showing);
+                }
                 _context.Add(showing);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -102,13 +110,13 @@ namespace mvcNestify.Controllers
                 return NotFound();
             }
 
-            var showing = await _context.Showings.FindAsync(customerID, listingID);
+            var showing = await _context.Showings.FindAsync(listingID, customerID);
             if (showing == null)
             {
                 return NotFound();
             }
-            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FirstName", showing.CustomerID);
-            ViewData["ListingID"] = new SelectList(_context.Listings, "ListingID", "CityLocation", showing.ListingID);
+            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", showing.CustomerID);
+            ViewData["ListingID"] = new SelectList(_context.Listings, "ListingID", "Address", showing.ListingID);
             return View(showing);
         }
 
@@ -117,9 +125,9 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("CustomerID,ListingID,Date,StartTime,EndTime,Comments")] Showing showing)
+        public async Task<IActionResult> Edit(int? listingID, int? customerID, [Bind("CustomerID,ListingID,Date,StartTime,EndTime,Comments")] Showing showing)
         {
-            if (id != showing.ListingID)
+            if (listingID != showing.ListingID && customerID != showing.CustomerID)
             {
                 return NotFound();
             }
@@ -133,7 +141,7 @@ namespace mvcNestify.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ShowingExists(showing.ListingID))
+                    if (!ShowingExists(showing.ListingID, showing.CustomerID))
                     {
                         return NotFound();
                     }
@@ -144,8 +152,8 @@ namespace mvcNestify.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FirstName", showing.CustomerID);
-            ViewData["ListingID"] = new SelectList(_context.Listings, "ListingID", "CityLocation", showing.ListingID);
+            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", showing.CustomerID);
+            ViewData["ListingID"] = new SelectList(_context.Listings, "ListingID", "Address", showing.ListingID);
             return View(showing);
         }
 
@@ -173,13 +181,13 @@ namespace mvcNestify.Controllers
         // POST: Showings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int? id)
+        public async Task<IActionResult> DeleteConfirmed(int? listingID, int? customerID)
         {
             if (_context.Showings == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Showings'  is null.");
             }
-            var showing = await _context.Showings.FindAsync(id);
+            var showing = await _context.Showings.FindAsync(listingID, customerID);
             if (showing != null)
             {
                 _context.Showings.Remove(showing);
@@ -189,9 +197,21 @@ namespace mvcNestify.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ShowingExists(int? id)
+        private bool ShowingExists(int? listingID, int? customerID)
         {
-            return (_context.Showings?.Any(e => e.ListingID == id)).GetValueOrDefault();
+            return (_context.Showings?.Any(e => e.ListingID == listingID && e.CustomerID == customerID)).GetValueOrDefault();
+        }
+
+        private bool CustomerDoesNotOwn(int? listingID, int? customerID)
+        {
+            var listing = _context.Listings.FirstOrDefault(l => l.ListingID == listingID);
+
+            if (listing.CustomerID == customerID)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
