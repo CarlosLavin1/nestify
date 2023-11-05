@@ -102,7 +102,7 @@ namespace mvcNestify.Controllers
                 return NotFound();
             }
 
-            var showing = await _context.Showings.FindAsync(customerID, listingID);
+            var showing = await _context.Showings.FindAsync(listingID, customerID);
             if (showing == null)
             {
                 return NotFound();
@@ -117,9 +117,9 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("CustomerID,ListingID,Date,StartTime,EndTime,Comments")] Showing showing)
+        public async Task<IActionResult> Edit(int? listingID, int? customerID, [Bind("CustomerID,ListingID,Date,StartTime,EndTime,Comments")] Showing showing)
         {
-            if (id != showing.ListingID)
+            if (listingID != showing.ListingID && customerID != showing.CustomerID)
             {
                 return NotFound();
             }
@@ -133,7 +133,7 @@ namespace mvcNestify.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ShowingExists(showing.ListingID))
+                    if (!ShowingExists(showing.ListingID, showing.CustomerID))
                     {
                         return NotFound();
                     }
@@ -189,9 +189,9 @@ namespace mvcNestify.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ShowingExists(int? id)
+        private bool ShowingExists(int? listingID, int? customerID)
         {
-            return (_context.Showings?.Any(e => e.ListingID == id)).GetValueOrDefault();
+            return (_context.Showings?.Any(e => e.ListingID == listingID && e.CustomerID == customerID)).GetValueOrDefault();
         }
     }
 }

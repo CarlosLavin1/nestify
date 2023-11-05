@@ -12,6 +12,8 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ListingID" />
+            <input type="hidden" asp-for="CustomerID" />
             <div class="form-group">
                 <label asp-for="CustomerID" class="control-label"></label>
                 @Html.TextBoxFor(model => model.Customer.FullName, new {disabled = "disabled", @class ="form-control"})
