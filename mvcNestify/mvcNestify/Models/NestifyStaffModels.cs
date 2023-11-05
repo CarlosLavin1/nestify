@@ -104,6 +104,8 @@ namespace mvcNestify.Models
 
         public virtual ICollection<Showing>? Showing { get; set; }
         public virtual ICollection<Contract>? Contract { get; set; }
+
+        public virtual List<Image>? Images { get; set; }
     }
 
     public class Customer

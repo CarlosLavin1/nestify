@@ -24,18 +24,18 @@
             </div>
 
             <div id="AgentList" class="form-group" style="display: none;">
-                <label class="control-label">Agents</label>
-                <select asp-items="ViewBag.Agents">
+                <label asp-for="AgentId" class="control-label">Agents</label>
+                <select asp-for="AgentId" asp-items="ViewBag.Agents">
                     <option selected disabled>-- SELECT AN AGENT --</option>
                 </select>
-                @* <span asp-validation-for="PostedFile" class="text-danger"></span> *@
+                <span asp-validation-for="AgentId" class="text-danger"></span>
             </div>
             <div id="ListingList" class="form-group" style="display: none;">
-                <label class="control-label">Listings</label>
-                <select asp-items="ViewBag.Listings">
+                <label asp-for="ListingId" class="control-label">Listings</label>
+                <select asp-for="ListingId" asp-items="ViewBag.Listings">
                     <option selected disabled>-- SELECT A LISTING --</option>
                 </select>
-                @* <span asp-validation-for="PostedFile" class="text-danger"></span> *@
+                <span asp-validation-for="ListingId" class="text-danger"></span>
             </div>
 
             <div class="form-group">

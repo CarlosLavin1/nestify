@@ -25,6 +25,12 @@ namespace mvcNestify.Models
         public int StaffID { get; set; }
         [NotMapped]
         public IFormFile? PostedFile { get; set; }
+
+        public int? ListingId { get; set; }
+        public virtual Listing? Listing { get; set; }
+
+        public int? AgentId { get; set; }
+        public virtual Agent? Agent { get; set; }
     }
 
     public class Listing
@@ -107,6 +113,8 @@ namespace mvcNestify.Models
         public virtual ICollection<Contract>? Contract { get; set; }
 
         public virtual ICollection<Showing>? Showing { get; set; }
+
+        public virtual List<Image>? Images { get; set; }
     }
 
     public class Contract

@@ -68,7 +68,7 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FileName, Description, AltText, PostedFile")] Image image)
+        public async Task<IActionResult> Create([Bind("ListingId, AgentId, FileName, Description, AltText, PostedFile")] Image image)
         {
             IFormFile imageFile = image.PostedFile;
             int fileSizeLimit = 1048576;
