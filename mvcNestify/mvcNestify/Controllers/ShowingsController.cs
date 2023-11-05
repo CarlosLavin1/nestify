@@ -29,9 +29,9 @@ namespace mvcNestify.Controllers
 
         // GET: Showings/Details/5
         [Authorize]
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? customerID, int? listingID)
         {
-            if (id == null || _context.Showings == null)
+            if (customerID == null || listingID == null || _context.Showings == null)
             {
                 return NotFound();
             }
@@ -39,7 +39,7 @@ namespace mvcNestify.Controllers
             var showing = await _context.Showings
                 .Include(s => s.Customer)
                 .Include(s => s.Listing)
-                .FirstOrDefaultAsync(m => m.ListingID == id);
+                .FirstOrDefaultAsync(m => m.ListingID == listingID && m.CustomerID == customerID);
             if (showing == null)
             {
                 return NotFound();
@@ -52,8 +52,8 @@ namespace mvcNestify.Controllers
         [Authorize]
         public IActionResult Create()
         {
-            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FirstName");
-            ViewData["ListingID"] = new SelectList(_context.Listings, "ListingID", "CityLocation");
+            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName");
+            ViewData["ListingID"] = new SelectList(_context.Listings, "ListingID", "Address");
             return View();
         }
 
@@ -62,29 +62,47 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CustomerID,ListingID,Date,StartTime,EndTime,Comments")] Showing showing)
+        public async Task<IActionResult> Create([Bind("CustomerID,ListingID,Customer,Listing,Date,StartTime,EndTime,Comments")] Showing showing)
         {
+
+            showing.Customer = _context.Customers.First(c => c.CustomerID == showing.CustomerID);
+            showing.Listing = _context.Listings.First(c => c.ListingID == showing.ListingID);
+
             if (ModelState.IsValid)
             {
+                if (TimeSlotIsTaken(showing))
+                {
+                    ModelState.AddModelError("", "Time slot is not available");
+                    ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", showing.CustomerID);
+                    ViewData["ListingID"] = new SelectList(_context.Listings, "ListingID", "Address", showing.ListingID);
+                    return View(showing);
+                }
                 _context.Add(showing);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FirstName", showing.CustomerID);
-            ViewData["ListingID"] = new SelectList(_context.Listings, "ListingID", "CityLocation", showing.ListingID);
+            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", showing.CustomerID);
+            ViewData["ListingID"] = new SelectList(_context.Listings, "ListingID", "Address", showing.ListingID);
             return View(showing);
+        }
+        private bool TimeSlotIsTaken(Showing showing)
+        {
+            List<Showing> showingsAtListing = _context.Showings.Where(s => s.ListingID == showing.ListingID).ToList();
+            //check if showing times overlap with any existing showings
+            return showingsAtListing.Any(s => (s.StartTime <= showing.StartTime && s.EndTime >= showing.StartTime) ||
+                (s.EndTime >= showing.EndTime && s.StartTime <= showing.EndTime));
         }
 
         // GET: Showings/Edit/5
         [Authorize]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? customerID, int? listingID)
         {
-            if (id == null || _context.Showings == null)
+            if (customerID == null || listingID == null || _context.Showings == null)
             {
                 return NotFound();
             }
 
-            var showing = await _context.Showings.FindAsync(id);
+            var showing = await _context.Showings.FindAsync(customerID, listingID);
             if (showing == null)
             {
                 return NotFound();
@@ -133,9 +151,9 @@ namespace mvcNestify.Controllers
 
         // GET: Showings/Delete/5
         [Authorize]
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? customerID, int? listingID)
         {
-            if (id == null || _context.Showings == null)
+            if (customerID == null || listingID == null || _context.Showings == null)
             {
                 return NotFound();
             }
@@ -143,7 +161,7 @@ namespace mvcNestify.Controllers
             var showing = await _context.Showings
                 .Include(s => s.Customer)
                 .Include(s => s.Listing)
-                .FirstOrDefaultAsync(m => m.ListingID == id);
+                .FirstOrDefaultAsync(m => m.ListingID == listingID && m.CustomerID == customerID);
             if (showing == null)
             {
                 return NotFound();
@@ -166,14 +184,14 @@ namespace mvcNestify.Controllers
             {
                 _context.Showings.Remove(showing);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ShowingExists(int? id)
         {
-          return (_context.Showings?.Any(e => e.ListingID == id)).GetValueOrDefault();
+            return (_context.Showings?.Any(e => e.ListingID == id)).GetValueOrDefault();
         }
     }
 }
