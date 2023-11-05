@@ -40,6 +40,7 @@ namespace mvcNestify.Controllers
                 .Include(s => s.Customer)
                 .Include(s => s.Listing)
                 .FirstOrDefaultAsync(m => m.ListingID == listingID && m.CustomerID == customerID);
+
             if (showing == null)
             {
                 return NotFound();

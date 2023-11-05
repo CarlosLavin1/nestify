@@ -131,12 +131,43 @@ namespace mvcNestify.Controllers
 
             var listing = await _context.Listings
                 .FirstOrDefaultAsync(m => m.ListingID == id);
+            var contract = await _context.Contracts
+                .FirstOrDefaultAsync(m => m.ListingID == id);
+            var agent = await _context.Agents
+                .FirstOrDefaultAsync(m => m.AgentID == contract.AgentID);
+
+            AgentListingViewModel model = new()
+            { 
+                AgentID = agent.AgentID,
+                AgentFirstName = agent.FirstName,
+                AgentMiddleName = agent.MiddleName,
+                AgentLastName = agent.LastName,
+                OfficeEmail = agent.OfficeEmail,
+                OfficePhone = agent.OfficePhone,
+                ListingID = listing.ListingID,
+                SalesPrice = contract.SalesPrice,
+                StreetAddress = listing.StreetAddress,
+                Municipality = listing.Municipality,
+                CityLocation = listing.CityLocation,
+                Province = listing.Province,
+                PostalCode = listing.PostalCode,
+                Footage = listing.Footage,
+                NumOfBaths = listing.NumOfBaths,
+                NumOfRooms = listing.NumOfRooms,
+                NumOfStories = listing.NumOfStories,
+                TypeOfHeating = listing.TypeOfHeating,
+                Features = listing.Features,
+                SpecialFeatures = listing.SpecialFeatures
+            };
+
+            
+
             if (listing == null)
             {
                 return NotFound();
             }
 
-            return View(listing);
+            return View(model);
         }
 
         // GET: Listings/Create

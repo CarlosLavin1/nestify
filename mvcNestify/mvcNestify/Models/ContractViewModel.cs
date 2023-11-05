@@ -124,7 +124,6 @@ namespace mvcNestify.Models
         [Display(Name = "First Name")]
         public string? CustFirstName { get; set; }
 
-
         [Display(Name = "Middle Name")]
         public string? CustMiddleName { get; set; }
 
@@ -141,11 +140,97 @@ namespace mvcNestify.Models
                     $"{CustFirstName} {CustLastName}";
             }
         }
+
         [DataType(DataType.Date)]
         public DateTime? StartDate { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime? EndDate { get; set; }
 
+    }
+
+    public class AgentListingViewModel
+    {
+        [DataType(DataType.Currency)]
+        [Display(Name = "Sales Price")]
+        public decimal SalesPrice { get; set; }
+
+        [Display(Name = "Listing ID")]
+        public int? ListingID { get; set; }
+
+        public string? StreetAddress { get; set; }
+
+        public string? Municipality { get; set; }
+        
+        [Display(Name = "City Location")]
+        public string? CityLocation { get; set; }
+
+        public string? Province { get; set; }
+
+        [Display(Name = "Postal Code")]
+        public string? PostalCode { get; set; }
+
+
+        public string? Address
+        {
+            get
+            {
+                return $"{StreetAddress}, {Municipality}, {Province}";
+            }
+        }
+
+        [Required]
+        public double Footage { get; set; }
+
+        [Required]
+        [Display(Name = "Number of Baths")]
+        public double NumOfBaths { get; set; }
+
+        [Required]
+        [Display(Name = "Number of Rooms")]
+        public double NumOfRooms { get; set; }
+
+        [Required]
+        [Display(Name = "Stories")]
+        public int NumOfStories { get; set; }
+
+        [Required]
+        [Display(Name = "Heating")]
+        public string TypeOfHeating { get; set; }
+
+        [Required]
+        public string Features { get; set; }
+
+        [Display(Name = "Special Features")]
+        public string SpecialFeatures { get; set; }
+
+        [Display(Name = "Agent ID")]
+        public int? AgentID { get; set; }
+
+        [Display(Name = "First Name")]
+        public string? AgentFirstName { get; set; }
+
+        [Display(Name = "Middle Name")]
+        public string? AgentMiddleName { get; set; }
+
+        [Display(Name = "Last Name")]
+        public string? AgentLastName { get; set; }
+
+        [Display(Name = "Agent Name")]
+        public string? AgentFullName
+        {
+            get
+            {
+                return (AgentMiddleName != null && AgentMiddleName.Length > 0) ?
+                    $"{AgentFirstName} {AgentMiddleName} {AgentLastName}" :
+                    $"{AgentFirstName} {AgentLastName}";
+            }
+        }
+
+        [Display(Name = "Office Email")]
+        public string? OfficeEmail { get; set; }
+
+        [Display(Name = "Office Phone")]
+        public string? OfficePhone { get; set; }
     }
 }

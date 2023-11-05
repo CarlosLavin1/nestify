@@ -1,4 +1,4 @@
-﻿@model mvcNestify.Models.Listing
+﻿@model mvcNestify.Models.AgentListingViewModel
 
 @{
     ViewData["Title"] = "CustDetails";
@@ -82,23 +82,25 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.SpecialFeatures)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ListingStatus)
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AgentFullName)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ListingStatus)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AgentFullName)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ContractSigned)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.OfficeEmail)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ContractSigned)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.OfficeEmail)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Customer)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.OfficePhone)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Customer.FirstName)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.OfficePhone)
         </dd>
     </dl>
 </div>
