@@ -22,10 +22,10 @@ body {
     font-size: 1.5rem;
 }
 
-    .nav-item:hover {
-        background-color: #E0E1A1;
-        font-weight: bold;
-    }
+.nav-item:hover {
+    background-color: #E0E1A1;
+    font-weight: bold;
+}
 
 #logo {
     width: 35%;

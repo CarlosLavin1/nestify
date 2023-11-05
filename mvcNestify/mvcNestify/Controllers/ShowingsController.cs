@@ -107,8 +107,8 @@ namespace mvcNestify.Controllers
             {
                 return NotFound();
             }
-            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FirstName", showing.CustomerID);
-            ViewData["ListingID"] = new SelectList(_context.Listings, "ListingID", "CityLocation", showing.ListingID);
+            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", showing.CustomerID);
+            ViewData["ListingID"] = new SelectList(_context.Listings, "ListingID", "Address", showing.ListingID);
             return View(showing);
         }
 
@@ -144,8 +144,8 @@ namespace mvcNestify.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FirstName", showing.CustomerID);
-            ViewData["ListingID"] = new SelectList(_context.Listings, "ListingID", "CityLocation", showing.ListingID);
+            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", showing.CustomerID);
+            ViewData["ListingID"] = new SelectList(_context.Listings, "ListingID", "Address", showing.ListingID);
             return View(showing);
         }
 
