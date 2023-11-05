@@ -142,10 +142,18 @@ namespace mvcNestify.Models
         }
 
         [DataType(DataType.Date)]
+        [Display(Name ="Contract Start Date")]
         public DateTime? StartDate { get; set; }
 
         [DataType(DataType.Date)]
+        [Display(Name = "Contract End Date")]
         public DateTime? EndDate { get; set; }
+
+        [Display(Name = "Signed Contract")]
+        public Boolean ContractSigned { get; set; }
+
+        [Display(Name = "Listing Status")]
+        public string? ListingStatus { get; set; }
 
     }
 
@@ -204,6 +212,20 @@ namespace mvcNestify.Models
         [Display(Name = "Special Features")]
         public string SpecialFeatures { get; set; }
 
+        [Display(Name = "Signed Contract")]
+        public Boolean ContractSigned { get; set; }
+
+        [DataType(DataType.Date)]
+        [Display(Name = "Contract Start Date")]
+        public DateTime? StartDate { get; set; }
+
+        [DataType(DataType.Date)]
+        [Display(Name = "Contract End Date")]
+        public DateTime? EndDate { get; set; }
+
+        [Display(Name = "Listing Status")]
+        public string? ListingStatus { get; set; }
+
         [Display(Name = "Agent ID")]
         public int? AgentID { get; set; }
 
@@ -232,5 +254,27 @@ namespace mvcNestify.Models
 
         [Display(Name = "Office Phone")]
         public string? OfficePhone { get; set; }
+
+        public int? CustomerID { get; set; }
+
+        [Display(Name = "First Name")]
+        public string? CustFirstName { get; set; }
+
+        [Display(Name = "Middle Name")]
+        public string? CustMiddleName { get; set; }
+
+        [Display(Name = "Last Name")]
+        public string? CustLastName { get; set; }
+
+        [Display(Name = "Customer Name")]
+        public string? CustomerFullName
+        {
+            get
+            {
+                return (CustMiddleName != null && CustMiddleName.Length > 0) ?
+                    $"{CustFirstName} {CustMiddleName} {CustLastName}" :
+                    $"{CustFirstName} {CustLastName}";
+            }
+        }
     }
 }

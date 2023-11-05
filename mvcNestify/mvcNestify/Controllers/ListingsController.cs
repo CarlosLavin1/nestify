@@ -132,13 +132,84 @@ namespace mvcNestify.Controllers
             }
 
             var listing = await _context.Listings
+               .FirstOrDefaultAsync(m => m.ListingID == id);
+            var contract = await _context.Contracts
                 .FirstOrDefaultAsync(m => m.ListingID == id);
+
+            AgentListingViewModel model = new();
+
+            if (contract != null)
+            {
+                var agent = await _context.Agents
+                    .FirstOrDefaultAsync(m => m.AgentID == contract.AgentID);
+                model = new()
+                {
+                    AgentID = agent.AgentID,
+                    AgentFirstName = agent.FirstName,
+                    AgentMiddleName = agent.MiddleName,
+                    AgentLastName = agent.LastName,
+                    OfficeEmail = agent.OfficeEmail,
+                    OfficePhone = agent.OfficePhone,
+                    ListingID = listing.ListingID,
+                    SalesPrice = contract.SalesPrice,
+                    StreetAddress = listing.StreetAddress,
+                    Municipality = listing.Municipality,
+                    CityLocation = listing.CityLocation,
+                    Province = listing.Province,
+                    PostalCode = listing.PostalCode,
+                    Footage = listing.Footage,
+                    NumOfBaths = listing.NumOfBaths,
+                    NumOfRooms = listing.NumOfRooms,
+                    NumOfStories = listing.NumOfStories,
+                    TypeOfHeating = listing.TypeOfHeating,
+                    Features = listing.Features,
+                    SpecialFeatures = listing.SpecialFeatures,
+                    CustomerID = listing.CustomerID,
+                    CustFirstName = listing.Customer.FirstName,
+                    CustLastName = listing.Customer.LastName,
+                    CustMiddleName = listing.Customer.MiddleName,
+                    ListingStatus = listing.ListingStatus,
+                    StartDate = contract.StartDate,
+                    EndDate = contract.EndDate,
+                    ContractSigned = listing.ContractSigned
+                };
+            }
+            else 
+            {
+                model = new()
+                {
+                    ListingID = listing.ListingID,
+                    StreetAddress = listing.StreetAddress,
+                    Municipality = listing.Municipality,
+                    CityLocation = listing.CityLocation,
+                    Province = listing.Province,
+                    PostalCode = listing.PostalCode,
+                    Footage = listing.Footage,
+                    NumOfBaths = listing.NumOfBaths,
+                    NumOfRooms = listing.NumOfRooms,
+                    NumOfStories = listing.NumOfStories,
+                    TypeOfHeating = listing.TypeOfHeating,
+                    Features = listing.Features,
+                    SpecialFeatures = listing.SpecialFeatures,
+                    CustomerID = listing.CustomerID,
+                    CustFirstName = listing.Customer.FirstName,
+                    CustLastName = listing.Customer.LastName,
+                    CustMiddleName = listing.Customer.MiddleName,
+                    ListingStatus = listing.ListingStatus,
+                    ContractSigned = listing.ContractSigned
+                };
+            }
+
+            
+
+
+
             if (listing == null)
             {
                 return NotFound();
             }
 
-            return View(listing);
+            return View(model);
         }
 
         public async Task<IActionResult> CustDetails(int? id)
