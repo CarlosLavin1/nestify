@@ -78,6 +78,13 @@ namespace mvcNestify.Controllers
                     ViewData["ListingID"] = new SelectList(availableListings, "ListingID", "Address", showing.ListingID);
                     return View(showing);
                 }
+                if (!CustomerDoesNotOwn(showing.ListingID, showing.CustomerID)) 
+                {
+                    ModelState.AddModelError("CustomerID", "Customer cannot book a showing at an owned listing.");
+                    ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", showing.CustomerID);
+                    ViewData["ListingID"] = new SelectList(availableListings, "ListingID", "Address", showing.ListingID);
+                    return View(showing);
+                }
                 _context.Add(showing);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -193,6 +200,18 @@ namespace mvcNestify.Controllers
         private bool ShowingExists(int? listingID, int? customerID)
         {
             return (_context.Showings?.Any(e => e.ListingID == listingID && e.CustomerID == customerID)).GetValueOrDefault();
+        }
+
+        private bool CustomerDoesNotOwn(int? listingID, int? customerID)
+        {
+            var listing = _context.Listings.FirstOrDefault(l => l.ListingID == listingID);
+
+            if (listing.CustomerID == customerID)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
