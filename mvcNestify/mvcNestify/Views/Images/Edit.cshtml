@@ -48,6 +48,23 @@
                 <input asp-for="StaffID" class="form-control" />
                 <span asp-validation-for="StaffID" class="text-danger"></span>
             </div>
+            @if(Model.ListingId != null)
+            {
+                <div class="form-group">
+                    <label asp-for="ListingId" class="control-label"></label>
+                    <input readonly asp-for="ListingId" class="form-control" />
+                    <span asp-validation-for="ListingId" class="text-danger"></span>
+                </div>
+            }
+            @if (Model.AgentId != null)
+            {
+                <div class="form-group">
+                    <label asp-for="AgentId" class="control-label"></label>
+                    <input readonly asp-for="AgentId" class="form-control" />
+                    <span asp-validation-for="AgentId" class="text-danger"></span>
+                </div>
+            }
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
