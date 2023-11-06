@@ -21,6 +21,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.OfficeEmail)
             </th>
+            <th>Image</th>
             <th></th>
         </tr>
     </thead>
@@ -36,6 +37,12 @@
             <td>
                 @Html.DisplayFor(modelItem => item.OfficeEmail)
             </td>
+                <td>
+                    @foreach (var image in item.Images.Where(i => i.Validated == true).ToList())
+                    {
+                        <img src="~/Uploads/TempFiles/@image.Name" alt="@image.AltText" height="50px">
+                    }
+                </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.AgentID">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.AgentID">Details</a> |
