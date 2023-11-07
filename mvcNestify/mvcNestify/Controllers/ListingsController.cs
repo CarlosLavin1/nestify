@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using Castle.Core.Resource;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using mvcNestify.Data;
@@ -264,8 +254,18 @@ namespace mvcNestify.Controllers
         [Authorize]
         public IActionResult Create(int? id)
         {
+            var agents = _context.Agents.Where(a => a.IsVerified == true);
+            var customers = _context.Agents.Where(c => c.IsVerified == true);
 
-            ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName");
+            if (agents.Count() > 0)
+            {
+                ViewData["AgentID"] = new SelectList(agents, "AgentID", "FullName");
+            }
+            else 
+            {
+                ModelState.AddModelError("AgentID", "No verifed agents in the system.");
+            }
+
             List<SelectListItem> provinceOptions = new List<SelectListItem>()
             {
                 new SelectListItem{Text = "-- SELECT A VALUE --", Value= "", Disabled = true, Selected = true },
@@ -345,19 +345,7 @@ namespace mvcNestify.Controllers
             {
 
                 var customer = _context.Customers.FirstOrDefault(cust => cust.CustomerID == listing.CustomerID);
-                var agent = _context.Agents.FirstOrDefault(a => a.AgentID == contract.AgentID);
-                if (contractModel.AgentID != null)
-                {
-                    if (agent.IsVerified == false)
-                    {
 
-                        ModelState.AddModelError("AgentID", "Agent is not verifed, please wait for verification and try again.");
-                        ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
-                        ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
-                        ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
-                        return View(contractModel);
-                    }
-                }
                 if (customer.IsVerified != true)
                 {
                     ModelState.AddModelError("CustomerID", "Customer is not verifed, please wait for verification and try again.");
@@ -501,7 +489,7 @@ namespace mvcNestify.Controllers
                 ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName");
             }
 
-            ViewBag.Customer = listing.Customer.FullName;
+            ViewData["CustomerID"] = _context.Customers.FirstOrDefault(c => c.CustomerID == listing.CustomerID).FullName;
 
             return View(model);
         }
