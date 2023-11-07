@@ -71,7 +71,7 @@ namespace mvcNestify.Models
         public double NumOfBaths { get; set; }
 
         [Required]
-        [Display(Name = "Number of Rooms")]
+        [Display(Name = "Number of Bedrooms")]
         public double NumOfRooms { get; set; }
 
         [Required]
@@ -195,7 +195,7 @@ namespace mvcNestify.Models
         public double NumOfBaths { get; set; }
 
         [Required]
-        [Display(Name = "Number of Rooms")]
+        [Display(Name = "Number of Bedrooms")]
         public double NumOfRooms { get; set; }
 
         [Required]

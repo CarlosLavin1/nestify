@@ -34,8 +34,13 @@
             </div>
             <div class="form-group">
                 <label asp-for="CityLocation" class="control-label"></label>
-                <input asp-for="CityLocation" class="form-control" />
-                <span asp-validation-for="CityLocation" class="text-danger"></span>
+                <select asp-for="CityLocation" class="form-control">
+                    <option disabled selected>-- SELECT A LOCATION --</option>
+                    <option value="North">North</option>
+                    <option value="East">East</option>
+                    <option value="South">South</option>
+                    <option value="West">West</option>
+                </select>
             </div>
             <div class="form-group">
                 <label asp-for="Footage" class="control-label"></label>
@@ -76,8 +81,15 @@
             </div>
             <div class="form-group">
                 <label asp-for="SpecialFeatures" class="control-label"></label>
-                <input asp-for="SpecialFeatures" class="form-control" />
-                <span asp-validation-for="SpecialFeatures" class="text-danger"></span>
+                <select asp-for="SpecialFeatures" class="form-control">
+                    <option disabled selected>-- SELECT  --</option>
+                    <option value="Fireplace">Fireplace</option>
+                    <option value="Garage (1 bay)">Garage (1 bay)</option>
+                    <option value="Garage (2 bay)">Garage (2 bay)</option>
+                    <option value="Garage (3 bay)">Garage (3 bay)</option>
+                    <option value="Baby Barn">Baby Barn</option>
+                    <option value="Central Air">Central Air</option>
+                </select>
             </div>
             <div class="form-group">
                 <label asp-for="SalesPrice" class="control-label"></label>
