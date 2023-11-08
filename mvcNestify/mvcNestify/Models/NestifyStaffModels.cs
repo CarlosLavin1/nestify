@@ -7,6 +7,7 @@ namespace mvcNestify.Models
     public class Agent
     {
         [Key]
+        [Display(Name = "Agent ID")]
         public int AgentID { get; set; }
 
         [Required(ErrorMessage = "Agent's S.I.N number is required")]
