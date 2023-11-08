@@ -3,6 +3,32 @@
 @{
     ViewData["Title"] = "Agents - Index";
 }
+<style>
+    body {
+        background-image: url('/assets/photo-1582407947304-fd86f028f716.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+    .grid-container{
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(1, auto);
+    }
+    .card{
+        background-color: #ABDAFC;
+        border: solid thin Black;
+    }
+    .card:hover, .btn:hover{
+            background-color: #E0E1A1;
+    }
+    .agentLink{
+        color: black;
+        text-decoration: none;
+    }
+    ul{
+    list-style: none;
+    }
+</style>
 
 <h1>View Agents</h1>
 
@@ -10,59 +36,45 @@
     <a asp-action="Create">Create New</a>
 </p>
 
-@foreach (var item in Model)
-{
-    <div class="card" style="width: 18rem;">
-        <img class="card-img-top" src="..." alt="Card image cap">
-        <div class="card-body">
-            <h5 class="card-title"> @Html.DisplayFor(modelItem => item.FullName)</h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+<div class="grid-container">
+    @foreach (var item in Model)
+    {
+        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src=" /assets/NoImageFound.png" class="img-fluid rounded-start" alt="...">
+                </div>
+                <div class="col-md-7">
+                    <div class="card-body">
+                        <h5 class="card-title"> @Html.DisplayFor(modelItem => item.FullName)</h5>
+                        <ul>
+                            <li><b>@Html.DisplayNameFor(model => model.AgentID):</b> @Html.DisplayFor(modelItem => item.AgentID)</li>
+                            <li><b>@Html.DisplayNameFor(model => model.DateOfEmployment):</b> @Html.DisplayFor(modelItem => item.DateOfEmployment)</li>
+                            <li><b>@Html.DisplayNameFor(model => model.DateOfBirth):</b> @Html.DisplayFor(modelItem => item.DateOfEmployment)</li>
+                            <li><b>Active Listings:</b> @item.Contract.Count()</li>
+                        </ul>
+                        <a asp-action="Edit" class="agentLink" asp-route-id="@item.AgentID">Edit</a> |
+                        <a asp-action="Details" class="agentLink" asp-route-id="@item.AgentID">Details</a> |
+                        <a asp-action="Delete" class="agentLink" asp-route-id="@item.AgentID">Delete</a>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-}
+    }
+</div>
 
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FullName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OfficePhone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OfficeEmail)
-            </th>
-            <th>Image</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OfficePhone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OfficeEmail)
-            </td>
-                <td>
-                    @foreach (var image in item.Images.Where(i => i.Validated == true).ToList())
-                    {
-                        <img src="~/Uploads/TempFiles/@image.Name" alt="@image.AltText" height="50px">
-                    }
-                </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.AgentID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.AgentID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.AgentID">Delete</a>
-            </td>
-        </tr>
+
+
+<!--
+    The code for your image:
+@* @foreach (var image in item.Images.Where(i => i.Validated == true).ToList())
+{
+                     <img src="~/Uploads/TempFiles/@image.Name" alt="@image.AltText" height="50px"> *@
 }
-    </tbody>
-</table>
+
+-->
+
+
+
+
