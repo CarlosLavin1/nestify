@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MailKit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using mvcNestify.Data;
 using mvcNestify.Models;
 using NuGet.DependencyResolver;
+using NuGet.Versioning;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using static mvcNestify.EmailServices.EmailSender;
 
 namespace mvcNestify.Controllers
@@ -21,8 +25,8 @@ namespace mvcNestify.Controllers
 
         List<string> specialFeats = new()
             {
-                "Has a fireplace",
-                "Has a baby barn",
+                "Has a Fireplace",
+                "Has a Baby Barn",
                 "Has Central Air",
                 "1 Bay Garage",
                 "2 Bay Garage",
@@ -198,7 +202,7 @@ namespace mvcNestify.Controllers
                     ContractSigned = listing.ContractSigned
                 };
             }
-            else 
+            else
             {
                 model = new()
                 {
@@ -291,7 +295,7 @@ namespace mvcNestify.Controllers
             {
                 ViewData["AgentID"] = new SelectList(agents, "AgentID", "FullName");
             }
-            else 
+            else
             {
                 ModelState.AddModelError("AgentID", "No verifed agents in the system.");
             }
@@ -331,31 +335,27 @@ namespace mvcNestify.Controllers
             };
 
             foreach (string feat in SpecialFeatures)
-                listing.SpecialFeatures += $"{feat}";
+                listing.SpecialFeatures += $"{feat}. ";
+
+
+            var customer = _context.Customers.FirstOrDefault(cust => cust.CustomerID == listing.CustomerID);
+
+            if (!customer.IsVerified == true)
+            {
+                ModelState.AddModelError("CustomerID", "Customer is not verifed, please wait for verification and try again.");
+                ModelState.ClearValidationState(nameof(contractModel));
+            }
+
+            if (ListingAddressExists(listing.Address))
+            {
+                ModelState.AddModelError("StreetAddress", $"Listing at {listing.Address} already exists.");
+                ModelState.ClearValidationState(nameof(contractModel));
+
+            }
 
             if (ModelState.IsValid)
             {
 
-                var customer = _context.Customers.FirstOrDefault(cust => cust.CustomerID == listing.CustomerID);
-
-                if (customer.IsVerified != true)
-                {
-                    ModelState.AddModelError("CustomerID", "Customer is not verifed, please wait for verification and try again.");
-                    ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, listing.SpecialFeatures);
-                    ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
-                    ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
-                    ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
-                    return View(contractModel);
-                }
-                if (ListingAddressExists(listing.Address))
-                {
-                    ModelState.AddModelError("StreetAddress", $"Listing at {listing.Address} already exists.");
-                    ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, listing.SpecialFeatures);
-                    ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
-                    ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
-                    ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
-                    return View(contractModel);
-                }
                 if (!!listing.ContractSigned)
                 {
                     contract = new()
@@ -366,12 +366,12 @@ namespace mvcNestify.Controllers
                         ListingID = 0
                     };
 
-                    listing.ListingStatus = "Avaliable";
+                    listing.ListingStatus = "Avalilable";
                     contract.EndDate = contract.StartDate.AddMonths(3);
                 }
                 else
                 {
-                    listing.ListingStatus = "Not Avaliable";
+                    listing.ListingStatus = "Not Available";
                 }
 
                 _context.Add(listing);
@@ -393,11 +393,13 @@ namespace mvcNestify.Controllers
 
                 TempData["ListingSaved"] = "Listing has been saved!";
                 return RedirectToAction("Select", new { id = listing.CustomerID });
+
             }
+
             ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, listing.SpecialFeatures);
             ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
             ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
-            ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
+            ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text", listing.Province);
             return View(contractModel);
         }
 
@@ -419,61 +421,43 @@ namespace mvcNestify.Controllers
             {
                 return NotFound();
             }
+
+            model = new()
+            {
+                ListingID = listing.ListingID,
+                CustomerID = listing.CustomerID,
+                StreetAddress = listing.StreetAddress,
+                Municipality = listing.Municipality,
+                CityLocation = listing.CityLocation,
+                Province = listing.Province,
+                PostalCode = listing.PostalCode,
+                Footage = listing.Footage,
+                NumOfBaths = listing.NumOfBaths,
+                NumOfRooms = listing.NumOfRooms,
+                NumOfStories = listing.NumOfStories,
+                TypeOfHeating = listing.TypeOfHeating,
+                Features = listing.Features,
+                SpecialFeatures = listing.SpecialFeatures,
+                ListingStatus = listing.ListingStatus,
+                ContractSigned = listing.ContractSigned,
+            };
+
+            ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName");
+
             if (contract != null)
             {
-                model = new()
-                {
-                    ContractID = contract.ContractID,
-                    StartDate = contract.StartDate,
-                    EndDate = contract.EndDate,
-                    SalesPrice = contract.SalesPrice,
-                    AgentID = contract.AgentID,
-                    ListingID = listing.ListingID,
-                    CustomerID = listing.CustomerID,
-                    StreetAddress = listing.StreetAddress,
-                    Municipality = listing.Municipality,
-                    CityLocation = listing.CityLocation,
-                    Province = listing.Province,
-                    PostalCode = listing.PostalCode,
-                    Footage = listing.Footage,
-                    NumOfBaths = listing.NumOfBaths,
-                    NumOfRooms = listing.NumOfRooms,
-                    NumOfStories = listing.NumOfStories,
-                    TypeOfHeating = listing.TypeOfHeating,
-                    Features = listing.Features,
-                    SpecialFeatures = listing.SpecialFeatures,
-                    ListingStatus = listing.ListingStatus,
-                    ContractSigned = listing.ContractSigned
-                };
+                model.ContractID = contract.ContractID;
+                model.StartDate = contract.StartDate;
+                model.EndDate = contract.EndDate;
+                model.SalesPrice = contract.SalesPrice;
+                model.AgentID = contract.AgentID;
 
                 ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
             }
-            else
-            {
-                model = new()
-                {
-                    ListingID = listing.ListingID,
-                    CustomerID = listing.CustomerID,
-                    StreetAddress = listing.StreetAddress,
-                    Municipality = listing.Municipality,
-                    CityLocation = listing.CityLocation,
-                    Province = listing.Province,
-                    PostalCode = listing.PostalCode,
-                    Footage = listing.Footage,
-                    NumOfBaths = listing.NumOfBaths,
-                    NumOfRooms = listing.NumOfRooms,
-                    NumOfStories = listing.NumOfStories,
-                    TypeOfHeating = listing.TypeOfHeating,
-                    Features = listing.Features,
-                    SpecialFeatures = listing.SpecialFeatures,
-                    ListingStatus = listing.ListingStatus,
-                    ContractSigned = listing.ContractSigned
-                };
 
-                ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName");
-            }
+            List<string> specialFeatures = model.SpecialFeatures.Split('.').Select(feat => feat.Trim()).ToList();
 
-            ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, listing.SpecialFeatures.ToList()); ;
+            ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, specialFeatures); ;
             ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text", listing.Province);
             ViewData["CustomerID"] = _context.Customers.FirstOrDefault(c => c.CustomerID == listing.CustomerID).FullName;
 
@@ -501,19 +485,17 @@ namespace mvcNestify.Controllers
                 NumOfStories = contractModel.NumOfStories,
                 TypeOfHeating = contractModel.TypeOfHeating,
                 Features = contractModel.Features,
-                SpecialFeatures = contractModel.SpecialFeatures,
+                SpecialFeatures = null,
                 ListingStatus = null,
                 ContractSigned = contractModel.ContractSigned,
                 CustomerID = contractModel.CustomerID
             };
 
-            Models.Contract contract = new()
-            {
-                StartDate = (DateTime)contractModel.StartDate,
-                SalesPrice = (decimal)contractModel.SalesPrice,
-                ListingID = listing.ListingID,
-                AgentID = contractModel.AgentID,
-            };
+
+            foreach (string feat in SpecialFeatures)
+                listing.SpecialFeatures += $"{feat}. ";
+
+            Models.Contract contract = new();
 
             if (id != listing.ListingID)
             {
@@ -523,8 +505,16 @@ namespace mvcNestify.Controllers
 
             if (!!listing.ContractSigned)
             {
+                contract = new()
+                {
+                    StartDate = (DateTime)contractModel.StartDate,
+                    SalesPrice = (decimal)contractModel.SalesPrice,
+                    ListingID = listing.ListingID,
+                    AgentID = contractModel.AgentID,
+                };
                 listing.ListingStatus = "Avaliable";
                 contract.EndDate = contract.StartDate.AddMonths(3);
+
             }
             else
             {
@@ -532,35 +522,26 @@ namespace mvcNestify.Controllers
                 contract.AgentID = null;
             }
 
+            var customer = _context.Customers.FirstOrDefault(cust => cust.CustomerID == listing.CustomerID);
+
+            if (customer.IsVerified != true)
+            {
+                ModelState.AddModelError("CustomerID", "Customer is not verifed, please wait for verification and try again.");
+            }
+
+            if (ListingAddressExists(listing.Address))
+            {
+                ModelState.AddModelError("StreetAddress", $"Listing at {listing.Address} already exists.");
+            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var customer = _context.Customers.FirstOrDefault(cust => cust.CustomerID == listing.CustomerID);
-
-                    if (customer.IsVerified != true)
-                    {
-                        ModelState.AddModelError("CustomerID", "Customer is not verifed, please wait for verification and try again.");
-                        ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, listing.SpecialFeatures);
-                        ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
-                        ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
-                        ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
-                        return View(contractModel);
-                    }
-                    if (ListingAddressExists(listing.Address))
-                    {
-                        ModelState.AddModelError("StreetAddress", $"Listing at {listing.Address} already exists.");
-                        ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, listing.SpecialFeatures);
-                        ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
-                        ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
-                        ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
-                        return View(contractModel);
-                    }
-
                     _context.Update(listing);
+
                     await _context.SaveChangesAsync();
-                    if (contract != null)
+                    if (contract.ContractID != null)
                     {
                         _context.Add(contract);
                         await _context.SaveChangesAsync();
@@ -580,6 +561,9 @@ namespace mvcNestify.Controllers
                 TempData["ListingSaved"] = "Listing has been updated!";
                 return RedirectToAction("Select", new { id = listing.CustomerID });
             }
+
+            List<string> specialFeatures = listing.SpecialFeatures.Split('.').Select(feat => feat.Trim()).ToList();
+
             ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, listing.SpecialFeatures);
             ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
             ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
