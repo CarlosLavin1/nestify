@@ -89,13 +89,13 @@ namespace mvcNestify.Models
 
         [Required]
         [Display(Name = "Heating")]
-        public string TypeOfHeating { get; set; }
+        public string? TypeOfHeating { get; set; }
 
         [Required]
-        public string Features { get; set; }
+        public string? Features { get; set; }
 
         [Display(Name = "Special Features")]
-        public string SpecialFeatures { get; set; }
+        public string? SpecialFeatures { get; set; }
 
         [Display(Name = "Listing Status")]
         public string? ListingStatus { get; set; }

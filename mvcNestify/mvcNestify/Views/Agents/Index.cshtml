@@ -15,8 +15,7 @@
         grid-template-rows: repeat(1, auto);
     }
     .card{
-        background-color: #ABDAFC;
-        border: solid thin Black;
+        background-color: rgba(255,255,255,0.7);
     }
     .card:hover, .btn:hover{
             background-color: #E0E1A1;
@@ -40,7 +39,7 @@
     @foreach (var item in Model)
     {
         <div class="card mb-3" style="max-width: 540px;">
-            <div class="row g-0">
+            <div class="row g-0 ml-4">
                 <div class="col-md-4">
                     <img src=" /assets/NoImageFound.png" class="img-fluid rounded-start" alt="...">
                 </div>
@@ -48,8 +47,8 @@
                     <div class="card-body">
                         <h5 class="card-title"> @Html.DisplayFor(modelItem => item.FullName)</h5>
                         <ul>
-                            <li><b>@Html.DisplayNameFor(model => model.AgentID):</b> @Html.DisplayFor(modelItem => item.AgentID)</li>
-                            <li><b>@Html.DisplayNameFor(model => model.DateOfEmployment):</b> @Html.DisplayFor(modelItem => item.DateOfEmployment)</li>
+                            <li><b>@Html.DisplayNameFor(model => model.OfficeEmail):</b> @Html.DisplayFor(modelItem => item.OfficeEmail)</li>
+                            <li><b>@Html.DisplayNameFor(model => model.OfficePhone):</b> @Html.DisplayFor(modelItem => item.OfficePhone)</li>
                             <li><b>@Html.DisplayNameFor(model => model.DateOfBirth):</b> @Html.DisplayFor(modelItem => item.DateOfEmployment)</li>
                             <li><b>Active Listings:</b> @item.Contract.Count()</li>
                         </ul>
