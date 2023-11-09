@@ -65,7 +65,7 @@
             <div class="form-group">
                 <label asp-for="TypeOfHeating" class="control-label"></label>
                 <select asp-for="TypeOfHeating" class="form-control">
-                    <option disabled selected>-- SELECT FROM BELOW --</option>
+                    <option disabled selected>-- SELECT HEATING TYPE --</option>
                     <option value="Eletric">Electric</option>
                     <option value="Gas">Gas</option>
                     <option value="Heat Pump">Heat Pump</option>
@@ -76,20 +76,13 @@
             </div>
             <div class="form-group">
                 <label asp-for="Features" class="control-label"></label>
-                <input asp-for="Features" class="form-control" />
+                <input asp-for="Features" class="form-control">
                 <span asp-validation-for="Features" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="SpecialFeatures" class="control-label"></label>
-                <select asp-for="SpecialFeatures" class="form-control">
-                    <option disabled selected>-- SELECT  --</option>
-                    <option value="Fireplace">Fireplace</option>
-                    <option value="Garage (1 bay)">Garage (1 bay)</option>
-                    <option value="Garage (2 bay)">Garage (2 bay)</option>
-                    <option value="Garage (3 bay)">Garage (3 bay)</option>
-                    <option value="Baby Barn">Baby Barn</option>
-                    <option value="Central Air">Central Air</option>
-                </select>
+                <label asp-for="SpecialFeatures" class="control-label">Select applicable special features:</label>
+                @Html.ListBox("SpecialFeatures", null, htmlAttributes: new{@class="form-control"})
+                <span asp-validation-for="SpecialFeatures" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="SalesPrice" class="control-label"></label>
@@ -104,14 +97,13 @@
             <div class="form-group">
                 <label asp-for="AgentID" class="control-label"></label>
                 <select asp-for="AgentID" class="form-control" asp-items="ViewBag.AgentID">
-                    <option disabled selected>-- SELECT FROM BELOW --</option>
+                    <option disabled selected>-- SELECT CONTRACT AGENT --</option>
                 </select>
                 <span asp-validation-for="AgentID" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CustomerID" class="control-label"></label>
-                <select asp-for="CustomerID" class="form-control" asp-items="ViewBag.CustomerID">
-                </select>
+                <select asp-for="CustomerID" class="form-control" asp-items="ViewBag.CustomerID"></select>
                 <span asp-validation-for="CustomerID" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -133,3 +125,4 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+

@@ -1,19 +1,53 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using mvcNestify.Data;
 using mvcNestify.Models;
+using NuGet.DependencyResolver;
 using static mvcNestify.EmailServices.EmailSender;
 
 namespace mvcNestify.Controllers
 {
 
+
+
     public class ListingsController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly IEmailSender _emailSender;
+
+        List<string> specialFeats = new()
+            {
+                "Has a fireplace",
+                "Has a baby barn",
+                "Has Central Air",
+                "1 Bay Garage",
+                "2 Bay Garage",
+                "3 Bay Garage"
+            };
+
+
+        List<SelectListItem> provinceOptions = new List<SelectListItem>()
+            {
+                new SelectListItem{Text = "-- SELECT A VALUE --", Value= "", Disabled = true, Selected = true },
+                new SelectListItem{Text = "AB", Value= "Alberta" },
+                new SelectListItem{Text = "BC", Value= "British Columbia" },
+                new SelectListItem{Text = "MB", Value= "Manitoba" },
+                new SelectListItem{Text = "NB", Value= "New Brunswick" },
+                new SelectListItem{Text = "NL", Value= "Newfoundland and Labrador" },
+                new SelectListItem{Text = "NT", Value= "Northwest Territories" },
+                new SelectListItem{Text = "NS", Value= "Nova Scotia" },
+                new SelectListItem{Text = "NU", Value= "Nunavut" },
+                new SelectListItem{Text = "ON", Value= "Ontario" },
+                new SelectListItem{Text = "PEI", Value= "Prince Edward Island" },
+                new SelectListItem{Text = "QUE", Value= "Quebec" },
+                new SelectListItem{Text = "SK", Value= "Saskatchewan" },
+                new SelectListItem{Text = "YT", Value= "Yukon" }
+
+            };
 
         public ListingsController(ApplicationDbContext context, IEmailSender emailSender)
         {
@@ -190,10 +224,6 @@ namespace mvcNestify.Controllers
                 };
             }
 
-            
-
-
-
             if (listing == null)
             {
                 return NotFound();
@@ -240,8 +270,6 @@ namespace mvcNestify.Controllers
                 SpecialFeatures = listing.SpecialFeatures
             };
 
-
-
             if (listing == null)
             {
                 return NotFound();
@@ -257,6 +285,8 @@ namespace mvcNestify.Controllers
             var agents = _context.Agents.Where(a => a.IsVerified == true);
             var customers = _context.Agents.Where(c => c.IsVerified == true);
 
+
+
             if (agents.Count() > 0)
             {
                 ViewData["AgentID"] = new SelectList(agents, "AgentID", "FullName");
@@ -266,26 +296,9 @@ namespace mvcNestify.Controllers
                 ModelState.AddModelError("AgentID", "No verifed agents in the system.");
             }
 
-            List<SelectListItem> provinceOptions = new List<SelectListItem>()
-            {
-                new SelectListItem{Text = "-- SELECT A VALUE --", Value= "", Disabled = true, Selected = true },
-                new SelectListItem{Text = "AB", Value= "Alberta" },
-                new SelectListItem{Text = "BC", Value= "British Columbia" },
-                new SelectListItem{Text = "MB", Value= "Manitoba" },
-                new SelectListItem{Text = "NB", Value= "New Brunswick" },
-                new SelectListItem{Text = "NL", Value= "Newfoundland and Labrador" },
-                new SelectListItem{Text = "NT", Value= "Northwest Territories" },
-                new SelectListItem{Text = "NS", Value= "Nova Scotia" },
-                new SelectListItem{Text = "NU", Value= "Nunavut" },
-                new SelectListItem{Text = "ON", Value= "Ontario" },
-                new SelectListItem{Text = "PEI", Value= "Prince Edward Island" },
-                new SelectListItem{Text = "QUE", Value= "Quebec" },
-                new SelectListItem{Text = "SK", Value= "Saskatchewan" },
-                new SelectListItem{Text = "YT", Value= "Yukon" }
-
-            };
             ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", id);
             ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
+            ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats);
             return View();
         }
 
@@ -294,34 +307,10 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ContractViewModel contractModel)
+        public async Task<IActionResult> Create(ContractViewModel contractModel, List<string> SpecialFeatures)
         {
-            List<SelectListItem> provinceOptions = new List<SelectListItem>()
-            {
-                new SelectListItem{Text = "-- SELECT A VALUE --", Value= "", Disabled = true, Selected = true },
-                new SelectListItem{Text = "AB", Value= "Alberta" },
-                new SelectListItem{Text = "BC", Value= "British Columbia" },
-                new SelectListItem{Text = "MB", Value= "Manitoba" },
-                new SelectListItem{Text = "NB", Value= "New Brunswick" },
-                new SelectListItem{Text = "NL", Value= "Newfoundland and Labrador" },
-                new SelectListItem{Text = "NT", Value= "Northwest Territories" },
-                new SelectListItem{Text = "NS", Value= "Nova Scotia" },
-                new SelectListItem{Text = "NU", Value= "Nunavut" },
-                new SelectListItem{Text = "ON", Value= "Ontario" },
-                new SelectListItem{Text = "PEI", Value= "Prince Edward Island" },
-                new SelectListItem{Text = "QUE", Value= "Quebec" },
-                new SelectListItem{Text = "SK", Value= "Saskatchewan" },
-                new SelectListItem{Text = "YT", Value= "Yukon" }
+            Models.Contract contract = new();
 
-            };
-
-            Models.Contract contract = new()
-            {
-                StartDate = contractModel.StartDate,
-                SalesPrice = contractModel.SalesPrice,
-                AgentID = contractModel.AgentID,
-                ListingID = 0
-            };
             Listing listing = new()
             {
                 StreetAddress = contractModel.StreetAddress,
@@ -335,11 +324,14 @@ namespace mvcNestify.Controllers
                 NumOfStories = contractModel.NumOfStories,
                 TypeOfHeating = contractModel.TypeOfHeating,
                 Features = contractModel.Features,
-                SpecialFeatures = contractModel.SpecialFeatures,
+                SpecialFeatures = "",
                 ListingStatus = " ",
                 ContractSigned = contractModel.ContractSigned,
                 CustomerID = contractModel.CustomerID
             };
+
+            foreach (string feat in SpecialFeatures)
+                listing.SpecialFeatures += $"{feat}";
 
             if (ModelState.IsValid)
             {
@@ -349,6 +341,7 @@ namespace mvcNestify.Controllers
                 if (customer.IsVerified != true)
                 {
                     ModelState.AddModelError("CustomerID", "Customer is not verifed, please wait for verification and try again.");
+                    ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, listing.SpecialFeatures);
                     ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
                     ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
                     ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
@@ -357,6 +350,7 @@ namespace mvcNestify.Controllers
                 if (ListingAddressExists(listing.Address))
                 {
                     ModelState.AddModelError("StreetAddress", $"Listing at {listing.Address} already exists.");
+                    ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, listing.SpecialFeatures);
                     ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
                     ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
                     ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
@@ -364,6 +358,14 @@ namespace mvcNestify.Controllers
                 }
                 if (!!listing.ContractSigned)
                 {
+                    contract = new()
+                    {
+                        StartDate = (DateTime)contractModel.StartDate,
+                        SalesPrice = (decimal)contractModel.SalesPrice,
+                        AgentID = contractModel.AgentID,
+                        ListingID = 0
+                    };
+
                     listing.ListingStatus = "Avaliable";
                     contract.EndDate = contract.StartDate.AddMonths(3);
                 }
@@ -392,6 +394,7 @@ namespace mvcNestify.Controllers
                 TempData["ListingSaved"] = "Listing has been saved!";
                 return RedirectToAction("Select", new { id = listing.CustomerID });
             }
+            ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, listing.SpecialFeatures);
             ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
             ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
             ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
@@ -403,25 +406,6 @@ namespace mvcNestify.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             ContractViewModel model = new();
-            List<SelectListItem> provinceOptions = new List<SelectListItem>()
-            {
-                new SelectListItem{Text = "-- SELECT A VALUE --", Value= "", Disabled = true, Selected = true },
-                new SelectListItem{Text = "AB", Value= "Alberta" },
-                new SelectListItem{Text = "BC", Value= "British Columbia" },
-                new SelectListItem{Text = "MB", Value= "Manitoba" },
-                new SelectListItem{Text = "NB", Value= "New Brunswick" },
-                new SelectListItem{Text = "NL", Value= "Newfoundland and Labrador" },
-                new SelectListItem{Text = "NT", Value= "Northwest Territories" },
-                new SelectListItem{Text = "NS", Value= "Nova Scotia" },
-                new SelectListItem{Text = "NU", Value= "Nunavut" },
-                new SelectListItem{Text = "ON", Value= "Ontario" },
-                new SelectListItem{Text = "PEI", Value= "Prince Edward Island" },
-                new SelectListItem{Text = "QUE", Value= "Quebec" },
-                new SelectListItem{Text = "SK", Value= "Saskatchewan" },
-                new SelectListItem{Text = "YT", Value= "Yukon" }
-
-            };
-            ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
 
             if (id == null || _context.Listings == null)
             {
@@ -489,6 +473,8 @@ namespace mvcNestify.Controllers
                 ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName");
             }
 
+            ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, listing.SpecialFeatures.ToList()); ;
+            ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text", listing.Province);
             ViewData["CustomerID"] = _context.Customers.FirstOrDefault(c => c.CustomerID == listing.CustomerID).FullName;
 
             return View(model);
@@ -499,27 +485,8 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ContractViewModel contractModel)
+        public async Task<IActionResult> Edit(int id, ContractViewModel contractModel, List<string> SpecialFeatures)
         {
-            List<SelectListItem> provinceOptions = new List<SelectListItem>()
-            {
-                new SelectListItem{Text = "-- SELECT A VALUE --", Value= "", Disabled = true, Selected = true },
-                new SelectListItem{Text = "AB", Value= "Alberta" },
-                new SelectListItem{Text = "BC", Value= "British Columbia" },
-                new SelectListItem{Text = "MB", Value= "Manitoba" },
-                new SelectListItem{Text = "NB", Value= "New Brunswick" },
-                new SelectListItem{Text = "NL", Value= "Newfoundland and Labrador" },
-                new SelectListItem{Text = "NT", Value= "Northwest Territories" },
-                new SelectListItem{Text = "NS", Value= "Nova Scotia" },
-                new SelectListItem{Text = "NU", Value= "Nunavut" },
-                new SelectListItem{Text = "ON", Value= "Ontario" },
-                new SelectListItem{Text = "PEI", Value= "Prince Edward Island" },
-                new SelectListItem{Text = "QUE", Value= "Quebec" },
-                new SelectListItem{Text = "SK", Value= "Saskatchewan" },
-                new SelectListItem{Text = "YT", Value= "Yukon" }
-
-            };
-
             Listing listing = new()
             {
                 ListingID = (int)contractModel.ListingID,
@@ -542,8 +509,8 @@ namespace mvcNestify.Controllers
 
             Models.Contract contract = new()
             {
-                StartDate = contractModel.StartDate,
-                SalesPrice = contractModel.SalesPrice,
+                StartDate = (DateTime)contractModel.StartDate,
+                SalesPrice = (decimal)contractModel.SalesPrice,
                 ListingID = listing.ListingID,
                 AgentID = contractModel.AgentID,
             };
@@ -570,6 +537,27 @@ namespace mvcNestify.Controllers
             {
                 try
                 {
+                    var customer = _context.Customers.FirstOrDefault(cust => cust.CustomerID == listing.CustomerID);
+
+                    if (customer.IsVerified != true)
+                    {
+                        ModelState.AddModelError("CustomerID", "Customer is not verifed, please wait for verification and try again.");
+                        ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, listing.SpecialFeatures);
+                        ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
+                        ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
+                        ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
+                        return View(contractModel);
+                    }
+                    if (ListingAddressExists(listing.Address))
+                    {
+                        ModelState.AddModelError("StreetAddress", $"Listing at {listing.Address} already exists.");
+                        ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, listing.SpecialFeatures);
+                        ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
+                        ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
+                        ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
+                        return View(contractModel);
+                    }
+
                     _context.Update(listing);
                     await _context.SaveChangesAsync();
                     if (contract != null)
@@ -592,6 +580,7 @@ namespace mvcNestify.Controllers
                 TempData["ListingSaved"] = "Listing has been updated!";
                 return RedirectToAction("Select", new { id = listing.CustomerID });
             }
+            ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, listing.SpecialFeatures);
             ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
             ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
             ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");

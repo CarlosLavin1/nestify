@@ -81,8 +81,8 @@
                 <span asp-validation-for="Features" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="SpecialFeatures" class="control-label"></label>
-                <input asp-for="SpecialFeatures" class="form-control" />
+                <label asp-for="SpecialFeatures" class="control-label">Select applicable special features:</label>
+                @Html.ListBox("SpecialFeatures", null, htmlAttributes: new{@class="form-control"})
                 <span asp-validation-for="SpecialFeatures" class="text-danger"></span>
             </div>
             <div class="form-group">

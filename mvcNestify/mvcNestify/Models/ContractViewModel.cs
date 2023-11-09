@@ -9,15 +9,15 @@ namespace mvcNestify.Models
 
         [DataType(DataType.Date)]
         [Display(Name = "Contract Start Date")]
-        public DateTime StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
 
         [DataType(DataType.Date)]
         [Display(Name = "Contract End Date")]
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
         [DataType(DataType.Currency)]
         [Display(Name = "Sales Price")]
-        public decimal SalesPrice { get; set; }
+        public decimal? SalesPrice { get; set; }
 
         [Display(Name = "Listing Agent")]
         public int? AgentID { get; set; }
@@ -86,7 +86,7 @@ namespace mvcNestify.Models
         public string Features { get; set; }
 
         [Display(Name = "Special Features")]
-        public string SpecialFeatures { get; set; }
+        public string? SpecialFeatures { get; set; }
 
         [Display(Name = "Listing Status")]
         public string? ListingStatus { get; set; }
