@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.Contracts;
 
 namespace mvcNestify.Models
 {
@@ -31,6 +32,7 @@ namespace mvcNestify.Models
 
         public int? AgentId { get; set; }
         public virtual Agent? Agent { get; set; }
+        public bool IsVisible { get; set; }
     }
 
     public class Listing
