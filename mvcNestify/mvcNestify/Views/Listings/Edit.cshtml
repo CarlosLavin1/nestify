@@ -76,6 +76,11 @@
                 </select>
             </div>
             <div class="form-group">
+                <label asp-for="SalesPrice" class="control-label"></label>
+                <input asp-for="SalesPrice" class="form-control" />
+                <span asp-validation-for="SalesPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Features" class="control-label"></label>
                 <input asp-for="Features" class="form-control" />
                 <span asp-validation-for="Features" class="text-danger"></span>
@@ -113,6 +118,13 @@
                 <input type="hidden" asp-for="CustomerID" />
                 <span asp-validation-for="CustomerID" class="text-danger"></span>
             </div>
+
+            <div class="form-group">
+                <label asp-for="Images"></label>
+                @Html.ListBox("Images", null, htmlAttributes: new{@class="form-control"})
+                <span asp-validation-for="Images"></span>
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

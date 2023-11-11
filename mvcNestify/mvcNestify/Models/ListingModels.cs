@@ -115,6 +115,9 @@ namespace mvcNestify.Models
         public virtual ICollection<Showing>? Showing { get; set; }
 
         public virtual List<Image>? Images { get; set; }
+
+        [NotMapped]
+        public List<Image>? VisibleListingImages {  get; set; } 
     }
 
     public class Contract

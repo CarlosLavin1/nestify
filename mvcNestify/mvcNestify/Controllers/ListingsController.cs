@@ -404,6 +404,7 @@ namespace mvcNestify.Controllers
         }
 
         // GET: Listings/Edit/5
+        [HttpGet]
         [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -440,9 +441,13 @@ namespace mvcNestify.Controllers
                 SpecialFeatures = listing.SpecialFeatures,
                 ListingStatus = listing.ListingStatus,
                 ContractSigned = listing.ContractSigned,
+                Images = listing.Images
             };
 
             ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName");
+
+            List<int>? selectedImages = listing.VisibleListingImages?.Select(i => i.ImageID).ToList();
+            ViewData["Images"] = new MultiSelectList(listing.Images, "ImageID", "Name", selectedImages);
 
             if (contract != null)
             {
@@ -488,12 +493,15 @@ namespace mvcNestify.Controllers
                 SpecialFeatures = null,
                 ListingStatus = null,
                 ContractSigned = contractModel.ContractSigned,
-                CustomerID = contractModel.CustomerID
+                CustomerID = contractModel.CustomerID,
             };
 
 
             foreach (string feat in SpecialFeatures)
                 listing.SpecialFeatures += $"{feat}. ";
+
+            //add selected images to visible images
+            //listing.VisibleListingImages.Add(_context.Image.Where(img => img.ImageID == i).ToList()[0]);
 
             Models.Contract contract = new();
 

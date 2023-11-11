@@ -25,16 +25,6 @@
                 </label>
             </form>
 
-            @* <div class="form-group">
-            <label for="AgentImage">Agent Image</label>
-            <input type="checkbox" id="AgentImage" />
-            </div>
-
-            <div class="form-group">
-            <label for="ListingImage">Listing Image</label>
-            <input type="checkbox" id="ListingImage" />
-            </div> *@
-
             <div id="AgentList" class="form-group" style="display: block;">
                 <label asp-for="AgentId" class="control-label">Agents</label>
                 <select asp-for="AgentId" asp-items="ViewBag.Agents">
@@ -126,26 +116,5 @@
             document.getElementById('ListingList').style.display = 'block';
             document.getElementById('AgentList').style.display = 'none';
         });
-
-
-                        // document.getElementById('AgentImage').addEventListener('change', function () {
-                        //     if (this.checked) {
-                        //         document.getElementById('ListingImage').disabled = true;
-                        //         document.getElementById('AgentList').style.display = 'block';
-                        //     } else {
-                        //         document.getElementById('ListingImage').disabled = false;
-                        //         document.getElementById('AgentList').style.display = 'none';
-                        //     }
-                        // });
-
-                        // document.getElementById('ListingImage').addEventListener('change', function () {
-                        //     if (this.checked) {
-                        //         document.getElementById('AgentImage').disabled = true;
-                        //         document.getElementById('ListingList').style.display = 'block';
-                        //     } else {
-                        //         document.getElementById('AgentImage').disabled = false;
-                        //         document.getElementById('ListingList').style.display = 'none';
-                        //     }
-                        // });
     </script>
 }

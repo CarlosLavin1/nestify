@@ -94,6 +94,8 @@ namespace mvcNestify.Models
         [Required]
         [Display(Name = "Signed Contract")]
         public Boolean ContractSigned { get; set; }
+        [Display(Name = "Listing Images")]
+        public List<Image>? Images { get; set; }
 
     }
     public class ListingViewModel
