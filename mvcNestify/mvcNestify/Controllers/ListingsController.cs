@@ -446,9 +446,6 @@ namespace mvcNestify.Controllers
 
             ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName");
 
-            List<int>? selectedImages = listing.VisibleListingImages?.Select(i => i.ImageID).ToList();
-            ViewData["Images"] = new MultiSelectList(listing.Images, "ImageID", "Name", selectedImages);
-
             if (contract != null)
             {
                 model.ContractID = contract.ContractID;
@@ -465,6 +462,7 @@ namespace mvcNestify.Controllers
             ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, specialFeatures); ;
             ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text", listing.Province);
             ViewData["CustomerID"] = _context.Customers.FirstOrDefault(c => c.CustomerID == listing.CustomerID).FullName;
+            
 
             return View(model);
         }
@@ -494,14 +492,13 @@ namespace mvcNestify.Controllers
                 ListingStatus = null,
                 ContractSigned = contractModel.ContractSigned,
                 CustomerID = contractModel.CustomerID,
+                Images = contractModel.Images,
             };
 
 
             foreach (string feat in SpecialFeatures)
                 listing.SpecialFeatures += $"{feat}. ";
 
-            //add selected images to visible images
-            //listing.VisibleListingImages.Add(_context.Image.Where(img => img.ImageID == i).ToList()[0]);
 
             Models.Contract contract = new();
 
@@ -568,15 +565,29 @@ namespace mvcNestify.Controllers
                 }
                 TempData["ListingSaved"] = "Listing has been updated!";
                 return RedirectToAction("Select", new { id = listing.CustomerID });
+            } else
+            {
+                foreach (var key in ModelState.Keys)
+                {
+                    var error = ModelState[key].Errors.FirstOrDefault();
+                    if (error != null)
+                    {
+                        // Log or handle the error as needed
+                        // You can also use ViewData to pass errors to the view
+                        ViewData["Error"] = error.ErrorMessage;
+                    }
+                }
             }
 
             List<string> specialFeatures = listing.SpecialFeatures.Split('.').Select(feat => feat.Trim()).ToList();
 
             ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, listing.SpecialFeatures);
-            ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
+            ViewData["CustomerID"] = _context.Customers.FirstOrDefault(c => c.CustomerID == listing.CustomerID).FullName;
+            //ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
             ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
             ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
-            return View(listing);
+            //view expects contractviewmodel
+            return View(contractModel);
         }
 
         // GET: Listings/Delete/5
