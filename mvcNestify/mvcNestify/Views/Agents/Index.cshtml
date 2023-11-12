@@ -9,23 +9,36 @@
         background-size: cover;
         background-repeat: no-repeat;
     }
+
+    @@media(min-width: 1205px) {
+        .grid-container {
+            display: grid;
+            justify-items: center;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(1, auto);
+        }
+    }
+
     .grid-container{
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(1, auto);
+        justify-content: center;
     }
-    .card{
+
+    .card {
         background-color: rgba(255,255,255,0.7);
     }
-    .card:hover, .btn:hover{
+
+        .card:hover, .btn:hover {
             background-color: #E0E1A1;
-    }
-    .agentLink{
+        }
+
+    .agentLink {
         color: black;
         text-decoration: none;
     }
-    ul{
-    list-style: none;
+
+    ul {
+        list-style: none;
     }
 </style>
 
@@ -73,7 +86,3 @@
 }
 
 -->
-
-
-
-
