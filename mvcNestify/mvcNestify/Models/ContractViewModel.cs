@@ -215,11 +215,9 @@ namespace mvcNestify.Models
         [Display(Name = "Signed Contract")]
         public Boolean ContractSigned { get; set; }
 
-        [DataType(DataType.Date)]
         [Display(Name = "Contract Start Date")]
         public DateTime? StartDate { get; set; }
 
-        [DataType(DataType.Date)]
         [Display(Name = "Contract End Date")]
         public DateTime? EndDate { get; set; }
 

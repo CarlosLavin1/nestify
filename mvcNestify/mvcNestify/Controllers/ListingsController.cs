@@ -100,7 +100,7 @@ namespace mvcNestify.Controllers
                                  Province = listing.Province,
                                  AgentID = contract.FirstOrDefault(c => c.ListingID == listing.ListingID).AgentID,
                                  StartDate = contract.FirstOrDefault(c => c.ListingID == listing.ListingID).StartDate,
-                                 EndDate = contract.FirstOrDefault(c => c.ListingID == listing.ListingID).EndDate.Date,
+                                 EndDate = contract.FirstOrDefault(c => c.ListingID == listing.ListingID).EndDate,
                                  CustomerID = listing.CustomerID,
                                  CustFirstName = listing.Customer.FirstName,
                                  CustMiddleName = listing.Customer.MiddleName,
@@ -462,7 +462,7 @@ namespace mvcNestify.Controllers
             ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, specialFeatures); ;
             ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text", listing.Province);
             ViewData["CustomerID"] = _context.Customers.FirstOrDefault(c => c.CustomerID == listing.CustomerID).FullName;
-            
+
 
             return View(model);
         }
@@ -514,11 +514,19 @@ namespace mvcNestify.Controllers
                 {
                     StartDate = (DateTime)contractModel.StartDate,
                     SalesPrice = (decimal)contractModel.SalesPrice,
+                    EndDate  = (DateTime)contractModel.StartDate,
                     ListingID = listing.ListingID,
                     AgentID = contractModel.AgentID,
                 };
+
+                contract.EndDate = contract.EndDate.AddMonths(3);
+
+                if (contractModel.ContractID != null)
+                {
+                    contract.ContractID = contractModel.ContractID;
+                }
+
                 listing.ListingStatus = "Avaliable";
-                contract.EndDate = contract.StartDate.AddMonths(3);
 
             }
             else
@@ -546,7 +554,13 @@ namespace mvcNestify.Controllers
                     _context.Update(listing);
 
                     await _context.SaveChangesAsync();
+
                     if (contract.ContractID != null)
+                    {
+                        _context.Update(contract);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
                     {
                         _context.Add(contract);
                         await _context.SaveChangesAsync();
@@ -565,7 +579,8 @@ namespace mvcNestify.Controllers
                 }
                 TempData["ListingSaved"] = "Listing has been updated!";
                 return RedirectToAction("Select", new { id = listing.CustomerID });
-            } else
+            }
+            else
             {
                 foreach (var key in ModelState.Keys)
                 {
