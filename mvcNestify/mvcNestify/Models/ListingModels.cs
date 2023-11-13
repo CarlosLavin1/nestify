@@ -111,7 +111,6 @@ namespace mvcNestify.Models
         public int? CustomerID { get; set; }
         public virtual Customer? Customer { get; set; }
 
-
         public virtual ICollection<Contract>? Contract { get; set; }
 
         public virtual ICollection<Showing>? Showing { get; set; }
@@ -128,12 +127,10 @@ namespace mvcNestify.Models
         public int? ContractID { get; set; }
 
         [Required]
-        [DataType(DataType.Date)]
         [Display(Name = "Contract Start Date")]
         public DateTime StartDate { get; set; }
 
         [Required]
-        [DataType(DataType.Date)]
         [Display(Name = "Contract End Date")]
         public DateTime EndDate { get; set; }
 
