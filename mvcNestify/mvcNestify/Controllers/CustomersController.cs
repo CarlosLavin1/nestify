@@ -35,7 +35,7 @@ namespace mvcNestify.Controllers
             {
                 customerList = customerList.Where(cust =>
                 cust.FirstName.Contains(searchCriteria) ||
-                cust.LastName.Contains(searchCriteria) ||
+                cust.LastName.Contains(searchCriteria)||
                 cust.PhoneNumber.Contains(searchCriteria)
                 );
             }
