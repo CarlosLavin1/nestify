@@ -289,7 +289,8 @@ namespace mvcNestify.Controllers
             var agents = _context.Agents.Where(a => a.IsVerified == true);
             var customers = _context.Agents.Where(c => c.IsVerified == true);
 
-
+            ContractViewModel contract = new ContractViewModel();
+            contract.Images = _context.Image.Where(i => i.IsListingImage).ToList();
 
             if (agents.Count() > 0)
             {
@@ -303,7 +304,7 @@ namespace mvcNestify.Controllers
             ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", id);
             ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
             ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats);
-            return View();
+            return View(contract);
         }
 
         // POST: Listings/Create
