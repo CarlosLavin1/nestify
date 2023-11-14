@@ -12,8 +12,34 @@
     <div class="col-md-4">
         <form asp-action="Create"  enctype="multipart/form-data" >
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div>
+                <label>
+                    <input type="radio" name="radioGroup" value="AgentImage" id="UploadImage">
+                    Upload Image
+                </label>
 
-            <div id="radioForm">
+                <label>
+                    <input type="radio" name="radioGroup" value="ListingImage" id="ShowAgentListing">
+                    Add Image To Existing Agent/Listing
+                </label>
+            </div>
+            
+            <div id="UploadSection" style="display: none;">
+                <hr />
+                <label>
+                    @* <input type="radio" name="radioGroup" value="AgentImage" id="UploadAgentImage" checked> *@
+                    @Html.CheckBoxFor(m => m.IsAgentImage)
+                    Upload Agent Image
+                </label>
+
+                <label>
+                    @* <input type="radio" name="radioGroup" value="ListingImage" id="UploadListingImage"> *@
+                    @Html.CheckBoxFor(m => m.IsListingImage)
+                    Upload Listing Image
+                </label>
+            </div>
+            <div id="AgentListingSection" style="display: none;">
+                <hr />
                 <label>
                     <input type="radio" name="radioGroup" value="AgentImage" id="AgentImage" checked>
                     Agent Image
@@ -25,7 +51,7 @@
                 </label>
             </div>
 
-            <div id="AgentList" class="form-group" style="display: block;">
+            <div id="AgentList" class="form-group" style="display: none;">
                 <label asp-for="AgentId" class="control-label">Agents</label>
                 <select asp-for="AgentId" asp-items="ViewBag.Agents">
                     <option selected disabled>-- SELECT AN AGENT --</option>
@@ -39,7 +65,7 @@
                 </select>
                 <span asp-validation-for="ListingId" class="text-danger"></span>
             </div>
-
+            <hr />
             <div class="form-group">
                 <label asp-for="PostedFile" class="control-label">Select file: </label>
                 <input type="file" asp-for="PostedFile" name="PostedFile" />
@@ -52,13 +78,6 @@
                 <input asp-for="FileName" class="form-control" />
                 <span asp-validation-for="FileName" class="text-danger"></span>
             </div>
-            @*
-            <div class="form-group">
-            <label asp-for="Name" class="control-label"></label>
-            <input asp-for="Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            *@
 
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
@@ -70,23 +89,6 @@
                 <input asp-for="AltText" class="form-control" />
                 <span asp-validation-for="AltText" class="text-danger"></span>
             </div>
-            @*
-            <div class="form-group">
-            <label asp-for="UploadTime" class="control-label"></label>
-            <input asp-for="UploadTime" class="form-control" />
-            <span asp-validation-for="UploadTime" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-            <label class="form-check-label">
-            <input class="form-check-input" asp-for="Validated" /> @Html.DisplayNameFor(model => model.Validated)
-            </label>
-            </div>
-            <div class="form-group">
-            <label asp-for="StaffID" class="control-label"></label>
-            <input asp-for="StaffID" class="form-control" />
-            <span asp-validation-for="StaffID" class="text-danger"></span>
-            </div>
-            *@
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -104,6 +106,20 @@
     }
     @* Disabled checkbox when the other is selected *@
     <script>
+        const uploadButton = document.getElementById('UploadImage');
+        const showAgentsListingsButton = document.getElementById('ShowAgentListing');
+
+        uploadButton.addEventListener('change', function () {
+            document.getElementById('UploadSection').style.display = 'block';
+            document.getElementById('AgentListingSection').style.display = 'none';
+            document.getElementById('ListingList').style.display = 'none';
+            document.getElementById('AgentList').style.display = 'none';
+        });
+        showAgentsListingsButton.addEventListener('change', function () {
+            document.getElementById('UploadSection').style.display = 'none';
+            document.getElementById('AgentListingSection').style.display = 'block';
+        });
+
         const agentButton = document.getElementById('AgentImage');
         const listingButton = document.getElementById('ListingImage');
 

@@ -33,6 +33,8 @@ namespace mvcNestify.Models
         public int? AgentId { get; set; }
         public virtual Agent? Agent { get; set; }
         public bool IsVisible { get; set; }
+        public bool IsListingImage { get; set; }
+        public bool IsAgentImage { get; set; }
     }
 
     public class Listing
