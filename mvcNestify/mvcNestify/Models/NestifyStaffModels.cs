@@ -89,13 +89,17 @@ namespace mvcNestify.Models
         [Display(Name = "Postal Code")]
         public string? PostalCode { get; set; }
 
+
         [Required(ErrorMessage = "Agent username is required")]
         public string? Username { get; set; }
 
+        [Display(Name = "Authorization Level")]
         public string? AuthorizationLevel { get; set; }
 
+        [Display(Name = "Creator ID")]
         public string? CreatorID { get; set; }
 
+        [Display(Name = "Is Verified")]
         public bool IsVerified { get; set; }
 
         [Required]
@@ -172,6 +176,7 @@ namespace mvcNestify.Models
         public DateTime DateOfBirth { get; set; }
 
         [Required]
+        [Display(Name = "Is Verified")]
         public bool IsVerified { get; set; }
         // use case asks for proof of identity
 

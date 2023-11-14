@@ -63,7 +63,7 @@ namespace mvcNestify.Controllers
         {
             var applicationDbContext = _context.Listings
                 .Include(c => c.Contract)
-                .Where(l => l.ListingStatus != "Not Avaliable");
+                .Where(l => l.ListingStatus != "Not Available");
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -121,6 +121,7 @@ namespace mvcNestify.Controllers
                                  CustMiddleName = listing.Customer.MiddleName,
                                  CustLastName = listing.Customer.LastName
                              };
+
                          }
 
                      }).ToList();
@@ -332,7 +333,8 @@ namespace mvcNestify.Controllers
                 SpecialFeatures = "",
                 ListingStatus = " ",
                 ContractSigned = contractModel.ContractSigned,
-                CustomerID = contractModel.CustomerID
+                CustomerID = contractModel.CustomerID,
+                Images = contractModel.Images
             };
 
             foreach (string feat in SpecialFeatures)
@@ -357,7 +359,7 @@ namespace mvcNestify.Controllers
             if (ModelState.IsValid)
             {
 
-                if (!!listing.ContractSigned)
+                if (listing.ContractSigned)
                 {
                     contract = new()
                     {
@@ -367,7 +369,7 @@ namespace mvcNestify.Controllers
                         ListingID = 0
                     };
 
-                    listing.ListingStatus = "Avalilable";
+                    listing.ListingStatus = "Available";
                     contract.EndDate = contract.StartDate.AddMonths(3);
                 }
                 else
@@ -375,8 +377,9 @@ namespace mvcNestify.Controllers
                     listing.ListingStatus = "Not Available";
                 }
 
-                _context.Add(listing);
+                _context.Listings.Add(listing);
                 await _context.SaveChangesAsync();
+
 
                 string url = Url.Action("CustDetails", "Listings", new { id = listing.ListingID }, protocol: "https");
                 var message = new EmailMessage(new string[] { listing.Customer.Email },
@@ -385,7 +388,7 @@ namespace mvcNestify.Controllers
                     $"Thank you, \n" +
                     $"From the Nestify Staff");
 
-                if (listing.ListingStatus == "Avaliable")
+                if (listing.ListingStatus == "Available")
                 {
                     contract.ListingID = listing.ListingID;
                     _context.Contracts.Add(contract);
@@ -527,12 +530,12 @@ namespace mvcNestify.Controllers
                     contract.ContractID = contractModel.ContractID;
                 }
 
-                listing.ListingStatus = "Avaliable";
+                listing.ListingStatus = "Available";
 
             }
             else
             {
-                listing.ListingStatus = "Not Avaliable";
+                listing.ListingStatus = "Not Available";
                 contract.AgentID = null;
             }
 
