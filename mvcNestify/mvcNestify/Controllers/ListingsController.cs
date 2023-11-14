@@ -332,7 +332,8 @@ namespace mvcNestify.Controllers
                 SpecialFeatures = "",
                 ListingStatus = " ",
                 ContractSigned = contractModel.ContractSigned,
-                CustomerID = contractModel.CustomerID
+                CustomerID = contractModel.CustomerID,
+                Images = contractModel.Images
             };
 
             foreach (string feat in SpecialFeatures)

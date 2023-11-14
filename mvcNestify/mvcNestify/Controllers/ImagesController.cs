@@ -71,7 +71,7 @@ namespace mvcNestify.Controllers
         public async Task<IActionResult> Create([Bind("ListingId, AgentId, FileName, Description, AltText, PostedFile, IsListingImage, IsAgentImage")] Image image)
         {
             IFormFile imageFile = image.PostedFile;
-            int fileSizeLimit = 1048576;
+            int fileSizeLimit = 7000000;
             if (ModelState.IsValid)
             {
                 if (imageFile != null && imageFile.Length <= fileSizeLimit)
