@@ -291,9 +291,32 @@ namespace mvcNestify.Controllers
         {
             var agents = _context.Agents.Where(a => a.IsVerified == true);
             var customers = _context.Agents.Where(c => c.IsVerified == true);
+            // get all unused listing images
+            List<ImageSelectionViewModel> imageList =
+                _context.Image.Where(i => i.Validated && i.IsListingImage && i.ListingId == null).Select(i =>
+                new ImageSelectionViewModel
+                {
+                    ImageID = i.ImageID,
+                    Name = i.Name,
+                    FileName = i.FileName,
+                    Description = i.Description,
+                    AltText = i.AltText,
+                    UploadDateTime = i.UploadDateTime,
+                    Validated = i.Validated,
+                    StaffID = i.StaffID,
+                    Listing = i.Listing,
+                    ListingId = i.ListingId,
+                    Agent = i.Agent,
+                    AgentId = i.AgentId,
+                    IsVisible = true,
+                    IsAgentImage = i.IsAgentImage,
+                    IsListingImage = i.IsListingImage,
+                    IsSelected = false
+                }).ToList();
 
+            // create new contractviewmodel and pass along listing images
             ContractViewModel contract = new ContractViewModel();
-            contract.Images = _context.Image.Where(i => i.IsListingImage).ToList();
+            contract.ImagesToSelect = imageList;
 
             if (agents.Count() > 0)
             {
@@ -336,7 +359,7 @@ namespace mvcNestify.Controllers
                 ListingStatus = " ",
                 ContractSigned = contractModel.ContractSigned,
                 CustomerID = contractModel.CustomerID,
-                Images = contractModel.Images
+                Images = new List<Image>()
             };
 
             foreach (string feat in SpecialFeatures)
@@ -381,7 +404,16 @@ namespace mvcNestify.Controllers
 
                 _context.Listings.Add(listing);
                 await _context.SaveChangesAsync();
+                //after listing is added, add images to listing
+                List<int> additions =
+                contractModel.ImagesToSelect.Where(i => i.IsSelected).Select(i => i.ImageID).ToList();
 
+                foreach (int addition in additions)
+                {
+                    listing.Images.Add(_context.Image.Find(addition));
+                }
+                _context.Update(listing);
+                await _context.SaveChangesAsync();
 
                 string url = Url.Action("CustDetails", "Listings", new { id = listing.ListingID }, protocol: "https");
                 var message = new EmailMessage(new string[] { listing.Customer.Email },

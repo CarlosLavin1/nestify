@@ -95,7 +95,7 @@ namespace mvcNestify.Models
         public Boolean ContractSigned { get; set; }
         [Display(Name = "Listing Images")]
         public List<Image>? Images { get; set; }
-        public List<int>? ImagesToShow { get; set; }
+        public List<ImageSelectionViewModel>? ImagesToSelect { get; set; }
 
     }
     public class ListingViewModel

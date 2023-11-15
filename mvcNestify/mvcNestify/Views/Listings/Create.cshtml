@@ -114,29 +114,33 @@
 
             <div class="form-group">
                 <label asp-for="Images" class="control-label"></label>
-                @for (int i = 0; i < Model.Images?.Count; i++)
+                @for (int i = 0; i < Model.ImagesToSelect?.Count; i++)
                 {
 
                     <div class="form-check m-1">
-                        <input type="hidden" asp-for="@Model.Images[i].ImageID" />
-                        <input type="hidden" asp-for="@Model.Images[i].Name" />
-                        <input type="hidden" asp-for="@Model.Images[i].AltText" />
-                        <input type="hidden" asp-for="@Model.Images[i].Description" />
-                        <input type="hidden" asp-for="@Model.Images[i].UploadDateTime" />
-                        <input type="hidden" asp-for="@Model.Images[i].FilePath" />
-                        <input type="hidden" asp-for="@Model.Images[i].Validated" />
-                        <input type="hidden" asp-for="@Model.Images[i].StaffID" />
-                        <input type="hidden" asp-for="@Model.Images[i].ListingId" />
-                        <input type="hidden" asp-for="@Model.Images[i].Listing" />
-                        <input type="hidden" asp-for="@Model.Images[i].AgentId" />
-                        <input type="hidden" asp-for="@Model.Images[i].Agent" />
+                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].ImageID" />
+                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].Name" />
+                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].AltText" />
+                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].Description" />
+                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].UploadDateTime" />
+                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].FilePath" />
+                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].Validated" />
+                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].StaffID" />
+                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].ListingId" />
+                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].Listing" />
+                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].AgentId" />
+                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].Agent" />
 
-                        <input asp-for="@Model.Images[i].IsVisible" class="form-check-input" />
-                        <label class="form-check-label" asp-for="@Model.Images[i].IsVisible">
-                            @Model.Images[i].Name
+                        <input asp-for="@Model.ImagesToSelect[i].IsSelected" class="form-check-input" />
+                        <label class="form-check-label" asp-for="@Model.ImagesToSelect[i].IsSelected">
+                            @Model.ImagesToSelect[i].Name
                         </label>
                     </div>
-
+                }
+                @if (Model.ImagesToSelect?.Count == 0)
+                {
+                    <br />
+                    <span style="font-weight: bold;">No Listing Images Available</span>
                 }
             </div>
             <div class="form-group">

@@ -76,6 +76,7 @@ namespace mvcNestify.Controllers
             {
                 if (imageFile != null && imageFile.Length <= fileSizeLimit)
                 {
+                    bool test = image.IsListingImage;
                     // verify valid image type
                     string contentType = imageFile.ContentType;
 
@@ -147,7 +148,7 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ImageID,FilePath,Name,Description,AltText,UploadDateTime,Validated,StaffID,ListingId,AgentId")] Image image)
+        public async Task<IActionResult> Edit(int id, [Bind("ImageID,FilePath,Name,Description,AltText,UploadDateTime,Validated,StaffID,ListingId,AgentId,IsVisible,IsListingImage,IsAgentImage")] Image image)
         {
             int? temp = image.ListingId;
             if (id != image.ImageID)

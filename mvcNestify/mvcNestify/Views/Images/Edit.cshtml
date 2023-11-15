@@ -13,6 +13,10 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ImageID" />
+            <input type="hidden" asp-for="IsVisible" />
+            <input type="hidden" asp-for="IsListingImage" />
+            <input type="hidden" asp-for="IsAgentImage" />
+
             <div class="form-group">
                 <label asp-for="FilePath" class="control-label"></label>
                 <input asp-for="FilePath" class="form-control" />
