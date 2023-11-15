@@ -248,8 +248,10 @@ namespace mvcNestify.Controllers
                 .FirstOrDefaultAsync(m => m.ListingID == id);
             var contract = await _context.Contracts
                 .FirstOrDefaultAsync(m => m.ListingID == id);
-            var agent = await _context.Agents
-                .FirstOrDefaultAsync(m => m.AgentID == contract.AgentID);
+            Agent? agent = new();
+            if(listing.ContractSigned)
+                agent = await _context.Agents
+                    .FirstOrDefaultAsync(m => m.AgentID == contract.AgentID);
 
             AgentListingViewModel model = new()
             {
@@ -260,7 +262,7 @@ namespace mvcNestify.Controllers
                 OfficeEmail = agent.OfficeEmail,
                 OfficePhone = agent.OfficePhone,
                 ListingID = listing.ListingID,
-                SalesPrice = contract.SalesPrice,
+                SalesPrice = contract != null ? contract.SalesPrice : 0,
                 StreetAddress = listing.StreetAddress,
                 Municipality = listing.Municipality,
                 CityLocation = listing.CityLocation,
