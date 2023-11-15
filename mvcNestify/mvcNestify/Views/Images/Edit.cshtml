@@ -16,12 +16,13 @@
             <input type="hidden" asp-for="IsVisible" />
             <input type="hidden" asp-for="IsListingImage" />
             <input type="hidden" asp-for="IsAgentImage" />
+            <input type="hidden" asp-for="FilePath" />
 
-            <div class="form-group">
+            @* <div class="form-group">
                 <label asp-for="FilePath" class="control-label"></label>
                 <input asp-for="FilePath" class="form-control" />
                 <span asp-validation-for="FilePath" class="text-danger"></span>
-            </div>
+            </div> *@
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
