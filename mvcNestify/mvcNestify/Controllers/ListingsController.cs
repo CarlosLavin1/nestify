@@ -90,6 +90,7 @@ namespace mvcNestify.Controllers
                      listings.Select(listing =>
                      {
                          ICollection<Models.Contract> contract = listing.Contract;
+
                          if (listing.ContractSigned == true)
                          {
                              return new ListingViewModel
@@ -99,6 +100,7 @@ namespace mvcNestify.Controllers
                                  Municipality = listing.Municipality,
                                  Province = listing.Province,
                                  AgentID = contract.FirstOrDefault(c => c.ListingID == listing.ListingID).AgentID,
+                                 ListingAgent = contract.FirstOrDefault(c => c.ListingID == listing.ListingID).ListingAgent.FullName.ToString(),
                                  StartDate = contract.FirstOrDefault(c => c.ListingID == listing.ListingID).StartDate,
                                  EndDate = contract.FirstOrDefault(c => c.ListingID == listing.ListingID).EndDate,
                                  CustomerID = listing.CustomerID,
@@ -106,6 +108,7 @@ namespace mvcNestify.Controllers
                                  CustMiddleName = listing.Customer.MiddleName,
                                  CustLastName = listing.Customer.LastName
                              };
+
 
                          }
                          else
@@ -388,7 +391,7 @@ namespace mvcNestify.Controllers
                 {
                     contract = new()
                     {
-                        StartDate = (DateTime)contractModel.StartDate,
+                        StartDate = (DateTime)contractModel.StartDate + DateTime.Now.TimeOfDay,
                         SalesPrice = (decimal)contractModel.SalesPrice,
                         AgentID = contractModel.AgentID,
                         ListingID = 0
