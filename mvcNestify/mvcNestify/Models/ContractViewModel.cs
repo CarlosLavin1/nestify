@@ -7,6 +7,7 @@ namespace mvcNestify.Models
     {
         public int? ContractID { get; set; }
 
+        [DataType(DataType.Date)]
         [Display(Name = "Contract Start Date")]
         public DateTime? StartDate { get; set; }
 
@@ -118,7 +119,10 @@ namespace mvcNestify.Models
             }
         }
 
-        [Display(Name = "Agent ID")]
+        [Display(Name = "Listing Agent")]
+        public string? ListingAgent { get; set; }
+
+        [Display(Name = "Listing Agent")]
         public int? AgentID { get; set; }
 
         public int? CustomerID { get; set; }
