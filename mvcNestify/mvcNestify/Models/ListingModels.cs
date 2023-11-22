@@ -23,7 +23,7 @@ namespace mvcNestify.Models
         public string? AltText { get; set; }
         public DateTime? UploadDateTime { get; set; }
         public bool Validated { get; set; }
-        public int StaffID { get; set; }
+        public string StaffID { get; set; }
         [NotMapped]
         public IFormFile? PostedFile { get; set; }
 
