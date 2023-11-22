@@ -203,6 +203,14 @@ namespace mvcNestify.Controllers
                 return NotFound();
             }
 
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (agent.CreatorID == userId)
+            {
+                ModelState.AddModelError("IsVerified", "Creator of agent cannot verify agent.");
+                ModelState.ClearValidationState(nameof(agent));
+            }
+
             if (ModelState.IsValid)
             {
                 try

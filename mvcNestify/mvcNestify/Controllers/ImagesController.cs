@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -110,7 +111,7 @@ namespace mvcNestify.Controllers
                     image.FilePath = fullPath;
                     image.UploadDateTime = DateTime.Now;
                     image.Validated = false;
-                    image.StaffID = 20; // get staff id from authenticated staff
+                    image.StaffID = User.FindFirstValue(ClaimTypes.NameIdentifier); // get staff id from authenticated staff
                     image.IsVisible = false;
 
                     _context.Add(image);
@@ -154,6 +155,14 @@ namespace mvcNestify.Controllers
             if (id != image.ImageID)
             {
                 return NotFound();
+            }
+
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (image.StaffID == userId)
+            {
+                ModelState.AddModelError("Validated", "Creator of image cannot verify image.");
+                ModelState.ClearValidationState(nameof(image));
             }
 
             if (ModelState.IsValid)
