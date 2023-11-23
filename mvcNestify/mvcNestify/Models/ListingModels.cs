@@ -111,6 +111,12 @@ namespace mvcNestify.Models
         [Required]
         [Display(Name = "Listing Customer")]
         public int? CustomerID { get; set; }
+
+
+        [Required]
+        [DataType(DataType.Currency)]
+        [Display(Name = "Sales Price")]
+        public decimal SalesPrice { get; set; }
         public virtual Customer? Customer { get; set; }
 
         public virtual ICollection<Contract>? Contract { get; set; }
@@ -135,11 +141,6 @@ namespace mvcNestify.Models
         [Required]
         [Display(Name = "Contract End Date")]
         public DateTime EndDate { get; set; }
-
-        [Required]
-        [DataType(DataType.Currency)]
-        [Display(Name = "Sales Price")]
-        public decimal SalesPrice { get; set; }
 
         [Required]
         [ForeignKey("Agent")]

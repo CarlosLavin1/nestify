@@ -14,9 +14,6 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ListingID)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Address)
             </th>
             <th>
@@ -36,10 +33,8 @@
         {
             @foreach (var item in Model)
             {
+                <input hidden value="@Html.DisplayFor(modelItem => item.ListingID)"/>
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ListingID)
-                    </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Address)
                     </td>

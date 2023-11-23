@@ -1,38 +1,31 @@
-﻿using MailKit;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using mvcNestify.Data;
 using mvcNestify.Models;
-using NuGet.DependencyResolver;
-using NuGet.Versioning;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+using System.Security.Permissions;
 using static mvcNestify.EmailServices.EmailSender;
 
 namespace mvcNestify.Controllers
 {
-
-
 
     public class ListingsController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly IEmailSender _emailSender;
 
-        List<string> specialFeats = new()
-            {
-                "Has a Fireplace",
-                "Has a Baby Barn",
-                "Has Central Air",
-                "1 Bay Garage",
-                "2 Bay Garage",
-                "3 Bay Garage"
-            };
 
+        List<string> specialFeats = new()
+    {
+        "Has a Fireplace",
+        "Has a Baby Barn",
+        "Has Central Air",
+        "Bay Garage"
+    };
 
         List<SelectListItem> provinceOptions = new List<SelectListItem>()
             {
@@ -183,7 +176,7 @@ namespace mvcNestify.Controllers
                     OfficeEmail = agent.OfficeEmail,
                     OfficePhone = agent.OfficePhone,
                     ListingID = listing.ListingID,
-                    SalesPrice = contract.SalesPrice,
+                    SalesPrice = listing.SalesPrice,
                     StreetAddress = listing.StreetAddress,
                     Municipality = listing.Municipality,
                     CityLocation = listing.CityLocation,
@@ -211,6 +204,7 @@ namespace mvcNestify.Controllers
                 model = new()
                 {
                     ListingID = listing.ListingID,
+                    listing.SalesPrice,
                     StreetAddress = listing.StreetAddress,
                     Municipality = listing.Municipality,
                     CityLocation = listing.CityLocation,
@@ -252,7 +246,7 @@ namespace mvcNestify.Controllers
             var contract = await _context.Contracts
                 .FirstOrDefaultAsync(m => m.ListingID == id);
             Agent? agent = new();
-            if(listing.ContractSigned)
+            if (listing.ContractSigned)
                 agent = await _context.Agents
                     .FirstOrDefaultAsync(m => m.AgentID == contract.AgentID);
 
@@ -265,7 +259,7 @@ namespace mvcNestify.Controllers
                 OfficeEmail = agent.OfficeEmail,
                 OfficePhone = agent.OfficePhone,
                 ListingID = listing.ListingID,
-                SalesPrice = contract != null ? contract.SalesPrice : 0,
+                SalesPrice = listing.SalesPrice,
                 StreetAddress = listing.StreetAddress,
                 Municipality = listing.Municipality,
                 CityLocation = listing.CityLocation,
@@ -294,7 +288,9 @@ namespace mvcNestify.Controllers
         {
             var agents = _context.Agents.Where(a => a.IsVerified == true);
             var customers = _context.Agents.Where(c => c.IsVerified == true);
+
             // get all unused listing images
+
             List<ImageSelectionViewModel> imageList =
                 _context.Image.Where(i => i.Validated && i.IsListingImage && i.ListingId == null).Select(i =>
                 new ImageSelectionViewModel
@@ -318,7 +314,22 @@ namespace mvcNestify.Controllers
                 }).ToList();
 
             // create new contractviewmodel and pass along listing images
-            ContractViewModel contract = new ContractViewModel();
+
+
+            List<SpecialFeaturesViewModel> feats =
+                specialFeats.Select(feat =>
+                new SpecialFeaturesViewModel
+                {
+                    Feature = feat,
+                    IsSeleted = false
+                }).ToList();
+
+
+            ContractViewModel contract = new()
+            {
+                ImagesToSelect = imageList,
+                SpecialFeatures = feats
+            };
             contract.ImagesToSelect = imageList;
 
             if (agents.Count() > 0)
@@ -328,11 +339,11 @@ namespace mvcNestify.Controllers
             else
             {
                 ModelState.AddModelError("AgentID", "No verifed agents in the system.");
+                ModelState.ClearValidationState(nameof(contract));
             }
 
             ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", id);
             ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
-            ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats);
             return View(contract);
         }
 
@@ -341,7 +352,7 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ContractViewModel contractModel, List<string> SpecialFeatures)
+        public async Task<IActionResult> Create(ContractViewModel contractModel)
         {
             Models.Contract contract = new();
 
@@ -351,6 +362,7 @@ namespace mvcNestify.Controllers
                 Municipality = contractModel.Municipality,
                 CityLocation = contractModel.CityLocation,
                 Province = contractModel.Province,
+                SalesPrice = (decimal)contractModel.SalesPrice,
                 PostalCode = contractModel.PostalCode,
                 Footage = contractModel.Footage,
                 NumOfBaths = contractModel.NumOfBaths,
@@ -358,16 +370,35 @@ namespace mvcNestify.Controllers
                 NumOfStories = contractModel.NumOfStories,
                 TypeOfHeating = contractModel.TypeOfHeating,
                 Features = contractModel.Features,
-                SpecialFeatures = "",
-                ListingStatus = " ",
                 ContractSigned = contractModel.ContractSigned,
                 CustomerID = contractModel.CustomerID,
                 Images = new List<Image>()
             };
 
-            foreach (string feat in SpecialFeatures)
-                listing.SpecialFeatures += $"{feat}. ";
+            for (int i = 0; i < contractModel.SpecialFeatures.Count; i++)
+            {
+                if (contractModel.SpecialFeatures[i].IsSeleted)
+                {
+                    if (contractModel.SpecialFeatures[i].Feature == "Garage")
+                    {
+                        if (contractModel.SpecialFeatures[i].NumOfBays == null || contractModel.SpecialFeatures[i].NumOfBays < 0)
+                        {
+                            ModelState.AddModelError("NumOfBays", "Number of garage bays must be a number greater than 0");
+                            ModelState.ClearValidationState(nameof(contractModel));
+                        }
+                        else
+                        {
+                            listing.SpecialFeatures += $"{contractModel.SpecialFeatures[i].NumOfBays} " +
+                                                       $"{contractModel.SpecialFeatures[i].Feature}. ";
+                        }
 
+                    }
+                    else
+                    {
+                        listing.SpecialFeatures += $"{contractModel.SpecialFeatures[i].Feature}. ";
+                    }
+                }
+            }
 
             var customer = _context.Customers.FirstOrDefault(cust => cust.CustomerID == listing.CustomerID);
 
@@ -384,15 +415,18 @@ namespace mvcNestify.Controllers
 
             }
 
-            if (ModelState.IsValid)
+            if (listing.ContractSigned)
             {
-
-                if (listing.ContractSigned)
+                if (contractModel.AgentID == null)
+                {
+                    ModelState.AddModelError("AgentID", $"Cannot make a contract without an agent selected");
+                    ModelState.ClearValidationState(nameof(contractModel));
+                }
+                else
                 {
                     contract = new()
                     {
-                        StartDate = (DateTime)contractModel.StartDate + DateTime.Now.TimeOfDay,
-                        SalesPrice = (decimal)contractModel.SalesPrice,
+                        StartDate = DateTime.Now,
                         AgentID = contractModel.AgentID,
                         ListingID = 0
                     };
@@ -400,21 +434,29 @@ namespace mvcNestify.Controllers
                     listing.ListingStatus = "Available";
                     contract.EndDate = contract.StartDate.AddMonths(3);
                 }
-                else
-                {
-                    listing.ListingStatus = "Not Available";
-                }
+
+            }
+            else
+            {
+                listing.ListingStatus = "Not Available";
+            }
+
+            if (ModelState.IsValid)
+            {
 
                 _context.Listings.Add(listing);
                 await _context.SaveChangesAsync();
                 //after listing is added, add images to listing
-                List<int> additions =
-                contractModel.ImagesToSelect.Where(i => i.IsSelected).Select(i => i.ImageID).ToList();
 
-                foreach (int addition in additions)
-                {
-                    listing.Images.Add(_context.Image.Find(addition));
-                }
+
+                //List<int> additions =
+                //contractModel.ImagesToSelect.Where(i => i.IsSelected).Select(i => i.ImageID).ToList();
+
+                //foreach (int addition in additions)
+                //{
+                //    listing.Images.Add(_context.Image.Find(addition));
+                //}
+
                 _context.Update(listing);
                 await _context.SaveChangesAsync();
 
@@ -425,7 +467,7 @@ namespace mvcNestify.Controllers
                     $"Thank you, \n" +
                     $"From the Nestify Staff");
 
-                if (listing.ListingStatus == "Available")
+                if (contract != null)
                 {
                     contract.ListingID = listing.ListingID;
                     _context.Contracts.Add(contract);
@@ -437,9 +479,8 @@ namespace mvcNestify.Controllers
 
             }
 
-            ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, listing.SpecialFeatures);
             ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
-            ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
+            ViewData["AgentID"] = new SelectList(_context.Agents.Where(a => a.IsVerified), "AgentID", "FullName", contract.AgentID);
             ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text", listing.Province);
             return View(contractModel);
         }
@@ -464,6 +505,43 @@ namespace mvcNestify.Controllers
                 return NotFound();
             }
 
+            List<string>? specialFeatures = listing.SpecialFeatures?.Split('.').Select(feat => feat.Trim()).ToList();
+            List<SpecialFeaturesViewModel> feats = new();
+
+            if (specialFeatures != null)
+            {
+                int? numOfBays = 0;
+                if (specialFeatures.Contains("Bay Garage"))
+                {
+                    string garage = specialFeatures.Where(s => s.Contains("Bay Garage")).FirstOrDefault().ToString();
+
+                    numOfBays = Convert.ToInt32(garage?.Substring(1));
+                }
+
+                feats =
+                   specialFeats.Select(feat =>
+                   new SpecialFeaturesViewModel
+                   {
+                       Feature = feat,
+                       IsSeleted = specialFeatures.Contains(feat),
+                       NumOfBays = numOfBays
+                      
+                   }).ToList();
+
+                
+            }
+            else
+            {
+                feats =
+                    specialFeats.Select(feat =>
+                    new SpecialFeaturesViewModel
+                    {
+                        Feature = feat,
+                        IsSeleted = false
+                    }).ToList();
+            }
+
+
             model = new()
             {
                 ListingID = listing.ListingID,
@@ -479,11 +557,14 @@ namespace mvcNestify.Controllers
                 NumOfStories = listing.NumOfStories,
                 TypeOfHeating = listing.TypeOfHeating,
                 Features = listing.Features,
-                SpecialFeatures = listing.SpecialFeatures,
+                SpecialFeatures = feats,
                 ListingStatus = listing.ListingStatus,
                 ContractSigned = listing.ContractSigned,
-                Images = listing.Images
+                Images = listing.Images,
+                SalesPrice = listing.SalesPrice
             };
+
+
 
             ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName");
 
@@ -492,18 +573,14 @@ namespace mvcNestify.Controllers
                 model.ContractID = contract.ContractID;
                 model.StartDate = contract.StartDate;
                 model.EndDate = contract.EndDate;
-                model.SalesPrice = contract.SalesPrice;
                 model.AgentID = contract.AgentID;
 
                 ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
             }
 
-            List<string> specialFeatures = model.SpecialFeatures.Split('.').Select(feat => feat.Trim()).ToList();
 
-            ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, specialFeatures); ;
             ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text", listing.Province);
             ViewData["CustomerID"] = _context.Customers.FirstOrDefault(c => c.CustomerID == listing.CustomerID).FullName;
-
 
             return View(model);
         }
@@ -513,7 +590,7 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ContractViewModel contractModel, List<string> SpecialFeatures)
+        public async Task<IActionResult> Edit(int id, ContractViewModel contractModel)
         {
             Listing listing = new()
             {
@@ -524,21 +601,41 @@ namespace mvcNestify.Controllers
                 Province = contractModel.Province,
                 PostalCode = contractModel.PostalCode,
                 Footage = contractModel.Footage,
+                SalesPrice = (decimal)contractModel.SalesPrice,
                 NumOfBaths = contractModel.NumOfBaths,
                 NumOfRooms = contractModel.NumOfRooms,
                 NumOfStories = contractModel.NumOfStories,
                 TypeOfHeating = contractModel.TypeOfHeating,
                 Features = contractModel.Features,
-                SpecialFeatures = null,
-                ListingStatus = null,
                 ContractSigned = contractModel.ContractSigned,
                 CustomerID = contractModel.CustomerID,
                 Images = contractModel.Images,
             };
 
+            for (int i = 0; i < contractModel.SpecialFeatures.Count; i++)
+            {
+                if (contractModel.SpecialFeatures[i].IsSeleted)
+                {
+                    if (contractModel.SpecialFeatures[i].Feature == "Bay Garage")
+                    {
+                        if (contractModel.SpecialFeatures[i].NumOfBays == null || contractModel.SpecialFeatures[i].NumOfBays <= 0)
+                        {
+                            ModelState.AddModelError("SpecialFeatures", "Number of garage bays must be a number greater than 0");
+                            ModelState.ClearValidationState(nameof(contractModel));
+                        }
+                        else
+                        {
+                            listing.SpecialFeatures += $"{contractModel.SpecialFeatures[i].NumOfBays} " +
+                                                       $"{contractModel.SpecialFeatures[i].Feature}. ";
+                        }
 
-            foreach (string feat in SpecialFeatures)
-                listing.SpecialFeatures += $"{feat}. ";
+                    }
+                    else
+                    {
+                        listing.SpecialFeatures += $"{contractModel.SpecialFeatures[i].Feature}. ";
+                    }
+                }
+            }
 
 
             Models.Contract contract = new();
@@ -554,8 +651,7 @@ namespace mvcNestify.Controllers
                 contract = new()
                 {
                     StartDate = (DateTime)contractModel.StartDate,
-                    SalesPrice = (decimal)contractModel.SalesPrice,
-                    EndDate  = (DateTime)contractModel.StartDate,
+                    EndDate = (DateTime)contractModel.StartDate,
                     ListingID = listing.ListingID,
                     AgentID = contractModel.AgentID,
                 };
@@ -635,11 +731,7 @@ namespace mvcNestify.Controllers
                 }
             }
 
-            List<string> specialFeatures = listing.SpecialFeatures.Split('.').Select(feat => feat.Trim()).ToList();
-
-            ViewData["SpecialFeatures"] = new MultiSelectList(specialFeats, listing.SpecialFeatures);
             ViewData["CustomerID"] = _context.Customers.FirstOrDefault(c => c.CustomerID == listing.CustomerID).FullName;
-            //ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", listing.CustomerID);
             ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
             ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text");
             //view expects contractviewmodel
