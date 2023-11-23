@@ -68,7 +68,7 @@
                 <label asp-for="TypeOfHeating" class="control-label"></label>
                 <select asp-for="TypeOfHeating" class="form-control">
                     <option disabled selected>-- SELECT FROM BELOW --</option>
-                    <option value="Eletric">Electric</option>
+                    <option value="Electric">Electric</option>
                     <option value="Gas">Gas</option>
                     <option value="Heat Pump">Heat Pump</option>
                     <option value="Oil Furnace">Oil Furance</option>
@@ -87,10 +87,34 @@
                 <span asp-validation-for="Features" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="SpecialFeatures" class="control-label">Select applicable special features:</label>
-                @Html.ListBox("SpecialFeatures", null, htmlAttributes: new{@class="form-control"})
-                <span asp-validation-for="SpecialFeatures" class="text-danger"></span>
+                <h4>Special Features:</h4>
+                @for (int i = 0; i < Model.SpecialFeatures?.Count; i++)
+                {
+                    <div class="form-check m-1">
+                        <input hidden asp-for="@Model.SpecialFeatures[i].Feature">
+                        @if (Model.SpecialFeatures[i].Feature == "Bay Garage")
+                        {
+                            <input asp-for="@Model.SpecialFeatures[i].IsSeleted" class="form-check-input">
+                            <label class="form-check-label" asp-for="@Model.SpecialFeatures[i].IsSeleted">
+                                Garage
+                            </label>
+                            <div class="form-group">
+                                <label asp-for="@Model.SpecialFeatures[i].NumOfBays" class="control-label">Number of Garage Bays</label>
+                                <input asp-for="@Model.SpecialFeatures[i].NumOfBays" class="form-control" />
+                            </div>
+                        }
+                        else
+                        {
+                            <input asp-for="@Model.SpecialFeatures[i].IsSeleted" class="form-check-input">
+                            <label class="form-check-label" asp-for="@Model.SpecialFeatures[i].IsSeleted">
+                                @Model.SpecialFeatures[i].Feature
+                            </label>
+                        }
+                    </div>
+
+                }
             </div>
+            <span asp-validation-for="SpecialFeatures" class="text-danger"></span>
             <div class="form-group">
                 <label asp-for="ListingStatus" class="control-label"></label>
                 <input asp-for="ListingStatus" class="form-control" readonly />
