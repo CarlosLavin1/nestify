@@ -204,7 +204,7 @@ namespace mvcNestify.Controllers
                 model = new()
                 {
                     ListingID = listing.ListingID,
-                    listing.SalesPrice,
+                    SalesPrice = listing.SalesPrice,
                     StreetAddress = listing.StreetAddress,
                     Municipality = listing.Municipality,
                     CityLocation = listing.CityLocation,
@@ -566,7 +566,7 @@ namespace mvcNestify.Controllers
 
 
 
-            ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName");
+            ViewData["AgentID"] = new SelectList(_context.Agents.Where(a => a.IsVerified == true), "AgentID", "FullName");
 
             if (contract != null)
             {
@@ -575,7 +575,7 @@ namespace mvcNestify.Controllers
                 model.EndDate = contract.EndDate;
                 model.AgentID = contract.AgentID;
 
-                ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", contract.AgentID);
+                ViewBag.AgentId = contract.ListingAgent.FullName;
             }
 
 
