@@ -21,9 +21,10 @@ namespace mvcNestify.Models
         [Required(ErrorMessage = "Alternate text is required")]
         [Display(Name = "Alternate Text")]
         public string? AltText { get; set; }
+        [Display(Name = "Upload Time")]
         public DateTime? UploadDateTime { get; set; }
         public bool Validated { get; set; }
-        public string StaffID { get; set; }
+        public string? StaffID { get; set; }
         [NotMapped]
         public IFormFile? PostedFile { get; set; }
 

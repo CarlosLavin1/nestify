@@ -28,17 +28,19 @@
                 @Html.DisplayNameFor(model => model.UploadDateTime)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Validated)
+                Verified
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StaffID)
+                Uploaded By
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
+            List<Microsoft.AspNetCore.Identity.IdentityUser> staff = ViewBag.Staff;
+            var name = staff.First(s => s.Id == item.StaffID).Email;
+            <tr>
             @* <td>
                 @Html.DisplayFor(modelItem => item.FilePath)
             </td> *@
@@ -58,13 +60,14 @@
                 @Html.DisplayFor(modelItem => item.Validated)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StaffID)
+                @name
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ImageID">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.ImageID">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.ImageID">Delete</a>
             </td>
+           
         </tr>
 }
     </tbody>
