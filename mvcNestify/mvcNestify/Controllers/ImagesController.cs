@@ -5,6 +5,7 @@ using System.Net.Mime;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using mvcNestify.Data;
@@ -26,6 +27,8 @@ namespace mvcNestify.Controllers
         // GET: Images
         public async Task<IActionResult> Index()
         {
+            List<Microsoft.AspNetCore.Identity.IdentityUser> users = _context.Users.ToList();
+            ViewBag.Staff = users;
               return _context.Image != null ? 
                           View(await _context.Image.ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.Image'  is null.");
@@ -125,6 +128,7 @@ namespace mvcNestify.Controllers
                 return View("Confirmation");
 
             }
+            IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
             return View(image);
         }
 

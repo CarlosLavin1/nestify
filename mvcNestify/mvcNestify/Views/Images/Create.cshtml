@@ -27,14 +27,12 @@
             <div id="UploadSection" style="display: none;">
                 <hr />
                 <label>
-                    @* <input type="radio" name="radioGroup" value="AgentImage" id="UploadAgentImage" checked> *@
-                    @Html.CheckBoxFor(m => m.IsAgentImage)
+                    @Html.CheckBoxFor(m => m.IsAgentImage, new { id = "image"})
                     Upload Agent Image
                 </label>
 
                 <label>
-                    @* <input type="radio" name="radioGroup" value="ListingImage" id="UploadListingImage"> *@
-                    @Html.CheckBoxFor(m => m.IsListingImage)
+                    @Html.CheckBoxFor(m => m.IsListingImage, new { id = "listing"})
                     Upload Listing Image
                 </label>
             </div>
@@ -105,7 +103,7 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     @* Disabled checkbox when the other is selected *@
-    <script>
+    <script defer>
         const uploadButton = document.getElementById('UploadImage');
         const showAgentsListingsButton = document.getElementById('ShowAgentListing');
 
@@ -131,6 +129,25 @@
         listingButton.addEventListener('change', function () {
             document.getElementById('ListingList').style.display = 'block';
             document.getElementById('AgentList').style.display = 'none';
+        });
+
+        let c1 = document.getElementById('agent');
+        let c2 = document.getElementById('listing');
+        c1.addEventListener('change', function () {
+            console.log('agent selected')
+            if (this.checked) {
+                c2.disabled = true;
+            } else {
+                c2.disabled = false;
+            }
+        });
+
+        c2.addEventListener('change', function () {
+            if (this.checked) {
+                c1.disabled = true;
+            } else {
+                c1.disabled = false;
+            }
         });
     </script>
 }
