@@ -4,57 +4,85 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<style>
+    @@media(min-width: 1205px) {
+        .grid-container {
+            display: grid;
+            justify-items: center;
+            grid-template-columns: 35% auto;
+            gap: 0%;
+        }
+
+        .grid-item-1 {
+            grid-column: 1;
+        }
+
+        .grid-item-2 {
+            grid-column: 2;
+            width:90%;
+        }
+    }
+</style>
 
 <div>
-    <h4>Showing</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Customer)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Customer.FullName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Listing)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Listing.Address)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Date)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Date)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartTime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartTime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EndTime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EndTime)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Agent)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Agent.FullName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Comments)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Comments)
-        </dd>
-    </dl>
-</div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Edit", "Edit", new { customerID = Model.CustomerID, listingID = Model.ListingID })  |
     <a asp-action="Index">Back to List</a>
 </div>
+
+<h1 class="form-h1">Showing Details:</h1>
+<div class="grid-container">
+    <div class="grid-item-1">
+        <h4>Viewing Details:</h4>
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Customer)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Customer.FullName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Listing)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Listing.Address)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Agent)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Agent.FullName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Comments)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Comments)
+            </dd>
+        </dl>
+    </div>
+    <div class="grid-item-2">
+        <h4>Date & Time:</h4>
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Date)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Date)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.StartTime)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.StartTime)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.EndTime)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.EndTime)
+            </dd>
+
+        </dl>
+    </div>
+</div>
+
