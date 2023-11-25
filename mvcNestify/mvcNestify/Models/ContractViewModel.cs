@@ -15,6 +15,7 @@ namespace mvcNestify.Models
         public DateTime? EndDate { get; set; }
 
         [DataType(DataType.Currency)]
+        [Required(ErrorMessage ="A sales price for the listing is required.")]
         [Display(Name = "Sales Price")]
         public decimal? SalesPrice { get; set; }
         
@@ -173,6 +174,8 @@ namespace mvcNestify.Models
         [DataType(DataType.Currency)]
         [Display(Name = "Sales Price")]
         public decimal SalesPrice { get; set; }
+
+        public List<Image>? Images { get; set; }
 
         [Display(Name = "Listing ID")]
         public int? ListingID { get; set; }

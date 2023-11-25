@@ -510,13 +510,13 @@ namespace mvcNestify.Controllers
 
             if (specialFeatures != null)
             {
-                int? numOfBays = 0;
-                if (specialFeatures.Contains("Bay Garage"))
-                {
-                    string garage = specialFeatures.Where(s => s.Contains("Bay Garage")).FirstOrDefault().ToString();
+                //int? numOfBays = 0;
+                //if (specialFeatures.Contains("Bay Garage"))
+                //{
+                //    string garage = specialFeatures.Where(s => s.Contains("Bay Garage")).FirstOrDefault().ToString();
 
-                    numOfBays = Convert.ToInt32(garage?.Substring(1));
-                }
+                //    numOfBays = Convert.ToInt32(garage?.Substring(1));
+                //}
 
                 feats =
                    specialFeats.Select(feat =>
@@ -524,7 +524,7 @@ namespace mvcNestify.Controllers
                    {
                        Feature = feat,
                        IsSeleted = specialFeatures.Contains(feat),
-                       NumOfBays = numOfBays
+                       NumOfBays = 0
                       
                    }).ToList();
 
@@ -565,9 +565,6 @@ namespace mvcNestify.Controllers
             };
 
 
-
-            ViewData["AgentID"] = new SelectList(_context.Agents.Where(a => a.IsVerified == true), "AgentID", "FullName");
-
             if (contract != null)
             {
                 model.ContractID = contract.ContractID;
@@ -575,11 +572,16 @@ namespace mvcNestify.Controllers
                 model.EndDate = contract.EndDate;
                 model.AgentID = contract.AgentID;
 
-                ViewBag.AgentId = contract.ListingAgent.FullName;
+                ViewBag.AgentName = contract.ListingAgent.FullName;
+            }
+            else 
+            {
+                ViewData["AgentID"] = new SelectList(_context.Agents.Where(a => a.IsVerified == true), "AgentID", "FullName");
             }
 
 
             ViewData["ProvinceOptions"] = new SelectList(provinceOptions, "Value", "Text", listing.Province);
+
             ViewData["CustomerID"] = _context.Customers.FirstOrDefault(c => c.CustomerID == listing.CustomerID).FullName;
 
             return View(model);
@@ -648,23 +650,27 @@ namespace mvcNestify.Controllers
 
             if (!!listing.ContractSigned)
             {
-                contract = new()
+                if (contractModel.ContractID == null)
                 {
-                    StartDate = (DateTime)contractModel.StartDate,
-                    EndDate = (DateTime)contractModel.StartDate,
-                    ListingID = listing.ListingID,
-                    AgentID = contractModel.AgentID,
-                };
+                    contract = new()
+                    {
+                        StartDate = DateTime.Now,
+                        EndDate = (DateTime)contractModel.StartDate,
+                        ListingID = listing.ListingID,
+                        AgentID = contractModel.AgentID,
+                    };
 
-                contract.EndDate = contract.EndDate.AddMonths(3);
-
-                if (contractModel.ContractID != null)
-                {
-                    contract.ContractID = contractModel.ContractID;
+                    contract.EndDate = contract.EndDate.AddMonths(3);
+                    listing.ListingStatus = "Available";
                 }
-
-                listing.ListingStatus = "Available";
-
+                else 
+                {
+                    contract = new()
+                    {
+                        ContractID = contractModel.ContractID
+                    };
+                    listing.ListingStatus = "Available";
+                }
             }
             else
             {
@@ -692,16 +698,12 @@ namespace mvcNestify.Controllers
 
                     await _context.SaveChangesAsync();
 
-                    if (contract.ContractID != null)
-                    {
-                        _context.Update(contract);
-                        await _context.SaveChangesAsync();
-                    }
-                    else
+                    if (contract.ContractID == null)
                     {
                         _context.Add(contract);
                         await _context.SaveChangesAsync();
                     }
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {

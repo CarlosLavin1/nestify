@@ -4,75 +4,74 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>View Listings</h1>
+<style>
+    @@media(min-width: 1205px) {
+        .grid-container {
+            display: grid;
+            justify-items: center;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(1, auto);
+        }
+    }
+
+    .grid-container {
+        display: grid;
+        justify-content: center;
+    }
+
+    .card {
+        background-color: #ABDAFC;
+    }
+
+    .card:hover, .btn:hover {
+        background-color: #E0E1A1;
+    }
+
+    .listingLink {
+        color: black;
+        text-decoration: none;
+    }
+
+    ul {
+        list-style: none;
+    }
+</style>
+
+<h1>Listings:</h1>
 <div>
-    <a asp-controller="Showings" asp-action="Index">View Showings</a> 
+    <a asp-controller="Showings" asp-action="Index">View Showings</a>
 </div>
 
-<p>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.StreetAddress)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Municipality)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Province)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NumOfBaths)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NumOfRooms)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NumOfStories)
-            </th>
-            <th>
-                Images
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {       
-            <tr>
-                <td>
-                @Html.DisplayFor(modelItem => item.StreetAddress)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Municipality)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Province)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumOfBaths)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumOfRooms)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumOfStories)
-            </td>
-            <td>
+
+<div class="grid-container">
+    @foreach (var item in Model)
+    {
+        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row g-0 ml-4">
+                <div class="col-md-4">
                     @foreach (var image in item.Images.Where(i => i.Validated && i.IsVisible).ToList())
                     {
-                        <img src="~/Uploads/TempFiles/@image.Name" alt="@image.AltText" height="50px">
+                        <img src="~/Uploads/TempFiles/@image.Name" alt="@image.AltText" width="100%" height="min-content">
                     }
                     @if (item.Images.Where(i => i.Validated && i.IsVisible).ToList().Count == 0)
                     {
-                        <img src="~/assets/NoImageFound.png" alt="NoImageFound" height="80px">
+                        <img src="~/assets/NoImageFound.png" alt="NoImageFound" width="100%" height="min-content">
                     }
-                </td>
-            <td>
-                <a asp-action="CustDetails" asp-route-id="@item.ListingID">Details</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                </div>
+                <div class="col-md-7">
+                    <div class="card-body">
+                        <h5 class="card-title"> @Html.DisplayFor(modelItem => item.Address)</h5>
+                        <ul>
+                            <li><b>@Html.DisplayNameFor(model => model.NumOfBaths):</b> @Html.DisplayFor(modelItem => item.NumOfBaths)</li>
+                            <li><b>@Html.DisplayNameFor(model => model.NumOfRooms):</b> @Html.DisplayFor(modelItem => item.NumOfRooms)</li>
+                            <li><b>@Html.DisplayNameFor(model => model.NumOfStories):</b> @Html.DisplayFor(modelItem => item.NumOfStories)</li>
+                            <li><b>Active Listings:</b> @item.Contract.Count()</li>
+                        </ul>
+                        <a asp-action="CustDetails" class="listingLink" asp-route-id="@item.ListingID">View Listing</a> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

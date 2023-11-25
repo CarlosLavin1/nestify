@@ -4,150 +4,159 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<style>
+    @@media(min-width: 1205px) {
+        .grid-container {
+            grid-template-rows: 1fr 1fr;
+            display: grid;
+            justify-items: center;
+            grid-template-columns: 66% auto;
+            gap: 0%;
+        }
 
-<div>
-    <h4>Listing</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StreetAddress)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StreetAddress)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Municipality)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Municipality)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Province)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Province)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PostalCode)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PostalCode)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CityLocation)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CityLocation)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Footage)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Footage)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NumOfBaths)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NumOfBaths)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NumOfRooms)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NumOfRooms)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NumOfStories)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NumOfStories)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TypeOfHeating)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TypeOfHeating)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Features)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Features)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SpecialFeatures)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SpecialFeatures)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ListingStatus)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ListingStatus)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.SalesPrice)
-        </dt>
-        @if (Model.SalesPrice > 0)
-        {
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.SalesPrice)
-            </dd>
+        .grid-item-1 {
+            grid-column: 1/2;
+            border-bottom: black dashed 1px;
         }
-        else
-        {
-            <dd class="col-sm-so"></dd>
+
+        .grid-item-2 {
+            grid-column: 1;
+            grid-row: 2;
+            border-bottom: black dashed 1px;
         }
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ContractSigned)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ContractSigned)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CustomerFullName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CustomerFullName)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AgentFullName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.AgentFullName)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.OfficeEmail)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.OfficeEmail)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.OfficePhone)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.OfficePhone)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
-    </dl>
-</div>
+
+        .grid-item-3 {
+            grid-row: 2;
+            grid-column: 2;
+        }
+    }
+</style>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.ListingID">Edit</a> |
     <a asp-action="Index">View Listings</a> |
     @Html.ActionLink("Back To Customer", "Select", new { id = Model.CustomerID})
 </div>
+<h1>Property Details:</h1>
+<h4 style="border-bottom: black 2px solid; margin-bottom: 5%;">  @Html.DisplayFor(model => model.Address)</h4>
+
+<div class="grid-container">
+    <div class="grid-item-1">
+        <dl class="row">
+            <h4>Property Information:</h4>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CityLocation)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CityLocation)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Footage)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Footage)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.NumOfBaths)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.NumOfBaths)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.NumOfRooms)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.NumOfRooms)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.NumOfStories)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.NumOfStories)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.TypeOfHeating)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.TypeOfHeating)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Features)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Features)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.SpecialFeatures)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.SpecialFeatures)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.ListingStatus)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.ListingStatus)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.SalesPrice)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.SalesPrice)
+            </dd>
+        </dl>
+    </div>
+    <div class="grid-item-2">
+        <dl class="row">
+            <h4>Contract Information:</h4>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.ContractSigned)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.ContractSigned)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.StartDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.StartDate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.EndDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.EndDate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CustomerFullName)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CustomerFullName)
+            </dd>
+        </dl>
+    </div>
+    <div class="grid-item-3">
+        <dl class="row">
+            <h4>Listing Agent Information:</h4>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.AgentFullName)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.AgentFullName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.OfficeEmail)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.OfficeEmail)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.OfficePhone)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.OfficePhone)
+            </dd>
+
+        </dl>
+    </div>
+</div>
+
