@@ -4,107 +4,117 @@
     ViewData["Title"] = "CustDetails";
 }
 
+<style>
+    @@media(min-width: 1205px) {
+        .grid-container {
+            display: grid;
+            justify-items: start;
+            grid-template-columns: auto 4fr;
+            gap: 1%;
+        }
+
+        .column-1 {
+            border-radius: 20px;
+            background-color: #ABDAFC;
+        }
+    }
+
+</style>
+<a asp-action="Index">Back to List</a>
 <h1>@Html.DisplayFor(l => l.Address)</h1>
 
-<div>
-    <h4>Listing</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StreetAddress)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StreetAddress)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Municipality)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Municipality)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Province)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Province)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PostalCode)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PostalCode)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CityLocation)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CityLocation)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Footage)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Footage)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NumOfBaths)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NumOfBaths)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NumOfRooms)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NumOfRooms)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NumOfStories)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NumOfStories)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TypeOfHeating)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TypeOfHeating)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Features)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Features)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SpecialFeatures)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SpecialFeatures)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AgentFullName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.AgentFullName)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.OfficeEmail)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.OfficeEmail)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.OfficePhone)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.OfficePhone)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.ListingID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<div class="grid-container">
+    <div class="column-1">
+        <h4>Property Information:</h4>
+        <dl class="row">
+
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CityLocation)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CityLocation)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Footage)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Footage)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.NumOfBaths)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.NumOfBaths)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.NumOfRooms)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.NumOfRooms)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.NumOfStories)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.NumOfStories)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.TypeOfHeating)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.TypeOfHeating)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Features)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Features)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.SpecialFeatures)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.SpecialFeatures)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.SalesPrice)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.SalesPrice)
+            </dd>
+        </dl>
+        <h4>Listing Agent:</h4>
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.AgentFullName)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.AgentFullName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.OfficeEmail)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.OfficeEmail)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.OfficePhone)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.OfficePhone)
+            </dd>
+        </dl>
+    </div>
+   @*  <div class="grid-column-2">
+        @if (Model.Images.Count() == 0)
+        {
+            <img src="~/assets/NoImageFound.png" alt="NoImageFound" width="100%" height="min-content">
+        }
+        else
+        {
+            @foreach (var image in Model.Images.Where(i => i.Validated && i.IsVisible).ToList())
+            {
+                <img src="~/Uploads/TempFiles/@image.Name" alt="@image.AltText" width="100%" height="min-content">
+            }
+        }
+    </div> *@

@@ -4,173 +4,179 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
 
-<h4>Listing</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="StreetAddress" class="control-label"></label>
-                <input asp-for="StreetAddress" class="form-control" />
-                <span asp-validation-for="StreetAddress" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Municipality" class="control-label"></label>
-                <input asp-for="Municipality" class="form-control" />
-                <span asp-validation-for="Municipality" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Province" class="control-label"></label>
-                <select asp-for="Province" class="form-control" asp-items="ViewBag.ProvinceOptions"></select>
-                <span asp-validation-for="Province" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PostalCode" class="control-label"></label>
-                <input asp-for="PostalCode" class="form-control" />
-                <span asp-validation-for="PostalCode" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CityLocation" class="control-label"></label>
-                <select asp-for="CityLocation" class="form-control">
-                    <option disabled selected>-- SELECT A LOCATION --</option>
-                    <option value="North">North</option>
-                    <option value="East">East</option>
-                    <option value="South">South</option>
-                    <option value="West">West</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Footage" class="control-label"></label>
-                <input asp-for="Footage" class="form-control" />
-                <span asp-validation-for="Footage" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NumOfBaths" class="control-label"></label>
-                <input asp-for="NumOfBaths" class="form-control" />
-                <span asp-validation-for="NumOfBaths" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NumOfRooms" class="control-label"></label>
-                <input asp-for="NumOfRooms" class="form-control" />
-                <span asp-validation-for="NumOfRooms" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NumOfStories" class="control-label"></label>
-                <input asp-for="NumOfStories" class="form-control" />
-                <span asp-validation-for="NumOfStories" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TypeOfHeating" class="control-label"></label>
-                <select asp-for="TypeOfHeating" class="form-control">
-                    <option disabled selected>-- SELECT HEATING TYPE --</option>
-                    <option value="Electric">Electric</option>
-                    <option value="Gas">Gas</option>
-                    <option value="Heat Pump">Heat Pump</option>
-                    <option value="Oil Furnace">Oil Furance</option>
-                    <option value="Oil Furnace">Wood Furance</option>
-                    <option value="Geothermal">Geothermal</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Features" class="control-label"></label>
-                <textarea asp-for="Features" class="form-control"></textarea>
-                <span asp-validation-for="Features" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <h4>Special Features:</h4>
-                @for (int i = 0; i < Model.SpecialFeatures?.Count; i++)
-                {
-                    <div class="form-check m-1">
-                        <input hidden asp-for="@Model.SpecialFeatures[i].Feature">
-                        @if (Model.SpecialFeatures[i].Feature == "Bay Garage")
-                        {
-                            <input asp-for="@Model.SpecialFeatures[i].IsSeleted" class="form-check-input">
-                            <label class="form-check-label" asp-for="@Model.SpecialFeatures[i].IsSeleted">
-                                Garage
-                            </label>
-                            <div class="form-group">
-                                <label asp-for="@Model.SpecialFeatures[i].NumOfBays" class="control-label">Number of Garage Bays</label>
-                                <input asp-for="@Model.SpecialFeatures[i].NumOfBays" class="form-control" />
-                            </div>
-                        }
-                        else
-                        {
-                            <input asp-for="@Model.SpecialFeatures[i].IsSeleted" class="form-check-input">
-                            <label class="form-check-label" asp-for="@Model.SpecialFeatures[i].IsSeleted">
-                                @Model.SpecialFeatures[i].Feature
-                            </label>
-                        }
-                    </div>
-
-                }
-                <span asp-validation-for="SpecialFeatures" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SalesPrice" class="control-label"></label>
-                <input asp-for="SalesPrice" class="form-control" />
-                <span asp-validation-for="SalesPrice" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="ContractSigned" /> @Html.DisplayNameFor(model => model.ContractSigned)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="AgentID" class="control-label"></label>
-                <select asp-for="AgentID" class="form-control" asp-items="ViewBag.AgentID">
-                    <option disabled selected>-- SELECT CONTRACT AGENT --</option>
-                </select>
-                <span asp-validation-for="AgentID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CustomerID" class="control-label"></label>
-                <select asp-for="CustomerID" class="form-control" asp-items="ViewBag.CustomerID"></select>
-                <span asp-validation-for="CustomerID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Images" class="control-label"></label>
-                @for (int i = 0; i < Model.ImagesToSelect?.Count; i++)
-                {
-
-                    <div class="form-check m-1">
-                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].ImageID" />
-                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].Name" />
-                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].AltText" />
-                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].Description" />
-                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].UploadDateTime" />
-                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].FilePath" />
-                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].Validated" />
-                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].StaffID" />
-                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].ListingId" />
-                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].Listing" />
-                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].AgentId" />
-                        <input type="hidden" asp-for="@Model.ImagesToSelect[i].Agent" />
-
-                        <input asp-for="@Model.ImagesToSelect[i].IsSelected" class="form-check-input" />
-                        <label class="form-check-label" asp-for="@Model.ImagesToSelect[i].IsSelected">
-                            @Model.ImagesToSelect[i].Name
-                        </label>
-                    </div>
-                }
-                @if (Model.ImagesToSelect?.Count == 0)
-                {
-                    <br />
-                    <span style="font-weight: bold;">No Listing Images Available</span>
-                }
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+<h1 class="form-h1">Create New Property Listing:</h1>
 
 <div>
     <a asp-action="Select" asp-route-id="@ViewBag.CustomerID.SelectedValue">Back to Customer</a>
 </div>
+
+<form asp-action="Create" class="grid-container">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="grid-item-1">
+        <h4>Address Information:</h4>
+        <div class="form-group">
+            <label asp-for="StreetAddress" class="control-label"></label>
+            <input asp-for="StreetAddress" class="form-control" />
+            <span asp-validation-for="StreetAddress" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Municipality" class="control-label"></label>
+            <input asp-for="Municipality" class="form-control" />
+            <span asp-validation-for="Municipality" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Province" class="control-label"></label>
+            <select asp-for="Province" class="form-control" asp-items="ViewBag.ProvinceOptions"></select>
+            <span asp-validation-for="Province" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="PostalCode" class="control-label"></label>
+            <input asp-for="PostalCode" class="form-control" />
+            <span asp-validation-for="PostalCode" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="CityLocation" class="control-label"></label>
+            <select asp-for="CityLocation" class="form-control">
+                <option disabled selected>-- SELECT A LOCATION --</option>
+                <option value="North">North</option>
+                <option value="East">East</option>
+                <option value="South">South</option>
+                <option value="West">West</option>
+            </select>
+        </div>
+    </div>
+    <div class="grid-item-2">
+        <h4>Property Information:</h4>
+        <div class="form-group">
+            <label asp-for="Footage" class="control-label"></label>
+            <input asp-for="Footage" class="form-control" />
+            <span asp-validation-for="Footage" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="NumOfBaths" class="control-label"></label>
+            <input asp-for="NumOfBaths" class="form-control" />
+            <span asp-validation-for="NumOfBaths" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="NumOfRooms" class="control-label"></label>
+            <input asp-for="NumOfRooms" class="form-control" />
+            <span asp-validation-for="NumOfRooms" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="NumOfStories" class="control-label"></label>
+            <input asp-for="NumOfStories" class="form-control" />
+            <span asp-validation-for="NumOfStories" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="TypeOfHeating" class="control-label"></label>
+            <select asp-for="TypeOfHeating" class="form-control">
+                <option disabled selected>-- SELECT HEATING TYPE --</option>
+                <option value="Electric">Electric</option>
+                <option value="Gas">Gas</option>
+                <option value="Heat Pump">Heat Pump</option>
+                <option value="Oil Furnace">Oil Furance</option>
+                <option value="Oil Furnace">Wood Furance</option>
+                <option value="Geothermal">Geothermal</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label asp-for="Features" class="control-label"></label>
+            <textarea asp-for="Features" class="form-control"></textarea>
+            <span asp-validation-for="Features" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <h4>Special Features:</h4>
+            @for (int i = 0; i < Model.SpecialFeatures?.Count; i++)
+            {
+                <div class="form-check m-1">
+                    <input hidden asp-for="@Model.SpecialFeatures[i].Feature">
+                    @if (Model.SpecialFeatures[i].Feature == "Bay Garage")
+                    {
+                        <input asp-for="@Model.SpecialFeatures[i].IsSeleted" class="form-check-input">
+                        <label class="form-check-label" asp-for="@Model.SpecialFeatures[i].IsSeleted">
+                            Garage
+                        </label>
+                        <div class="form-group">
+                            <label asp-for="@Model.SpecialFeatures[i].NumOfBays" class="control-label">Number of Garage Bays</label>
+                            <input asp-for="@Model.SpecialFeatures[i].NumOfBays" class="form-control" />
+                        </div>
+                    }
+                    else
+                    {
+                        <input asp-for="@Model.SpecialFeatures[i].IsSeleted" class="form-check-input">
+                        <label class="form-check-label" asp-for="@Model.SpecialFeatures[i].IsSeleted">
+                            @Model.SpecialFeatures[i].Feature
+                        </label>
+                    }
+                </div>
+
+            }
+
+        </div>
+        <div class="form-group">
+            <label asp-for="SalesPrice" class="control-label"></label>
+            <input asp-for="SalesPrice" class="form-control" />
+            <span asp-validation-for="SalesPrice" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="grid-item-3">
+        <h4>Contract Information:</h4>
+        <div class="form-group form-check">
+            <label class="form-check-label">
+                <input class="form-check-input" asp-for="ContractSigned" /> @Html.DisplayNameFor(model => model.ContractSigned)
+            </label>
+        </div>
+        <div class="form-group">
+            <label asp-for="AgentID" class="control-label"></label>
+            <select asp-for="AgentID" class="form-control" asp-items="ViewBag.AgentID">
+                <option disabled selected>-- SELECT CONTRACT AGENT --</option>
+            </select>
+            <span asp-validation-for="AgentID" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="CustomerID" class="control-label"></label>
+            <select asp-for="CustomerID" class="form-control" asp-items="ViewBag.CustomerID"></select>
+            <span asp-validation-for="CustomerID" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Images" class="control-label"></label>
+            @for (int i = 0; i < Model.ImagesToSelect?.Count; i++)
+            {
+
+                <div class="form-check m-1">
+                    <input type="hidden" asp-for="@Model.ImagesToSelect[i].ImageID" />
+                    <input type="hidden" asp-for="@Model.ImagesToSelect[i].Name" />
+                    <input type="hidden" asp-for="@Model.ImagesToSelect[i].AltText" />
+                    <input type="hidden" asp-for="@Model.ImagesToSelect[i].Description" />
+                    <input type="hidden" asp-for="@Model.ImagesToSelect[i].UploadDateTime" />
+                    <input type="hidden" asp-for="@Model.ImagesToSelect[i].FilePath" />
+                    <input type="hidden" asp-for="@Model.ImagesToSelect[i].Validated" />
+                    <input type="hidden" asp-for="@Model.ImagesToSelect[i].StaffID" />
+                    <input type="hidden" asp-for="@Model.ImagesToSelect[i].ListingId" />
+                    <input type="hidden" asp-for="@Model.ImagesToSelect[i].Listing" />
+                    <input type="hidden" asp-for="@Model.ImagesToSelect[i].AgentId" />
+                    <input type="hidden" asp-for="@Model.ImagesToSelect[i].Agent" />
+
+                    <input asp-for="@Model.ImagesToSelect[i].IsSelected" class="form-check-input" />
+                    <label class="form-check-label" asp-for="@Model.ImagesToSelect[i].IsSelected">
+                        @Model.ImagesToSelect[i].Name
+                    </label>
+                </div>
+            }
+            @if (Model.ImagesToSelect?.Count == 0)
+            {
+                <br />
+                <span style="font-weight: bold;">No Listing Images Available</span>
+            }
+        </div>
+    </div>
+
+    <div class="grid-item-2">
+        <input type="submit" value="Create" class="btn btn-lg" />
+    </div>
+
+</form>
 
 @section Scripts {
     @{

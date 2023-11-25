@@ -3,58 +3,63 @@
 @{
     ViewData["Title"] = "Select";
 }
-
-<h1>Selected Customer: @Html.Label(Model.FirstOrDefault().CustomerFullName)</h1>
-
-<div>
-    @Html.ActionLink("Create New Listing", "Create", new { id = Model.FirstOrDefault().CustomerID}) |
-    <a asp-controller="Customers" asp-action="Index">Back to Customers</a>
-</div>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Address)
-            </th>
-            <th>
-                Listing Agent
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model.FirstOrDefault().ListingID != null)
-        {
-            @foreach (var item in Model)
-            {
-                <input hidden value="@Html.DisplayFor(modelItem => item.ListingID)"/>
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Address)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ListingAgent)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.StartDate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.EndDate)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.ListingID">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.ListingID">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.ListingID">Delete</a>
-                    </td>
-                </tr>
-            }
+<style>
+    @@media(min-width: 1205px) {
+        .grid-container {
+            display: grid;
+            justify-items: center;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(1, auto);
         }
-    </tbody>
-    <span class="text-success">@ViewBag.ListingSaved</span>
-</table>
+    }
+
+    .grid-container {
+        display: grid;
+        justify-content: center;
+    }
+
+    .card {
+        background-color: #ABDAFC;
+    }
+
+        .card:hover, .btn:hover {
+            background-color: #E0E1A1;
+        }
+
+    .listingLink {
+        color: black;
+        text-decoration: none;
+    }
+
+    ul {
+        list-style: none;
+    }
+</style>
+
+@Html.ActionLink("Create New Listing", "Create", new { id = Model.FirstOrDefault().CustomerID}) |
+<a asp-controller="Customers" asp-action="Index">Back to Customers</a>
+<h1 class="form-h1">Selected Customer: @Html.Label(Model.FirstOrDefault().CustomerFullName)</h1>
+
+
+
+<div class="grid-container">
+    @foreach (var item in Model)
+    {
+        <div class="card mb-3" style="max-width: 540px; text-align: center;">
+            <h5 class="card-title" style="border-bottom: 1px solid black;"> @Html.DisplayFor(modelItem => item.Address)</h5>
+            <div class="card-body" style="text-align: left;">
+                <ul>
+                    <li><b>@Html.DisplayNameFor(model => model.Address):</b> @Html.DisplayFor(modelItem => item.Address)</li>
+                    <li><b>@Html.DisplayNameFor(model => model.ListingAgent):</b> @Html.DisplayFor(modelItem => item.ListingAgent)</li>
+                    <li><b>@Html.DisplayNameFor(model => model.StartDate):</b> @Html.DisplayFor(modelItem => item.StartDate)</li>
+                    <li><b>@Html.DisplayNameFor(model => model.EndDate):</b> @Html.DisplayFor(modelItem => item.EndDate)</li>
+                </ul>
+                <a asp-action="Edit" asp-route-id="@item.ListingID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ListingID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ListingID">Delete</a>
+            </div>
+        </div>
+    }
+</div>
+
+

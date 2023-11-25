@@ -40,6 +40,16 @@ namespace mvcNestify.Models
             }
         }
 
+        [NotMapped]
+        [Display(Name = "Full Address")]
+        public string? FullAddress
+        {
+            get
+            {
+                return $"{StreetAddress}, {Municipality}, {Province}";
+            }
+        }
+
         [Required(ErrorMessage = "Agent's date of birth is required")]
         [DataType(DataType.Date)]
         [Display(Name = "Date of Birth")]
