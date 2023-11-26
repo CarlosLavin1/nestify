@@ -75,6 +75,15 @@ namespace mvcNestify.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ListingId,AgentId,FileName,Description,AltText,PostedFile, IsListingImage, IsAgentImage, Type")] Image image)
         {
+            List<SelectListItem> agents = new List<SelectListItem>();
+            List<SelectListItem> listings = new List<SelectListItem>();
+            foreach (var agent in _context.Agents)
+                agents.Add(new SelectListItem { Text = $"{agent.FullName}", Value = $"{agent.AgentID}" });
+            foreach (var listing in _context.Listings)
+                listings.Add(new SelectListItem { Text = $"{listing.Customer.FullName} - {listing.Address}", Value = $"{listing.ListingID}" });
+
+            ViewData["Listings"] = listings;
+            ViewData["Agents"] = agents;
             IFormFile imageFile = image.PostedFile;
             int fileSizeLimit = 7000000;
             if (ModelState.IsValid)
@@ -110,6 +119,12 @@ namespace mvcNestify.Controllers
                     {
                         imageFile.CopyTo(stream);
                     }
+                    //check if file name already exists
+                    if(_context.Image.Select(i => i.Name).ToList().Contains(fileName))
+                    {
+                        ModelState.AddModelError("", "An image with this name already exists");
+                        return View(image);
+                    }
                     //check if listing already has 7 images
                     if(image.ListingId != null)
                     {
@@ -119,6 +134,11 @@ namespace mvcNestify.Controllers
                             ModelState.AddModelError("", "Listing already has 7 images");
                             return View(image);
                         }
+                    }
+                    if (image.ListingId == null && image.AgentId == null && !image.IsListingImage && !image.IsAgentImage)
+                    {
+                        ModelState.AddModelError("Type", "Please select an agent or listing");
+                        return View(image);
                     }
                     // populate model props
                     image.Name = fileName;
@@ -138,10 +158,14 @@ namespace mvcNestify.Controllers
                     ViewBag.Message = $"Successfully uploaded file: " + fileName;
                     return View("Confirmation");
                 }
-                
-                ViewBag.Message = "Error uploading file";
-                return View("Confirmation");
-
+                if (imageFile == null)
+                {
+                    ModelState.AddModelError("", "Please select a file");
+                    return View(image);
+                }
+                ModelState.AddModelError("", "Must assign image to a listing or agent");
+                return View(image);
+                //ViewBag.Message = "Error uploading file";
             }
             IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
             return View(image);

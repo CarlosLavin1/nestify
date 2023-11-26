@@ -272,8 +272,8 @@ namespace mvcNestify.Controllers
         {
             List<Showing> showingsAtListing = _context.Showings.Where(s => s.ListingID == showing.ListingID).ToList();
             //check if showing times overlap with any existing showings
-            return showingsAtListing.Any(s => (s.StartTime <= showing.StartTime && s.EndTime >= showing.StartTime) ||
-                (s.EndTime >= showing.EndTime && s.StartTime <= showing.EndTime));
+            return showingsAtListing.Any(s => ((s.StartTime <= showing.StartTime && s.EndTime >= showing.StartTime) ||
+                (s.EndTime >= showing.EndTime && s.StartTime <= showing.EndTime)) && s.Date == showing.Date);
         }
 
         private bool AgentNotAvailable(Showing showing)
