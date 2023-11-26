@@ -1,20 +1,76 @@
 ﻿@model IEnumerable<mvcNestify.Models.Image>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Image - Index";
 }
+<style>
+    body {
+        background-image: url("/assets/image_background.jpg");
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+    h1,p {
+        text-align: center;
+    }
 
-<h1>Index</h1>
+    .link {
+        color: black;
+        text-decoration: none;
+    }
+
+    @@media(min-width: 1205px) {
+        .grid-container {
+            display: grid;
+            justify-items: center;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(1, auto);
+        }
+    }
+
+    .grid-container {
+        display: grid;
+        justify-content: center;
+    }
+
+    .card {
+        background-color: #ABDAFC;
+    }
+</style>
+
+<h1>Image List</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" style="font-weight:bolder;">Upload New Image</a>
 </p>
-<table class="table">
+<div id="wrapper" class="grid-container">
+    @foreach (var item in Model)
+    {
+        List<Microsoft.AspNetCore.Identity.IdentityUser> staff = ViewBag.Staff;
+        var name = staff.First(s => s.Id == item.StaffID).Email;
+        <div class="card" style="width: 18rem;">
+            <img src="~/Uploads/TempFiles/@item.Name" alt="@item.AltText">
+            <div class="card-body">
+                <p style="font-weight: bold;" class="card-text">@Html.DisplayFor(modelItem => item.Description)</p>
+                <p>Uploaded On: @Html.DisplayFor(modelItem => item.UploadDateTime)</p>
+                <p>Uploaded By: @name</p>
+                <p>Verified: @(item.Validated ? "Yes" : "No")</p>
+                <p>
+                    <a asp-action="Edit" asp-route-id="@item.ImageID" class="link">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ImageID" class="link">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ImageID" class="link">Delete</a>
+                </p>
+            </div>
+        </div>
+    }
+</div>
+
+
+@* <table class="table">
     <thead>
         <tr>
-            @* <th>
-                @Html.DisplayNameFor(model => model.FilePath)
-            </th> *@
+            <th>
+                Image Preview
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
@@ -41,9 +97,9 @@
             List<Microsoft.AspNetCore.Identity.IdentityUser> staff = ViewBag.Staff;
             var name = staff.First(s => s.Id == item.StaffID).Email;
             <tr>
-            @* <td>
-                @Html.DisplayFor(modelItem => item.FilePath)
-            </td> *@
+            <td>
+                <img src="~/Uploads/TempFiles/@item.Name" alt="@item.AltText">
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
@@ -63,12 +119,12 @@
                 @name
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ImageID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ImageID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ImageID">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.ImageID" class="link">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ImageID" class="link">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ImageID" class="link">Delete</a>
             </td>
            
         </tr>
 }
     </tbody>
-</table>
+</table> *@
