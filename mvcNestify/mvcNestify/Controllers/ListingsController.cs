@@ -518,7 +518,6 @@ namespace mvcNestify.Controllers
 
             if (specialFeatures != null)
             {
-
                 feats =
                    specialFeats.Select(feat =>
                    new SpecialFeaturesViewModel
@@ -526,7 +525,6 @@ namespace mvcNestify.Controllers
                        Feature = feat,
                        IsSeleted = specialFeatures.Contains(feat),
                        NumOfBays = specialFeatures.Where(f => f.Contains(feat)).FirstOrDefault()?.ToString()
-
                    }).ToList();
 
 
@@ -575,7 +573,8 @@ namespace mvcNestify.Controllers
 
                 ViewBag.AgentName = contract.ListingAgent.FullName;
             }
-            else
+
+            else 
             {
                 ViewData["AgentID"] = new SelectList(_context.Agents.Where(a => a.IsVerified == true), "AgentID", "FullName");
             }
@@ -660,6 +659,7 @@ namespace mvcNestify.Controllers
 
             if (!!listing.ContractSigned)
             {
+
                 if (contractModel.AgentID == null)
                 {
                     ModelState.AddModelError("AgentID", "Contract must have an agent.");
@@ -717,7 +717,8 @@ namespace mvcNestify.Controllers
 
                     await _context.SaveChangesAsync();
 
-                    if (contract.ListingID != null)
+
+                    if (contract.ListingID != null)               
                     {
                         _context.Add(contract);
                         await _context.SaveChangesAsync();
