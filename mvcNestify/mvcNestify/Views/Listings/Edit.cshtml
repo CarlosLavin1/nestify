@@ -86,25 +86,24 @@
         </div>
         <div class="form-group">
             <label asp-for="Features" class="control-label"></label>
-            <textarea asp-for="Features" class="form-control" />@Model.Features</textarea>
+
+            <textarea asp-for="Features" class="form-control">@Model.Features</textarea>
             <span asp-validation-for="Features" class="text-danger"></span>
         </div>
         <div class="form-group">
             <h4>Special Features:</h4>
-            @for (int i = 0; i < Model.SpecialFeatures?.Count; i++)
+
+            @for (int i = 0; i < Model.SpecialFeatures.Count(); i++)
             {
                 <div class="form-check m-1">
                     <input hidden asp-for="@Model.SpecialFeatures[i].Feature">
-                    @if (Model.SpecialFeatures[i].Feature == "Bay Garage")
+                    @if (Model.SpecialFeatures[i].Feature.Contains("Garage"))
                     {
-                        <input asp-for="@Model.SpecialFeatures[i].IsSeleted" class="form-check-input">
-                        <label class="form-check-label" asp-for="@Model.SpecialFeatures[i].IsSeleted">
-                            Garage
-                        </label>
-                        <div class="form-group">
-                            <label asp-for="@Model.SpecialFeatures[i].NumOfBays" class="control-label">Number of Garage Bays</label>
-                            <input asp-for="@Model.SpecialFeatures[i].NumOfBays" class="form-control" />
-                        </div>
+                        <p>If property has a garage select number of bays:</p>
+                        <input type="radio" asp-for="@Model.SpecialFeatures[i].NumOfBays" value="1 Bay Garage"> <label>1 Bay Garage</label>
+                        <input type="radio" asp-for="@Model.SpecialFeatures[i].NumOfBays" value="2 Bay Garage"> <label>2 Bay Garage</label>
+                        <input type="radio" asp-for="@Model.SpecialFeatures[i].NumOfBays" value="3 Bay Garage"> <label>3 Bay Garage</label>
+
                     }
                     else
                     {
@@ -116,7 +115,35 @@
                 </div>
 
             }
-            <span asp-validation-for="SpecialFeatures" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="grid-item-3">
+            <h4>Contract Information:</h4>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="ContractSigned" /> @Html.DisplayNameFor(model => model.ContractSigned)
+                </label>
+            </div>
+            @if (Model.ContractID == null)
+            {
+                <div class="form-group">
+                    <label asp-for="AgentID" class="control-label"></label>
+                    <select asp-for="AgentID" class="form-control" asp-items="ViewBag.AgentID">
+                        <option disabled selected>-- SELECT FROM BELOW --</option>
+                    </select>
+                    <span asp-validation-for="AgentID" class="text-danger"></span>
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <input hidden asp-for="ContractID">
+                    <input hidden asp-for="AgentID">
+                    <label asp-for="AgentID" class="control-label"></label>
+                    <input type="text" class="form-control" placeholder="@ViewBag.AgentName" readonly />
+                    <span asp-validation-for="AgentID" class="text-danger"></span>
+                </div>
+            }
         </div>
 
     </div>
@@ -147,20 +174,11 @@
                 <input type="text" class="form-control" placeholder="@ViewBag.AgentName" readonly />
                 <span asp-validation-for="AgentID" class="text-danger"></span>
             </div>
-        }
 
-        <div class="form-group">
-            <label asp-for="CustomerID" class="control-label"></label>
-            <input type="text" class="form-control" placeholder="@ViewBag.CustomerID" readonly />
-            <input type="hidden" asp-for="CustomerID" />
-            <span asp-validation-for="CustomerID" class="text-danger"></span>
         </div>
-    </div>
-    <div class="grid-item-3">
-        <h4>Listing Images:</h4>
-        @for (int i = 0; i < Model.Images?.Count; i++)
-        {
-            if (Model.Images[i].Validated)
+        <div class="grid-item-3">
+            <h4>Listing Images:</h4>
+            @for (int i = 0; i < Model.Images?.Count; i++)
             {
                 <div class="form-check m-1">
                     <input type="hidden" asp-for="@Model.Images[i].ImageID" />
@@ -184,10 +202,12 @@
             }
         }
 
-    </div>
-    <div class="grid-item-2">
-        <input type="submit" value="Save" class="btn btn-lg" />
-    </div>
+
+        </div>
+        <div class="grid-item-2">
+            <input type="submit" value="Save" class="btn btn-lg" />
+        </div>
+
 
 </form>
 

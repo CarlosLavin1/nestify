@@ -20,12 +20,12 @@ namespace mvcNestify.Controllers
 
 
         List<string> specialFeats = new()
-    {
-        "Has a Fireplace",
-        "Has a Baby Barn",
-        "Has Central Air",
-        "Bay Garage"
-    };
+        {
+            "Has a Fireplace",
+            "Has a Baby Barn",
+            "Has Central Air",
+            "Garage"
+        };
 
         List<SelectListItem> provinceOptions = new List<SelectListItem>()
             {
@@ -324,7 +324,6 @@ namespace mvcNestify.Controllers
                     IsSeleted = false
                 }).ToList();
 
-
             ContractViewModel contract = new()
             {
                 ImagesToSelect = imageList,
@@ -379,25 +378,34 @@ namespace mvcNestify.Controllers
             {
                 if (contractModel.SpecialFeatures[i].IsSeleted)
                 {
-                    if (contractModel.SpecialFeatures[i].Feature == "Garage")
-                    {
-                        if (contractModel.SpecialFeatures[i].NumOfBays == null || contractModel.SpecialFeatures[i].NumOfBays < 0)
-                        {
-                            ModelState.AddModelError("NumOfBays", "Number of garage bays must be a number greater than 0");
-                            ModelState.ClearValidationState(nameof(contractModel));
-                        }
-                        else
-                        {
-                            listing.SpecialFeatures += $"{contractModel.SpecialFeatures[i].NumOfBays} " +
-                                                       $"{contractModel.SpecialFeatures[i].Feature}. ";
-                        }
-
-                    }
-                    else
-                    {
-                        listing.SpecialFeatures += $"{contractModel.SpecialFeatures[i].Feature}. ";
-                    }
+                    listing.SpecialFeatures += $"{contractModel.SpecialFeatures[i].Feature}. ";
                 }
+                if (contractModel.SpecialFeatures[i].NumOfBays != null)
+                {
+                    listing.SpecialFeatures += $"{contractModel.SpecialFeatures[i].NumOfBays}";
+                }
+
+            }
+
+            if (contractModel.Footage <= 0)
+            {
+                ModelState.AddModelError("Footage", "Footage must be a value greater than 0");
+                ModelState.ClearValidationState(nameof(contractModel));
+            }
+            if (contractModel.NumOfStories <= 0)
+            {
+                ModelState.AddModelError("NumOfStories", "Number of stories must be a value greater than 0");
+                ModelState.ClearValidationState(nameof(contractModel));
+            }
+            if (contractModel.NumOfBaths <= 0)
+            {
+                ModelState.AddModelError("NumOfBaths", "Number of bathrooms must be a value greater than 0");
+                ModelState.ClearValidationState(nameof(contractModel));
+            }
+            if (contractModel.NumOfRooms < 0)
+            {
+                ModelState.AddModelError("NumOfRooms", "Number of bedrooms must be a value greater than 0");
+                ModelState.ClearValidationState(nameof(contractModel));
             }
 
             var customer = _context.Customers.FirstOrDefault(cust => cust.CustomerID == listing.CustomerID);
@@ -457,8 +465,8 @@ namespace mvcNestify.Controllers
                 //    listing.Images.Add(_context.Image.Find(addition));
                 //}
 
-                _context.Update(listing);
-                await _context.SaveChangesAsync();
+                //_context.Update(listing);
+                //await _context.SaveChangesAsync();
 
                 string url = Url.Action("CustDetails", "Listings", new { id = listing.ListingID }, protocol: "https");
                 var message = new EmailMessage(new string[] { listing.Customer.Email },
@@ -467,7 +475,7 @@ namespace mvcNestify.Controllers
                     $"Thank you, \n" +
                     $"From the Nestify Staff");
 
-                if (contract != null)
+                if (listing.ListingStatus == "Available")
                 {
                     contract.ListingID = listing.ListingID;
                     _context.Contracts.Add(contract);
@@ -510,25 +518,16 @@ namespace mvcNestify.Controllers
 
             if (specialFeatures != null)
             {
-                //int? numOfBays = 0;
-                //if (specialFeatures.Contains("Bay Garage"))
-                //{
-                //    string garage = specialFeatures.Where(s => s.Contains("Bay Garage")).FirstOrDefault().ToString();
-
-                //    numOfBays = Convert.ToInt32(garage?.Substring(1));
-                //}
-
                 feats =
                    specialFeats.Select(feat =>
                    new SpecialFeaturesViewModel
                    {
                        Feature = feat,
                        IsSeleted = specialFeatures.Contains(feat),
-                       NumOfBays = 0
-                      
+                       NumOfBays = specialFeatures.Where(f => f.Contains(feat)).FirstOrDefault()?.ToString()
                    }).ToList();
 
-                
+
             }
             else
             {
@@ -574,6 +573,7 @@ namespace mvcNestify.Controllers
 
                 ViewBag.AgentName = contract.ListingAgent.FullName;
             }
+
             else 
             {
                 ViewData["AgentID"] = new SelectList(_context.Agents.Where(a => a.IsVerified == true), "AgentID", "FullName");
@@ -614,31 +614,40 @@ namespace mvcNestify.Controllers
                 Images = contractModel.Images,
             };
 
+
+            if (contractModel.Footage <= 0)
+            {
+                ModelState.AddModelError("Footage", "Footage must be a value greater than 0");
+                ModelState.ClearValidationState(nameof(contractModel));
+            }
+            if (contractModel.NumOfStories <= 0)
+            {
+                ModelState.AddModelError("NumOfStories", "Number of stories must be a value greater than 0");
+                ModelState.ClearValidationState(nameof(contractModel));
+            }
+            if (contractModel.NumOfBaths <= 0)
+            {
+                ModelState.AddModelError("NumOfBaths", "Number of bathrooms must be a value greater than 0");
+                ModelState.ClearValidationState(nameof(contractModel));
+            }
+            if (contractModel.NumOfRooms < 0)
+            {
+                ModelState.AddModelError("NumOfRooms", "Number of bedrooms must be a value greater than 0");
+                ModelState.ClearValidationState(nameof(contractModel));
+            }
+
             for (int i = 0; i < contractModel.SpecialFeatures.Count; i++)
             {
                 if (contractModel.SpecialFeatures[i].IsSeleted)
                 {
-                    if (contractModel.SpecialFeatures[i].Feature == "Bay Garage")
-                    {
-                        if (contractModel.SpecialFeatures[i].NumOfBays == null || contractModel.SpecialFeatures[i].NumOfBays <= 0)
-                        {
-                            ModelState.AddModelError("SpecialFeatures", "Number of garage bays must be a number greater than 0");
-                            ModelState.ClearValidationState(nameof(contractModel));
-                        }
-                        else
-                        {
-                            listing.SpecialFeatures += $"{contractModel.SpecialFeatures[i].NumOfBays} " +
-                                                       $"{contractModel.SpecialFeatures[i].Feature}. ";
-                        }
-
-                    }
-                    else
-                    {
-                        listing.SpecialFeatures += $"{contractModel.SpecialFeatures[i].Feature}. ";
-                    }
+                    listing.SpecialFeatures += $"{contractModel.SpecialFeatures[i].Feature}. ";
                 }
-            }
+                if (contractModel.SpecialFeatures[i].NumOfBays != null)
+                {
+                    listing.SpecialFeatures += $"{contractModel.SpecialFeatures[i].NumOfBays}";
+                }
 
+            }
 
             Models.Contract contract = new();
 
@@ -650,26 +659,36 @@ namespace mvcNestify.Controllers
 
             if (!!listing.ContractSigned)
             {
-                if (contractModel.ContractID == null)
-                {
-                    contract = new()
-                    {
-                        StartDate = DateTime.Now,
-                        EndDate = (DateTime)contractModel.StartDate,
-                        ListingID = listing.ListingID,
-                        AgentID = contractModel.AgentID,
-                    };
 
-                    contract.EndDate = contract.EndDate.AddMonths(3);
-                    listing.ListingStatus = "Available";
+                if (contractModel.AgentID == null)
+                {
+                    ModelState.AddModelError("AgentID", "Contract must have an agent.");
+                    ModelState.ClearValidationState(nameof(contractModel));
                 }
                 else 
                 {
-                    contract = new()
+                    if (contractModel.ContractID == null)
                     {
-                        ContractID = contractModel.ContractID
-                    };
-                    listing.ListingStatus = "Available";
+
+                        contract = new()
+                        {
+                            StartDate = DateTime.Now,
+                            EndDate = (DateTime)contractModel.StartDate,
+                            ListingID = listing.ListingID,
+                            AgentID = contractModel.AgentID,
+                        };
+
+                        contract.EndDate = contract.EndDate.AddMonths(3);
+                        listing.ListingStatus = "Available";
+                    }
+                    else
+                    {
+                        contract = new()
+                        {
+                            ContractID = contractModel.ContractID
+                        };
+                        listing.ListingStatus = "Available";
+                    }
                 }
             }
             else
@@ -698,7 +717,8 @@ namespace mvcNestify.Controllers
 
                     await _context.SaveChangesAsync();
 
-                    if (contract.ContractID == null)
+
+                    if (contract.ListingID != null)               
                     {
                         _context.Add(contract);
                         await _context.SaveChangesAsync();
@@ -785,7 +805,7 @@ namespace mvcNestify.Controllers
                 ModelState.AddModelError("Contract", $"Listing at {listing.Address} still has an active contract.");
             }
 
-            return View();
+            return View(listing);
         }
 
         private bool ListingExists(int id)

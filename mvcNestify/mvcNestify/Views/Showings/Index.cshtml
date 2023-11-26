@@ -3,8 +3,33 @@
 @{
     ViewData["Title"] = "Index";
 }
+<style>
+    @@media(min-width: 1205px) {
+        .grid-container {
+            display: grid;
+            justify-items: center;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(1, auto);
+        }
+    }
 
-<h1>Index</h1>
+    .grid-container {
+        display: grid;
+        justify-content: center;
+    }
+
+    .link {
+        color: black;
+        text-decoration: none;
+    }
+
+    ul {
+        list-style: none;
+    }
+</style>
+
+<h1>Scheduled Showings:</h1>
+<a asp-action="Create">Create New</a>
 <form asp-action="Index" method="get">
 
     <div class="form-actions no-color">
@@ -17,67 +42,24 @@
     </div>
 </form>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Customer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Listing)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Agent.FullName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Comments)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Customer.FullName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Listing.Address)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Date)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartTime)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EndTime)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Agent.FullName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Comments)
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { CustomerID = item.CustomerID, ListingID = item.ListingID }) |
-                    @Html.ActionLink("Details", "Details", new { CustomerID = item.CustomerID, ListingID = item.ListingID  }) |
-                    @Html.ActionLink("Delete", "Delete", new { CustomerID = item.CustomerID, ListingID = item.ListingID  })
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="grid-container">
+    @foreach (var item in Model)
+    {
+        <div class="card mb-3" style="width:100%; border: dotted black 1px;">
+            <div class="card-body">
+                <ul>
+                    <li><b>@Html.DisplayNameFor(model => model.Customer):</b> @Html.DisplayFor(modelItem => item.Customer.FullName)</li>
+                    <li><b>@Html.DisplayNameFor(model => model.Listing):</b> @Html.DisplayFor(modelItem => item.Listing.Address)</li>
+                    <li><b>@Html.DisplayNameFor(model => model.Date):</b> @Html.DisplayFor(modelItem => item.Date)</li>
+                    <li><b>@Html.DisplayNameFor(model => model.StartTime):</b> @Html.DisplayFor(modelItem => item.StartTime)</li>
+                    <li><b>@Html.DisplayNameFor(model => model.EndTime):</b> @Html.DisplayFor(modelItem => item.EndTime)</li>
+                    <li><b>@Html.DisplayNameFor(model => model.Agent):</b> @Html.DisplayFor(modelItem => item.Agent.FullName)</li>
+                    <li><b>@Html.DisplayNameFor(model => model.Comments):</b> @Html.DisplayFor(modelItem => item.Comments)</li>
+                </ul>
+                @Html.ActionLink("Edit", "Edit", new { customerID = item.CustomerID, listingID = item.ListingID }) |
+                @Html.ActionLink("Details", "Details", new {customerID = item.CustomerID, listingID = item.ListingID }) |
+                @Html.ActionLink("Delete", "Delete", new {customerID = item.CustomerID, ListingID = item.ListingID })
+            </div>
+        </div>
+    }
+</div>
