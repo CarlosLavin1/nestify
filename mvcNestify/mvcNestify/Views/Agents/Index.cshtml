@@ -54,7 +54,15 @@
         <div class="card mb-3" style="max-width: 540px;">
             <div class="row g-0 ml-4">
                 <div class="col-md-4">
-                    <img src=" /assets/NoImageFound.png" class="img-fluid rounded-start" alt="...">
+                    @* <img src=" /assets/NoImageFound.png" class="img-fluid rounded-start" alt="..."> *@
+                    @foreach (var image in item.Images.Where(i => i.Validated).ToList())
+                    {
+                        <img src="~/Uploads/TempFiles/@image.Name" alt="@image.AltText" width="100%" height="min-content">
+                    }
+                    @if (item.Images.Where(i => i.Validated).ToList().Count == 0)
+                    {
+                        <img src="~/assets/NoImageFound.png" alt="NoImageFound" width="100%" height="min-content">
+                    }
                 </div>
                 <div class="col-md-7">
                     <div class="card-body">

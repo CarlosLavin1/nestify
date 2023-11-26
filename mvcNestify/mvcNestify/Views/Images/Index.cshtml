@@ -40,7 +40,7 @@
 <h1>Image List</h1>
 
 <p>
-    <a asp-action="Create" style="font-weight:bolder;">Upload New Image</a>
+    <a asp-action="Create" style="font-weight:bolder; color: white;">Upload New Image</a>
 </p>
 <div id="wrapper" class="grid-container">
     @foreach (var item in Model)
@@ -53,7 +53,14 @@
                 <p style="font-weight: bold;" class="card-text">@Html.DisplayFor(modelItem => item.Description)</p>
                 <p>Uploaded On: @Html.DisplayFor(modelItem => item.UploadDateTime)</p>
                 <p>Uploaded By: @name</p>
-                <p>Verified: @(item.Validated ? "Yes" : "No")</p>
+                @if (item.Validated)
+                {
+                    <p>Verified: <b style="color: green;">Yes</b></p>
+                }
+                else
+                {
+                    <p>Verified: <b style="color: red;">No</b></p>
+                }
                 <p>
                     <a asp-action="Edit" asp-route-id="@item.ImageID" class="link">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.ImageID" class="link">Details</a> |

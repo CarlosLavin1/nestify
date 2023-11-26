@@ -456,17 +456,17 @@ namespace mvcNestify.Controllers
                 await _context.SaveChangesAsync();
                 //after listing is added, add images to listing
 
+                List<int>? additions = new();
+                additions =
+                contractModel.ImagesToSelect?.Where(i => i.IsSelected).Select(i => i.ImageID).ToList();
 
-                //List<int> additions =
-                //contractModel.ImagesToSelect.Where(i => i.IsSelected).Select(i => i.ImageID).ToList();
+                foreach (int addition in additions)
+                {
+                    listing.Images.Add(_context.Image.Find(addition));
+                }
 
-                //foreach (int addition in additions)
-                //{
-                //    listing.Images.Add(_context.Image.Find(addition));
-                //}
-
-                //_context.Update(listing);
-                //await _context.SaveChangesAsync();
+                _context.Update(listing);
+                await _context.SaveChangesAsync();
 
                 string url = Url.Action("CustDetails", "Listings", new { id = listing.ListingID }, protocol: "https");
                 var message = new EmailMessage(new string[] { listing.Customer.Email },

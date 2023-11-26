@@ -72,7 +72,7 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ListingId, AgentId, FileName, Description, AltText, PostedFile, IsListingImage, IsAgentImage")] Image image)
+        public async Task<IActionResult> Create([Bind("ListingId,AgentId,FileName,Description,AltText,PostedFile, IsListingImage, IsAgentImage, Type")] Image image)
         {
             IFormFile imageFile = image.PostedFile;
             int fileSizeLimit = 7000000;
@@ -109,6 +109,16 @@ namespace mvcNestify.Controllers
                     {
                         imageFile.CopyTo(stream);
                     }
+                    //check if listing already has 7 images
+                    if(image.ListingId != null)
+                    {
+                        Listing? listing = _context.Listings?.Find(image.ListingId);
+                        if(listing?.Images?.Count == 7)
+                        {
+                            ModelState.AddModelError("", "Listing already has 7 images");
+                            return View(image);
+                        }
+                    }
                     // populate model props
                     image.Name = fileName;
                     image.FilePath = fullPath;
@@ -116,6 +126,10 @@ namespace mvcNestify.Controllers
                     image.Validated = false;
                     image.StaffID = User.FindFirstValue(ClaimTypes.NameIdentifier); // get staff id from authenticated staff
                     image.IsVisible = false;
+                    if (image.Type == "L" && image.AgentId == null && image.ListingId == null)
+                        image.IsListingImage = true;
+                    else if (image.Type == "A" && image.AgentId == null && image.ListingId == null)
+                        image.IsAgentImage = true;
 
                     _context.Add(image);
                     await _context.SaveChangesAsync();

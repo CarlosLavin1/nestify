@@ -27,7 +27,8 @@ namespace mvcNestify.Models
         public string? StaffID { get; set; }
         [NotMapped]
         public IFormFile? PostedFile { get; set; }
-
+        [NotMapped]
+        public string? Type {  get; set; }
         public int? ListingId { get; set; }
         public virtual Listing? Listing { get; set; }
 

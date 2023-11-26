@@ -26,15 +26,11 @@
             
             <div id="UploadSection" style="display: none;">
                 <hr />
-                <label>
-                    @Html.CheckBoxFor(m => m.IsAgentImage, new { id = "image"})
-                    Upload Agent Image
-                </label>
-
-                <label>
-                    @Html.CheckBoxFor(m => m.IsListingImage, new { id = "listing"})
-                    Upload Listing Image
-                </label>
+                <label class="control-label">Select Image Type</label>
+                <select asp-for="Type">
+                    <option value="L" selected>Listing</option>
+                    <option value="A">Agent</option>
+                </select>
             </div>
             <div id="AgentListingSection" style="display: none;">
                 <hr />
