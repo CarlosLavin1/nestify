@@ -45,20 +45,28 @@
 <div class="grid-container">
     @foreach (var item in Model)
     {
-        <div class="card mb-3" style="max-width: 540px; text-align: center;">
-            <h5 class="card-title" style="border-bottom: 1px solid black;"> @Html.DisplayFor(modelItem => item.Address)</h5>
-            <div class="card-body" style="text-align: left;">
-                <ul>
-                    <li><b>@Html.DisplayNameFor(model => model.Address):</b> @Html.DisplayFor(modelItem => item.Address)</li>
-                    <li><b>@Html.DisplayNameFor(model => model.ListingAgent):</b> @Html.DisplayFor(modelItem => item.ListingAgent)</li>
-                    <li><b>@Html.DisplayNameFor(model => model.StartDate):</b> @Html.DisplayFor(modelItem => item.StartDate)</li>
-                    <li><b>@Html.DisplayNameFor(model => model.EndDate):</b> @Html.DisplayFor(modelItem => item.EndDate)</li>
-                </ul>
-                <a asp-action="Edit" asp-route-id="@item.ListingID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ListingID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ListingID">Delete</a>
+        @if (item.ListingID != null)
+        {
+            <div class="card mb-3" style="max-width: 540px; text-align: center;">
+                <h5 class="card-title" style="border-bottom: 1px solid black;"> @Html.DisplayFor(modelItem => item.Address)</h5>
+                <div class="card-body" style="text-align: left;">
+                    <ul>
+                        <li><b>@Html.DisplayNameFor(model => model.Address):</b> @Html.DisplayFor(modelItem => item.Address)</li>
+                        <li><b>@Html.DisplayNameFor(model => model.ListingAgent):</b> @Html.DisplayFor(modelItem => item.ListingAgent)</li>
+                        <li><b>@Html.DisplayNameFor(model => model.StartDate):</b> @Html.DisplayFor(modelItem => item.StartDate)</li>
+                        <li><b>@Html.DisplayNameFor(model => model.EndDate):</b> @Html.DisplayFor(modelItem => item.EndDate)</li>
+                    </ul>
+                    <a asp-action="Edit" asp-route-id="@item.ListingID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ListingID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ListingID">Delete</a>
+                </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <p class="text-danger text-center"><b>Customer has no listings</b></p>
+        }
+
     }
 </div>
 

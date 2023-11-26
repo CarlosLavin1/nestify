@@ -31,19 +31,23 @@ namespace mvcNestify.Controllers
                 select showing;
 
 
-            if (!String.IsNullOrEmpty(searchCriteria)) 
+            if (!String.IsNullOrEmpty(searchCriteria))
             {
-                if(DateTime.TryParse(searchCriteria, out DateTime s))
+                if (DateTime.TryParse(searchCriteria, out DateTime s))
+                {
+                    showingList = showingList.Where(show =>
+                        show.Date == Convert.ToDateTime(s).Date);
+                }
+                else
                 {
                     showingList = showingList.Where(s =>
-                        s.Date.Date.Equals(Convert.ToDateTime(s).Date));
+                        s.Agent.FirstName.Contains(searchCriteria) ||
+                        s.Agent.LastName.Contains(searchCriteria) ||
+                        s.Agent.MiddleName.Contains(searchCriteria));
                 }
-                showingList = showingList.Where(s =>
-                s.Agent.FirstName.Contains(searchCriteria) ||
-                s.Agent.LastName.Contains(searchCriteria) ||
-                s.Agent.MiddleName.Contains(searchCriteria));
+
             }
-            if (showingList.IsNullOrEmpty()) 
+            if (showingList.IsNullOrEmpty())
             {
                 ViewBag.NoShowing = $"There were no records that matched your search {searchCriteria} in the system. Please try again.";
             }
@@ -106,7 +110,7 @@ namespace mvcNestify.Controllers
                     ViewData["ListingID"] = new SelectList(availableListings, "ListingID", "Address", showing.ListingID);
                     return View(showing);
                 }
-                if (!CustomerDoesNotOwn(showing)) 
+                if (!CustomerDoesNotOwn(showing))
                 {
                     ModelState.AddModelError("CustomerID", "Customer cannot book a showing at an owned listing.");
                     ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", showing.CustomerID);
@@ -131,7 +135,7 @@ namespace mvcNestify.Controllers
             ViewData["ListingID"] = new SelectList(availableListings, "ListingID", "Address", showing.ListingID);
             return View(showing);
         }
-       
+
 
         // GET: Showings/Edit/5
         [Authorize]
