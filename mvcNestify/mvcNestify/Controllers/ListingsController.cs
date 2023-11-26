@@ -673,12 +673,11 @@ namespace mvcNestify.Controllers
                         contract = new()
                         {
                             StartDate = DateTime.Now,
-                            EndDate = (DateTime)contractModel.StartDate,
                             ListingID = listing.ListingID,
                             AgentID = contractModel.AgentID,
                         };
 
-                        contract.EndDate = contract.EndDate.AddMonths(3);
+                        contract.EndDate = contract.StartDate.AddMonths(3);
                         listing.ListingStatus = "Available";
                     }
                     else

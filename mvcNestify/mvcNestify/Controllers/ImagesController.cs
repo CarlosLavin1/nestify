@@ -126,7 +126,7 @@ namespace mvcNestify.Controllers
                     image.UploadDateTime = DateTime.Now;
                     image.Validated = false;
                     image.StaffID = User.FindFirstValue(ClaimTypes.NameIdentifier); // get staff id from authenticated staff
-                    image.IsVisible = false;
+                    image.IsVisible = true;
                     if (image.Type == "L" && image.AgentId == null && image.ListingId == null)
                         image.IsListingImage = true;
                     else if (image.Type == "A" && image.AgentId == null && image.ListingId == null)

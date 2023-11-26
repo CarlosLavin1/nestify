@@ -46,7 +46,7 @@
     @foreach (var item in Model)
     {
         List<Microsoft.AspNetCore.Identity.IdentityUser> staff = ViewBag.Staff;
-        var name = staff.First(s => s.Id == item.StaffID).Email;
+        string? name = staff.First(s => s.Id == item.StaffID).Email;
         <div class="card" style="width: 18rem;">
             <img src="~/Uploads/TempFiles/@item.Name" alt="@item.AltText">
             <div class="card-body">
