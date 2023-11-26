@@ -271,7 +271,8 @@ namespace mvcNestify.Controllers
                 NumOfStories = listing.NumOfStories,
                 TypeOfHeating = listing.TypeOfHeating,
                 Features = listing.Features,
-                SpecialFeatures = listing.SpecialFeatures
+                SpecialFeatures = listing.SpecialFeatures,
+                Images = listing.Images
             };
 
             if (listing == null)

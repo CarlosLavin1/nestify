@@ -104,6 +104,16 @@
                 @Html.DisplayFor(model => model.OfficePhone)
             </dd>
         </dl>
+        @if(Model.Images != null && Model.Images.Count > 0)
+        {
+            @foreach (Image img in Model.Images.Where(i => i.Validated && i.IsVisible))
+            {
+                <img src="~/Uploads/TempFiles/@img.Name" alt="@img.AltText" width="100%" height="min-content">
+            }
+        } else
+        {
+            <img src="~/assets/NoImageFound.png" alt="NoImageFound" width="100%" height="min-content">
+        }
         <a asp-area="" asp-controller="Images" asp-action="Index">Manage Images</a>
     </div>
 </div>

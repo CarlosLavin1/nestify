@@ -280,8 +280,8 @@ namespace mvcNestify.Controllers
         {
             List<Showing> showingsWithAgent = _context.Showings.Where(s => s.AgentID == showing.AgentID).ToList();
 
-            return showingsWithAgent.Any(s => (s.StartTime <= showing.StartTime && s.EndTime >= showing.StartTime) ||
-                (s.EndTime >= showing.EndTime && s.StartTime <= showing.EndTime));
+            return showingsWithAgent.Any(s => ((s.StartTime <= showing.StartTime && s.EndTime >= showing.StartTime) ||
+                (s.EndTime >= showing.EndTime && s.StartTime <= showing.EndTime)) && s.Date == showing.Date);
         }
     }
 }
