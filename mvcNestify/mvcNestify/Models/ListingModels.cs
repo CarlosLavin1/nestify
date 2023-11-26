@@ -31,7 +31,8 @@ namespace mvcNestify.Models
         public string? Type {  get; set; }
         public int? ListingId { get; set; }
         public virtual Listing? Listing { get; set; }
-
+        [Display(Name = "Verified By")]
+        public string? VerifiedBy { get; set; }
         public int? AgentId { get; set; }
         public virtual Agent? Agent { get; set; }
         public bool IsVisible { get; set; }

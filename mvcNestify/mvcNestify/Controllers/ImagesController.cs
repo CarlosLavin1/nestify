@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
@@ -187,6 +188,9 @@ namespace mvcNestify.Controllers
             {
                 try
                 {
+                    List<Microsoft.AspNetCore.Identity.IdentityUser> users = _context.Users.ToList();
+                    if (image.Validated)
+                        image.VerifiedBy = users.First(s => s.Id == User.FindFirstValue(ClaimTypes.NameIdentifier)).Email;
                     image.ListingId = temp;
                     _context.Update(image);
                     await _context.SaveChangesAsync();
