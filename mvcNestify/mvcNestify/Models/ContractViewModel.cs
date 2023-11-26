@@ -88,6 +88,7 @@ namespace mvcNestify.Models
         [Display(Name = "Special Features")]
         public List<SpecialFeaturesViewModel>? SpecialFeatures { get; set; }
 
+
         [Display(Name = "Listing Status")]
         public string? ListingStatus { get; set; }
 
@@ -104,9 +105,10 @@ namespace mvcNestify.Models
     {
         public string Feature { get; set; }
         public bool IsSeleted { get; set; }
-        public int? NumOfBays { get; set; }
-    }
 
+        public string? NumOfBays { get; set; }
+
+    }
     public class ListingViewModel
     {
         [Display(Name = "Listing ID")]
