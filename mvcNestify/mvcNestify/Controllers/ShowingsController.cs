@@ -126,6 +126,14 @@ namespace mvcNestify.Controllers
                     ViewData["ListingID"] = new SelectList(availableListings, "ListingID", "Address", showing.ListingID);
                     return View(showing);
                 }
+                if (ShowingExists(showing.ListingID, showing.CustomerID)) 
+                {
+                    ModelState.AddModelError("CustomerID", "Customer already has a showing booked at this listing.");
+                    ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", showing.CustomerID);
+                    ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", showing.AgentID);
+                    ViewData["ListingID"] = new SelectList(availableListings, "ListingID", "Address", showing.ListingID);
+                    return View(showing);
+                }
                 _context.Add(showing);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
