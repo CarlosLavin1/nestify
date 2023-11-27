@@ -170,7 +170,7 @@ namespace mvcNestify.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? listingID, int? customerID, [Bind("CustomerID,ListingID,Date,StartTime,EndTime,AgentId,Comments")] Showing showing)
+        public async Task<IActionResult> Edit(int? listingID, int? customerID, [Bind("CustomerID,ListingID,Date,StartTime,EndTime,AgentID,Comments")] Showing showing)
         {
             if (listingID != showing.ListingID && customerID != showing.CustomerID)
             {
@@ -198,7 +198,10 @@ namespace mvcNestify.Controllers
                         return View(showing);
                     }
 
-                    _context.Update(showing);
+                    var entry = _context.Showings.First(e => e.ListingID == showing.ListingID && e.CustomerID == showing.CustomerID);
+                    _context.Entry(entry).CurrentValues.SetValues(showing);
+                    _context.SaveChanges();
+                    //_context.Update(showing);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -222,7 +225,7 @@ namespace mvcNestify.Controllers
 
         // GET: Showings/Delete/5
         [Authorize]
-        public async Task<IActionResult> Delete(int? customerID, int? listingID)
+        public async Task<IActionResult> Delete(int? listingID, int? customerID)
         {
             if (customerID == null || listingID == null || _context.Showings == null)
             {

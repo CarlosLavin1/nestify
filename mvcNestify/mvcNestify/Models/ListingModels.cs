@@ -166,13 +166,17 @@ namespace mvcNestify.Models
         //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         //public int? ShowingID { get; set;}
 
+        [Key]
         [Required]
         [Display(Name ="Customer")]
+        [ForeignKey("Customer")]
         public int? CustomerID { get; set; }
         public virtual Customer? Customer { get; set; }
 
+        [Key]
         [Required]
         [Display(Name = "Listing")]
+        [ForeignKey("Listing")]
         public int? ListingID { get; set; }
         public virtual Listing? Listing { get; set; }
 

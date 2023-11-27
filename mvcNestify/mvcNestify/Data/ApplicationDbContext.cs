@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using mvcNestify.Models;
-using System.Reflection.Emit;
-using System.Security.Cryptography.X509Certificates;
+
 
 namespace mvcNestify.Data
 {
