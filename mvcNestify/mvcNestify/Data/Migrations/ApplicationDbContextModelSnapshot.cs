@@ -304,7 +304,7 @@ namespace mvcNestify.Data.Migrations
 
                     b.HasKey("AgentID");
 
-                    b.ToTable("Agents");
+                    b.ToTable("Agents", (string)null);
                 });
 
             modelBuilder.Entity("mvcNestify.Models.Contract", b =>
@@ -335,7 +335,7 @@ namespace mvcNestify.Data.Migrations
 
                     b.HasIndex("ListingID");
 
-                    b.ToTable("Contracts");
+                    b.ToTable("Contracts", (string)null);
                 });
 
             modelBuilder.Entity("mvcNestify.Models.Customer", b =>
@@ -392,7 +392,7 @@ namespace mvcNestify.Data.Migrations
 
                     b.HasKey("CustomerID");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("mvcNestify.Models.Image", b =>
@@ -450,7 +450,7 @@ namespace mvcNestify.Data.Migrations
 
                     b.HasIndex("ListingId");
 
-                    b.ToTable("Image");
+                    b.ToTable("Image", (string)null);
                 });
 
             modelBuilder.Entity("mvcNestify.Models.Listing", b =>
@@ -524,7 +524,7 @@ namespace mvcNestify.Data.Migrations
 
                     b.HasIndex("CustomerID");
 
-                    b.ToTable("Listings");
+                    b.ToTable("Listings", (string)null);
                 });
 
             modelBuilder.Entity("mvcNestify.Models.Showing", b =>
@@ -558,7 +558,7 @@ namespace mvcNestify.Data.Migrations
 
                     b.HasIndex("CustomerID");
 
-                    b.ToTable("Showings");
+                    b.ToTable("Showings", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
