@@ -461,20 +461,24 @@ namespace mvcNestify.Controllers
                 additions =
                 contractModel.ImagesToSelect?.Where(i => i.IsSelected).Select(i => i.ImageID).ToList();
 
-                foreach (int addition in additions)
-                {
-                    listing.Images.Add(_context.Image.Find(addition));
-                }
+                if(additions != null && additions.Count > 0)
+                    foreach (int addition in additions)
+                    {
+                        listing.Images.Add(_context.Image.Find(addition));
+                    }
 
                 _context.Update(listing);
                 await _context.SaveChangesAsync();
 
-                string url = Url.Action("CustDetails", "Listings", new { id = listing.ListingID }, protocol: "https");
-                var message = new EmailMessage(new string[] { listing.Customer.Email },
-                    "Listing Creation",
-                    $"Your listing has been created! Your listing number is {listing.ListingID}. \n The link to view your listing is {url}. \n" +
-                    $"Thank you, \n" +
-                    $"From the Nestify Staff");
+                if(listing.Customer.Email != null)
+                {
+                    string url = Url.Action("CustDetails", "Listings", new { id = listing.ListingID }, protocol: "https");
+                    var message = new EmailMessage(new string[] { listing.Customer.Email },
+                        "Listing Creation",
+                        $"Your listing has been created! Your listing number is {listing.ListingID}. \n The link to view your listing is {url}. \n" +
+                        $"Thank you, \n" +
+                        $"From the Nestify Staff");
+                } 
 
                 if (listing.ListingStatus == "Available")
                 {

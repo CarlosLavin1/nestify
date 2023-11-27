@@ -135,11 +135,7 @@ namespace mvcNestify.Controllers
                             return View(image);
                         }
                     }
-                    if (image.ListingId == null && image.AgentId == null && !image.IsListingImage && !image.IsAgentImage)
-                    {
-                        ModelState.AddModelError("Type", "Please select an agent or listing");
-                        return View(image);
-                    }
+                    
                     // populate model props
                     image.Name = fileName;
                     image.FilePath = fullPath;
@@ -151,6 +147,11 @@ namespace mvcNestify.Controllers
                         image.IsListingImage = true;
                     else if (image.Type == "A" && image.AgentId == null && image.ListingId == null)
                         image.IsAgentImage = true;
+                    if (image.ListingId == null && image.AgentId == null && !image.IsListingImage && !image.IsAgentImage)
+                    {
+                        ModelState.AddModelError("Type", "Please select an agent or listing");
+                        return View(image);
+                    }
 
                     _context.Add(image);
                     await _context.SaveChangesAsync();
