@@ -294,7 +294,8 @@ namespace mvcNestify.Controllers
             
             return showingsAtListing.Any(s => ((s.StartTime <= showing.StartTime && s.EndTime >= showing.StartTime) ||
                 (s.EndTime >= showing.EndTime && s.StartTime <= showing.EndTime)
-                || (s.StartTime >= showing.StartTime && s.EndTime <= showing.EndTime)) && s.Date == showing.Date);
+                || (s.StartTime >= showing.StartTime && s.EndTime <= showing.EndTime)) && s.Date == showing.Date
+                && (s.ListingID != showing.ListingID && s.CustomerID != showing.CustomerID));
         }
 
         private bool AgentNotAvailable(Showing showing)
@@ -303,7 +304,8 @@ namespace mvcNestify.Controllers
 
             return showingsWithAgent.Any(s => ((s.StartTime <= showing.StartTime && s.EndTime >= showing.StartTime) ||
                 (s.EndTime >= showing.EndTime && s.StartTime <= showing.EndTime)
-                || (s.StartTime >= showing.StartTime && s.EndTime <= showing.EndTime)) && s.Date == showing.Date);
+                || (s.StartTime >= showing.StartTime && s.EndTime <= showing.EndTime)) && s.Date == showing.Date
+                && (s.ListingID != showing.ListingID && s.CustomerID != showing.CustomerID));
         }
     }
 }
