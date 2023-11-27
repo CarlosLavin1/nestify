@@ -3,13 +3,28 @@
 @{
     ViewData["Title"] = "Create";
 }
+<style>
+    h1,h4 {
+        color: white;
+    }
+    body {
+        background-image: url("/assets/image_background.jpg");
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+    #wrapper{
+        width: 80%;
+        margin: auto;
+        background-color: white;
+    }
+</style>
 
 <h1>Create</h1>
 
 <h4>Image</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="row" >
+    <div class="col-md-4" id="wrapper">
         <form asp-action="Create"  enctype="multipart/form-data" >
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div>

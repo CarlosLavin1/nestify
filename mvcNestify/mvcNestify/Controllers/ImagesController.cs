@@ -175,6 +175,8 @@ namespace mvcNestify.Controllers
         // GET: Images/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            List<Microsoft.AspNetCore.Identity.IdentityUser> users = _context.Users.ToList();
+            ViewBag.Staff = users;
             if (id == null || _context.Image == null)
             {
                 return NotFound();
@@ -195,6 +197,8 @@ namespace mvcNestify.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ImageID,FilePath,Name,Description,AltText,UploadDateTime,Validated,StaffID,ListingId,AgentId,IsVisible,IsListingImage,IsAgentImage")] Image image)
         {
+            //List<Microsoft.AspNetCore.Identity.IdentityUser> users = _context.Users.ToList();
+            //ViewBag.Staff = users;
             int? temp = image.ListingId;
             if (id != image.ImageID)
             {

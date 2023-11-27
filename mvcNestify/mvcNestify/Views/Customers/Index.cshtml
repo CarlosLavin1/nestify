@@ -4,7 +4,48 @@
     ViewData["Title"] = "Customer - Index";
 }
 
-<h1>Customer - Index</h1>
+<h1>Customers</h1>
+
+<p>
+    <a asp-action="Create" style="font-weight:bolder; color: white;">Create New Customer</a>
+</p>
+<form asp-action="Index" method="get">
+
+    <div class="form-actions no-color">
+        <p>
+            Search For Customer: <input type="text" class="form-control-sm" name="searchCriteria" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" />
+            <span class="text-danger">@ViewBag.NoCustomer</span>
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
+<div id="wrapper" class="grid-container">
+    @foreach (var item in Model)
+    {
+        <div class="card" style="width: 18rem; background-color: #ABDAFC">
+            <div class="card-body">
+                <p style="font-weight: bold;" class="card-text">@Html.DisplayFor(modelItem => item.FullName)</p>
+                <p>
+                    @Html.DisplayFor(modelItem => item.StreetAddress), @Html.DisplayFor(modelItem => item.Municipality), 
+                @Html.DisplayFor(modelItem => item.Province)
+                @Html.DisplayFor(modelItem => item.PostalCode)</p>
+                <p>@Html.DisplayFor(modelItem => item.PhoneNumber)</p>
+                <p>@Html.DisplayFor(modelItem => item.Email)</p>
+                <p>
+                    <a asp-action="Edit" asp-route-id="@item.CustomerID">Edit</a> |
+                    <a asp-controller="Listings" asp-action="Select" asp-route-id="@item.CustomerID">Select</a> |
+                    <a asp-action="Details" asp-route-id="@item.CustomerID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.CustomerID">Delete</a>
+                </p>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+@* <h1>Customer - Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -87,4 +128,4 @@
         </tr>
 }
     </tbody>
-</table>
+</table> *@
