@@ -85,7 +85,7 @@ namespace mvcNestify.Controllers
             ViewData["Listings"] = listings;
             ViewData["Agents"] = agents;
             IFormFile imageFile = image.PostedFile;
-            int fileSizeLimit = 7000000;
+            int fileSizeLimit = 5000000;
             if (ModelState.IsValid)
             {
                 if (imageFile != null && imageFile.Length <= fileSizeLimit)
@@ -162,6 +162,11 @@ namespace mvcNestify.Controllers
                 if (imageFile == null)
                 {
                     ModelState.AddModelError("", "Please select a file");
+                    return View(image);
+                }
+                if(imageFile.Length >= fileSizeLimit)
+                {
+                    ModelState.AddModelError("", "Files must be smaller than 5mb");
                     return View(image);
                 }
                 ModelState.AddModelError("", "Must assign image to a listing or agent");
