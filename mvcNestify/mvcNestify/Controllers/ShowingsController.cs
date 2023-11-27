@@ -134,6 +134,14 @@ namespace mvcNestify.Controllers
                     ViewData["ListingID"] = new SelectList(availableListings, "ListingID", "Address", showing.ListingID);
                     return View(showing);
                 }
+                if (ShowingExists(showing.ListingID, showing.CustomerID))
+                {
+                    ModelState.AddModelError("", "Showing already exists");
+                    ViewData["CustomerID"] = new SelectList(_context.Customers, "CustomerID", "FullName", showing.CustomerID);
+                    ViewData["AgentID"] = new SelectList(_context.Agents, "AgentID", "FullName", showing.AgentID);
+                    ViewData["ListingID"] = new SelectList(_context.Listings, "ListingID", "Address", showing.ListingID);
+                    return View(showing);
+                }
                 _context.Add(showing);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -276,12 +284,14 @@ namespace mvcNestify.Controllers
 
             return true;
         }
+        //check if showing start/end times are in any showing time block or if timeslot is entirely in an existing time block
         private bool TimeSlotIsTaken(Showing showing)
         {
             List<Showing> showingsAtListing = _context.Showings.Where(s => s.ListingID == showing.ListingID).ToList();
-            //check if showing times overlap with any existing showings
+            
             return showingsAtListing.Any(s => ((s.StartTime <= showing.StartTime && s.EndTime >= showing.StartTime) ||
-                (s.EndTime >= showing.EndTime && s.StartTime <= showing.EndTime)) && s.Date == showing.Date);
+                (s.EndTime >= showing.EndTime && s.StartTime <= showing.EndTime)
+                || (s.StartTime >= showing.StartTime && s.EndTime <= showing.EndTime)) && s.Date == showing.Date);
         }
 
         private bool AgentNotAvailable(Showing showing)
@@ -289,7 +299,8 @@ namespace mvcNestify.Controllers
             List<Showing> showingsWithAgent = _context.Showings.Where(s => s.AgentID == showing.AgentID).ToList();
 
             return showingsWithAgent.Any(s => ((s.StartTime <= showing.StartTime && s.EndTime >= showing.StartTime) ||
-                (s.EndTime >= showing.EndTime && s.StartTime <= showing.EndTime)) && s.Date == showing.Date);
+                (s.EndTime >= showing.EndTime && s.StartTime <= showing.EndTime)
+                || (s.StartTime >= showing.StartTime && s.EndTime <= showing.EndTime)) && s.Date == showing.Date);
         }
     }
 }
